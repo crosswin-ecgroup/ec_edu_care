@@ -78,7 +78,7 @@ export default function Login() {
                     className="w-32 h-32 mb-4 rounded-full"
                     resizeMode="contain"
                 />
-                <Text className="text-3xl font-bold text-blue-800">EC EduCare</Text>
+                <Text className="text-3xl font-bold text-blue-800">EC Edu Care</Text>
                 <Text className="text-gray-600 mt-2">Rise Mobile App</Text>
             </View>
 
