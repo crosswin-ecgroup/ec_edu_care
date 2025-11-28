@@ -8,8 +8,8 @@ interface AuthCardProps {
 
 export function AuthCard({ title, children }: AuthCardProps) {
     return (
-        <View className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm">
-            <Text className="text-2xl font-bold text-center mb-6 text-gray-800">{title}</Text>
+        <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md w-full max-w-sm">
+            <Text className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">{title}</Text>
             {children}
         </View>
     );

@@ -13,7 +13,7 @@ export function PrimaryButton({ onPress, title, loading, disabled }: PrimaryButt
         <TouchableOpacity
             onPress={onPress}
             disabled={disabled || loading}
-            className={`bg-blue-600 py-3 px-6 rounded-lg items-center justify-center ${disabled ? 'opacity-50' : 'active:bg-blue-700'
+            className={`bg-blue-600 dark:bg-blue-500 py-3 px-6 rounded-lg items-center justify-center ${disabled ? 'opacity-50' : 'active:bg-blue-700 dark:active:bg-blue-600'
                 }`}
         >
             {loading ? (
