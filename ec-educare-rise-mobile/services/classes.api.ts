@@ -1,26 +1,53 @@
 import { api } from './api.base';
 
-export interface Class {
-    id: string;
+export interface Teacher {
+    userId: string;
     name: string;
-    description: string;
-    teacherId?: string;
-    // Add other fields
+    email?: string;
+}
+
+export interface Student {
+    userId: string;
+    name: string;
+    email?: string;
+}
+
+export interface Class {
+    classId: string;
+    name: string;
+    subject?: string;
+    standard?: string;
+    startDate: string;
+    endDate: string;
+    dayOfWeek?: string[];
+    sessionTime?: {
+        totalHours?: number;
+        totalMinutes?: number;
+    };
+    createdOn: string;
+    telegramGroupId?: number;
+    telegramGroupLink?: string;
+    teachers?: Teacher[];
+    students?: Student[];
 }
 
 export const classesApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getClasses: builder.query<Class[], void>({
-            query: () => '/classes',
+            query: () => '/Classes',
             providesTags: ['Classes'],
         }),
+        getClassById: builder.query<Class, string>({
+            query: (id) => `/Classes/${id}`,
+            providesTags: (result, error, id) => [{ type: 'Classes', id }],
+        }),
         getClassDetails: builder.query<Class, string>({
-            query: (id) => `/classes/${id}`,
+            query: (id) => `/Classes/${id}`,
             providesTags: (result, error, id) => [{ type: 'Classes', id }],
         }),
         createClass: builder.mutation<Class, Partial<Class>>({
             query: (body) => ({
-                url: '/classes',
+                url: '/Classes',
                 method: 'POST',
                 body,
             }),
@@ -28,7 +55,7 @@ export const classesApi = api.injectEndpoints({
         }),
         assignTeacher: builder.mutation<void, { classId: string; teacherId: string }>({
             query: ({ classId, teacherId }) => ({
-                url: `/classes/${classId}/assignteacher`,
+                url: `/Classes/${classId}/assignteacher`,
                 method: 'POST',
                 body: { teacherId },
             }),
@@ -40,6 +67,7 @@ export const classesApi = api.injectEndpoints({
 
 export const {
     useGetClassesQuery,
+    useGetClassByIdQuery,
     useGetClassDetailsQuery,
     useCreateClassMutation,
     useAssignTeacherMutation
