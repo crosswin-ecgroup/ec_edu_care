@@ -32,23 +32,19 @@ function RootLayoutNav() {
       // If authenticated and in auth group OR at root, go to dashboard
       if (inAuthGroup || !segments[0]) {
         console.log('Redirecting to dashboard');
-        router.replace('/dashboard');
+        setTimeout(() => router.replace('/dashboard'), 0);
       }
     } else if (!isAuthenticated && segments[0] !== 'auth') {
       console.log('Redirecting to login');
-      router.replace('/auth/login');
+      setTimeout(() => router.replace('/auth/login'), 0);
     }
 
     return () => clearTimeout(hydrationTimeout);
   }, [isAuthenticated, segments, rootNavigationState, isHydrated]);
 
-  if (!isHydrated || !rootNavigationState?.key) {
-    return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
-        <ActivityIndicator size="large" color="#3B82F6" />
-      </View>
-    );
-  }
+  // We must render the Stack immediately to ensure navigation is mounted.
+  // The useEffect will handle redirection once hydration is complete.
+  // While hydrating, the user will see the initial route (likely index.tsx which is a spinner).
 
   return (
     <Stack>

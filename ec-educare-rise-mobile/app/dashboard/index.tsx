@@ -16,7 +16,10 @@ export default function Dashboard() {
     };
 
     const renderHeader = () => (
-        <View className="mb-6 bg-blue-600 dark:bg-blue-800 p-6 rounded-3xl shadow-lg">
+        <TouchableOpacity
+            onPress={() => router.push('/dashboard/profile')}
+            className="mb-6 bg-blue-600 dark:bg-blue-800 p-6 rounded-3xl shadow-lg active:opacity-90"
+        >
             <View className="flex-row justify-between items-center mb-4">
                 <View>
                     <Text className="text-blue-100 text-lg font-medium">Welcome back,</Text>
@@ -30,7 +33,7 @@ export default function Dashboard() {
                 <Ionicons name="person-circle-outline" size={20} color="#BFDBFE" />
                 <Text className="text-blue-100 ml-2 font-medium">{user?.role || 'Student'}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
@@ -107,6 +110,15 @@ export default function Dashboard() {
                     }
                 />
             )}
+
+            {/* Floating Action Button for Creating Class */}
+            <TouchableOpacity
+                onPress={() => router.push('/dashboard/create-class')}
+                className="absolute bottom-6 right-6 bg-blue-600 dark:bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg active:bg-blue-700 dark:active:bg-blue-600"
+                style={{ elevation: 5 }}
+            >
+                <Ionicons name="add" size={30} color="white" />
+            </TouchableOpacity>
         </View>
     );
 }

@@ -48,7 +48,7 @@ export default function CalendarScreen() {
                         if (!marks[dateStr].dots.find((d: any) => d.key === cls.classId)) {
                             marks[dateStr].dots.push({
                                 key: cls.classId,
-                                color: '#3B82F6', // blue-500
+                                color: '#10B981', // emerald-500 (Green for timing range)
                                 selectedDotColor: 'white',
                             });
                         }

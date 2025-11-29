@@ -31,6 +31,30 @@ export interface Class {
     students?: Student[];
 }
 
+export interface TimeSpan {
+    ticks?: number;
+    days?: number;
+    hours?: number;
+    milliseconds?: number;
+    minutes?: number;
+    seconds?: number;
+    totalDays?: number;
+    totalHours?: number;
+    totalMilliseconds?: number;
+    totalMinutes?: number;
+    totalSeconds?: number;
+}
+
+export interface CreateClassDto {
+    name: string;
+    subject: string;
+    standard: string;
+    startDate: string;
+    endDate: string;
+    dayOfWeek: string[];
+    sessionTime: TimeSpan;
+}
+
 export const classesApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getClasses: builder.query<Class[], void>({
@@ -45,7 +69,7 @@ export const classesApi = api.injectEndpoints({
             query: (id) => `/Classes/${id}`,
             providesTags: (result, error, id) => [{ type: 'Classes', id }],
         }),
-        createClass: builder.mutation<Class, Partial<Class>>({
+        createClass: builder.mutation<Class, CreateClassDto>({
             query: (body) => ({
                 url: '/Classes',
                 method: 'POST',
