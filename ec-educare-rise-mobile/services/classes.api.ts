@@ -76,6 +76,14 @@ export const classesApi = api.injectEndpoints({
             query: (id) => `/Classes/${id}`,
             providesTags: (result, error, id) => [{ type: 'Classes', id }],
         }),
+        getTeachers: builder.query<Teacher[], void>({
+            query: () => '/Teachers',
+            providesTags: ['Teachers'],
+        }),
+        getStudents: builder.query<Student[], void>({
+            query: () => '/Students',
+            providesTags: ['Students'],
+        }),
         createClass: builder.mutation<Class, CreateClassDto>({
             query: (body) => ({
                 url: '/Classes',
@@ -98,7 +106,7 @@ export const classesApi = api.injectEndpoints({
                 method: 'POST',
                 body,
             }),
-            // Invalidate Directory or Teachers tag if it existed, for now just general invalidation might be needed or none if we don't have a list query yet
+            invalidatesTags: ['Teachers'],
         }),
         createStudent: builder.mutation<Student, CreateStudentDto>({
             query: (body) => ({
@@ -106,6 +114,7 @@ export const classesApi = api.injectEndpoints({
                 method: 'POST',
                 body,
             }),
+            invalidatesTags: ['Students'],
         }),
     }),
 });
@@ -114,6 +123,8 @@ export const {
     useGetClassesQuery,
     useGetClassByIdQuery,
     useGetClassDetailsQuery,
+    useGetTeachersQuery,
+    useGetStudentsQuery,
     useCreateClassMutation,
     useAssignTeacherMutation,
     useCreateTeacherMutation,

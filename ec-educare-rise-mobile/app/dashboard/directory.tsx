@@ -1,88 +1,51 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useGetClassesQuery } from '../../services/classes.api';
+import { useGetTeachersQuery, useGetStudentsQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type PersonType = 'teacher' | 'student';
 
-interface Person {
-    userId: string;
-    name: string;
-    email?: string;
-    type: PersonType;
-    grades: string[];
-}
-
 export default function Directory() {
     const router = useRouter();
-    const { data: classes, isLoading } = useGetClassesQuery();
+    const { data: teachers, isLoading: teachersLoading } = useGetTeachersQuery();
+    const { data: students, isLoading: studentsLoading } = useGetStudentsQuery();
     const [selectedType, setSelectedType] = useState<PersonType>('teacher');
     const [selectedGrade, setSelectedGrade] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Aggregate all unique teachers and students with their grades
-    const { teachers, students, grades } = useMemo(() => {
-        if (!classes) return { teachers: [], students: [], grades: ['All'] };
-
-        const teacherMap = new Map<string, Person>();
-        const studentMap = new Map<string, Person>();
+    // Extract unique grades from students
+    const grades = useMemo(() => {
+        if (!students) return ['All'];
         const gradeSet = new Set<string>(['All']);
-
-        classes.forEach(cls => {
-            if (cls.standard) gradeSet.add(cls.standard);
-
-            // Process teachers
-            cls.teachers?.forEach(teacher => {
-                if (!teacherMap.has(teacher.userId)) {
-                    teacherMap.set(teacher.userId, {
-                        ...teacher,
-                        type: 'teacher',
-                        grades: []
-                    });
-                }
-                if (cls.standard && !teacherMap.get(teacher.userId)!.grades.includes(cls.standard)) {
-                    teacherMap.get(teacher.userId)!.grades.push(cls.standard);
-                }
-            });
-
-            // Process students
-            cls.students?.forEach(student => {
-                if (!studentMap.has(student.userId)) {
-                    studentMap.set(student.userId, {
-                        ...student,
-                        type: 'student',
-                        grades: []
-                    });
-                }
-                if (cls.standard && !studentMap.get(student.userId)!.grades.includes(cls.standard)) {
-                    studentMap.get(student.userId)!.grades.push(cls.standard);
-                }
-            });
+        students.forEach(student => {
+            if (student.grade) gradeSet.add(student.grade);
         });
-
-        return {
-            teachers: Array.from(teacherMap.values()),
-            students: Array.from(studentMap.values()),
-            grades: Array.from(gradeSet)
-        };
-    }, [classes]);
+        return Array.from(gradeSet);
+    }, [students]);
 
     // Filter people based on search and grade
     const filteredPeople = useMemo(() => {
-        const people = selectedType === 'teacher' ? teachers : students;
+        const people = selectedType === 'teacher' ? (teachers || []) : (students || []);
 
         return people.filter(person => {
-            const matchesSearch = person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (person.email?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-            const matchesGrade = selectedGrade === 'All' || person.grades.includes(selectedGrade);
-            return matchesSearch && matchesGrade;
+            const matchesSearch = person.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (person.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+                (person.mobileNumber?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+
+            // For students, filter by grade
+            if (selectedType === 'student' && selectedGrade !== 'All') {
+                const student = person as typeof students[0];
+                return matchesSearch && student.grade === selectedGrade;
+            }
+
+            return matchesSearch;
         });
     }, [selectedType, teachers, students, searchQuery, selectedGrade]);
 
-    if (isLoading) {
+    if (teachersLoading || studentsLoading) {
         return <LoadingOverlay />;
     }
 
@@ -168,56 +131,57 @@ export default function Directory() {
 
                     {/* People List */}
                     {filteredPeople.length > 0 ? (
-                        filteredPeople.map((person) => (
-                            <View
-                                key={person.userId}
-                                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
-                            >
-                                <View className="flex-row items-center">
-                                    <View className={`w-12 h-12 rounded-full items-center justify-center ${selectedType === 'teacher'
-                                        ? 'bg-blue-100 dark:bg-blue-900'
-                                        : 'bg-green-100 dark:bg-green-900'
-                                        }`}>
-                                        <Text className={`font-bold text-lg ${selectedType === 'teacher'
-                                            ? 'text-blue-600 dark:text-blue-400'
-                                            : 'text-green-600 dark:text-green-400'
+                        filteredPeople.map((person) => {
+                            const personId = selectedType === 'teacher'
+                                ? (person as any).teacherId
+                                : (person as any).studentId;
+                            const grade = selectedType === 'student' ? (person as any).grade : null;
+
+                            return (
+                                <View
+                                    key={personId}
+                                    className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
+                                >
+                                    <View className="flex-row items-center">
+                                        <View className={`w-12 h-12 rounded-full items-center justify-center ${selectedType === 'teacher'
+                                            ? 'bg-blue-100 dark:bg-blue-900'
+                                            : 'bg-green-100 dark:bg-green-900'
                                             }`}>
-                                            {person.name[0].toUpperCase()}
-                                        </Text>
-                                    </View>
-                                    <View className="ml-3 flex-1">
-                                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                            {person.name}
-                                        </Text>
-                                        {person.email && (
-                                            <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                                {person.email}
+                                            <Text className={`font-bold text-lg ${selectedType === 'teacher'
+                                                ? 'text-blue-600 dark:text-blue-400'
+                                                : 'text-green-600 dark:text-green-400'
+                                                }`}>
+                                                {person.fullName[0].toUpperCase()}
                                             </Text>
-                                        )}
-                                        {person.grades.length > 0 && (
-                                            <View className="flex-row flex-wrap mt-2">
-                                                {person.grades.map((grade, idx) => (
-                                                    <View
-                                                        key={idx}
-                                                        className={`mr-2 mb-1 px-2 py-1 rounded ${selectedType === 'teacher'
-                                                            ? 'bg-blue-100 dark:bg-blue-900'
-                                                            : 'bg-green-100 dark:bg-green-900'
-                                                            }`}
-                                                    >
-                                                        <Text className={`text-xs font-medium ${selectedType === 'teacher'
-                                                            ? 'text-blue-700 dark:text-blue-300'
-                                                            : 'text-green-700 dark:text-green-300'
-                                                            }`}>
+                                        </View>
+                                        <View className="ml-3 flex-1">
+                                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                                {person.fullName}
+                                            </Text>
+                                            {person.email && (
+                                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {person.email}
+                                                </Text>
+                                            )}
+                                            {person.mobileNumber && (
+                                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                                    {person.mobileNumber}
+                                                </Text>
+                                            )}
+                                            {grade && (
+                                                <View className="flex-row flex-wrap mt-2">
+                                                    <View className="mr-2 mb-1 px-2 py-1 rounded bg-green-100 dark:bg-green-900">
+                                                        <Text className="text-xs font-medium text-green-700 dark:text-green-300">
                                                             {grade}
                                                         </Text>
                                                     </View>
-                                                ))}
-                                            </View>
-                                        )}
+                                                </View>
+                                            )}
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        ))
+                            );
+                        })
                     ) : (
                         <View className="items-center py-12">
                             <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
