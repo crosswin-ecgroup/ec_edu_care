@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Switch, Platform } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCreateClassMutation } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { CustomAlert } from '../../components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function CreateClass() {
     const router = useRouter();
@@ -14,8 +15,10 @@ export default function CreateClass() {
     const [name, setName] = useState('');
     const [subject, setSubject] = useState('');
     const [standard, setStandard] = useState('');
-    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-    const [endDate, setEndDate] = useState(new Date(new Date().setMonth(new Date().getMonth() + 3)).toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date(new Date().setMonth(new Date().getMonth() + 3)));
+    const [showStartPicker, setShowStartPicker] = useState(false);
+    const [showEndPicker, setShowEndPicker] = useState(false);
 
     // Duration
     const [durationHours, setDurationHours] = useState('1');
@@ -31,6 +34,13 @@ export default function CreateClass() {
         message: '',
         type: 'error' as 'error' | 'success' | 'info'
     });
+
+    const formatDate = (date: Date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
 
     const toggleDay = (day: string) => {
         if (selectedDays.includes(day)) {
@@ -67,8 +77,8 @@ export default function CreateClass() {
                 name,
                 subject,
                 standard,
-                startDate: new Date(startDate).toISOString(),
-                endDate: new Date(endDate).toISOString(),
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
                 dayOfWeek: selectedDays,
                 sessionTime
             }).unwrap();
@@ -134,23 +144,45 @@ export default function CreateClass() {
                 <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
                     <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Schedule</Text>
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Start Date (YYYY-MM-DD)</Text>
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
-                        placeholder="YYYY-MM-DD"
-                        placeholderTextColor="#9CA3AF"
-                        value={startDate}
-                        onChangeText={setStartDate}
-                    />
+                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Start Date</Text>
+                    <TouchableOpacity
+                        onPress={() => setShowStartPicker(true)}
+                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
+                    >
+                        <Text className="text-gray-800 dark:text-gray-100">{formatDate(startDate)}</Text>
+                        <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
+                    </TouchableOpacity>
+                    {showStartPicker && (
+                        <DateTimePicker
+                            value={startDate}
+                            mode="date"
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={(event, selectedDate) => {
+                                setShowStartPicker(Platform.OS === 'ios');
+                                if (selectedDate) setStartDate(selectedDate);
+                            }}
+                        />
+                    )}
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">End Date (YYYY-MM-DD)</Text>
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
-                        placeholder="YYYY-MM-DD"
-                        placeholderTextColor="#9CA3AF"
-                        value={endDate}
-                        onChangeText={setEndDate}
-                    />
+                    <Text className="text-gray-600 dark:text-gray-400 mb-1">End Date</Text>
+                    <TouchableOpacity
+                        onPress={() => setShowEndPicker(true)}
+                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
+                    >
+                        <Text className="text-gray-800 dark:text-gray-100">{formatDate(endDate)}</Text>
+                        <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
+                    </TouchableOpacity>
+                    {showEndPicker && (
+                        <DateTimePicker
+                            value={endDate}
+                            mode="date"
+                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                            onChange={(event, selectedDate) => {
+                                setShowEndPicker(Platform.OS === 'ios');
+                                if (selectedDate) setEndDate(selectedDate);
+                            }}
+                        />
+                    )}
 
                     <Text className="text-gray-600 dark:text-gray-400 mb-1">Session Duration</Text>
                     <View className="flex-row items-center mb-4">
@@ -181,14 +213,14 @@ export default function CreateClass() {
                                 key={day}
                                 onPress={() => toggleDay(day)}
                                 className={`mr-2 mb-2 px-3 py-2 rounded-full border ${selectedDays.includes(day)
-                                    ? 'bg-blue-600 border-blue-600'
-                                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
+                                        ? 'bg-blue-600 border-blue-600'
+                                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
                                     }`}
                             >
                                 <Text
                                     className={`${selectedDays.includes(day)
-                                        ? 'text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-300'
+                                            ? 'text-white font-bold'
+                                            : 'text-gray-600 dark:text-gray-300'
                                         }`}
                                 >
                                     {day.slice(0, 3)}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList, RefreshControl, TouchableOpacity, TextInput } from 'react-native';
 import { useAuthStore } from '../../store/auth.store';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
@@ -10,30 +10,72 @@ export default function Dashboard() {
     const user = useAuthStore((state) => state.user);
     const { data: classes, isLoading, refetch } = useGetClassesQuery();
     const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterStandard, setFilterStandard] = useState('All');
 
     const handleClassPress = (classId: string) => {
         router.push(`/dashboard/class-details?id=${classId}`);
     };
 
+    const filteredClasses = classes?.filter(cls => {
+        const matchesSearch = cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (cls.subject?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+        const matchesFilter = filterStandard === 'All' || cls.standard === filterStandard;
+        return matchesSearch && matchesFilter;
+    }) || [];
+
+    const standards = ['All', ...Array.from(new Set(classes?.map(c => c.standard).filter(Boolean) || []))];
+
     const renderHeader = () => (
-        <TouchableOpacity
-            onPress={() => router.push('/dashboard/profile')}
-            className="mb-6 bg-blue-600 dark:bg-blue-800 p-6 rounded-3xl shadow-lg active:opacity-90"
-        >
-            <View className="flex-row justify-between items-center mb-4">
-                <View>
-                    <Text className="text-blue-100 text-lg font-medium">Welcome back,</Text>
-                    <Text className="text-3xl font-bold text-white">{user?.name || 'Student'}</Text>
-                </View>
-                <View className="bg-white/20 p-2 rounded-full">
-                    <Ionicons name="school" size={32} color="white" />
-                </View>
+        <View className="mb-4">
+            <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                Class Management
+            </Text>
+
+            {/* Search Bar */}
+            <View className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm mb-3 flex-row items-center">
+                <Ionicons name="search" size={20} color="#9CA3AF" />
+                <TextInput
+                    className="flex-1 ml-2 text-gray-800 dark:text-gray-100"
+                    placeholder="Search classes..."
+                    placeholderTextColor="#9CA3AF"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                />
+                {searchQuery.length > 0 && (
+                    <TouchableOpacity onPress={() => setSearchQuery('')}>
+                        <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+                    </TouchableOpacity>
+                )}
             </View>
-            <View className="flex-row items-center bg-blue-700 dark:bg-blue-900/50 p-3 rounded-xl self-start">
-                <Ionicons name="person-circle-outline" size={20} color="#BFDBFE" />
-                <Text className="text-blue-100 ml-2 font-medium">{user?.role || 'Student'}</Text>
+
+            {/* Filter Pills */}
+            <View className="flex-row flex-wrap mb-2">
+                {standards.map((std) => (
+                    <TouchableOpacity
+                        key={std}
+                        onPress={() => setFilterStandard(std || 'All')}
+                        className={`mr-2 mb-2 px-4 py-2 rounded-full ${filterStandard === std
+                            ? 'bg-blue-600'
+                            : 'bg-gray-200 dark:bg-gray-700'
+                            }`}
+                    >
+                        <Text
+                            className={`text-sm font-medium ${filterStandard === std
+                                ? 'text-white'
+                                : 'text-gray-700 dark:text-gray-300'
+                                }`}
+                        >
+                            {std}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
             </View>
-        </TouchableOpacity>
+
+            <Text className="text-sm text-gray-500 dark:text-gray-400">
+                {filteredClasses.length} {filteredClasses.length === 1 ? 'class' : 'classes'} found
+            </Text>
+        </View>
     );
 
     return (
@@ -42,7 +84,7 @@ export default function Dashboard() {
                 <LoadingOverlay />
             ) : (
                 <FlatList
-                    data={classes}
+                    data={filteredClasses}
                     keyExtractor={(item) => item.classId}
                     refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#3B82F6" />}
                     contentContainerClassName="p-4 pb-20"
@@ -50,7 +92,7 @@ export default function Dashboard() {
                         <>
                             {renderHeader()}
                             <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 ml-1">
-                                Your Classes
+                                All Classes
                             </Text>
                         </>
                     )}

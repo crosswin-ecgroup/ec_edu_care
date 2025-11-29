@@ -6,16 +6,36 @@ import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
+const CLASS_COLORS = [
+    '#3B82F6', // blue-500
+    '#10B981', // emerald-500
+    '#F59E0B', // amber-500
+    '#EF4444', // red-500
+    '#8B5CF6', // violet-500
+    '#EC4899', // pink-500
+    '#06B6D4', // cyan-500
+    '#F97316', // orange-500
+];
+
 export default function CalendarScreen() {
     const { data: classes, isLoading } = useGetClassesQuery();
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState('');
 
+    // Assign colors to classes
+    const classColors = useMemo(() => {
+        if (!classes) return {};
+        const colorMap: Record<string, string> = {};
+        classes.forEach((cls, index) => {
+            colorMap[cls.classId] = CLASS_COLORS[index % CLASS_COLORS.length];
+        });
+        return colorMap;
+    }, [classes]);
+
     const markedDates = useMemo(() => {
         if (!classes) return {};
 
         const marks: any = {};
-        const today = new Date();
 
         // Helper to get day name
         const getDayName = (date: Date) => {
@@ -23,7 +43,6 @@ export default function CalendarScreen() {
         };
 
         // Iterate through next 3 months to populate calendar
-        // This is a simplified approach. Ideally, we'd generate on demand or have backend support.
         const startDate = new Date();
         startDate.setDate(1); // Start of current month
         const endDate = new Date();
@@ -48,7 +67,7 @@ export default function CalendarScreen() {
                         if (!marks[dateStr].dots.find((d: any) => d.key === cls.classId)) {
                             marks[dateStr].dots.push({
                                 key: cls.classId,
-                                color: '#10B981', // emerald-500 (Green for timing range)
+                                color: classColors[cls.classId],
                                 selectedDotColor: 'white',
                             });
                         }
@@ -68,7 +87,7 @@ export default function CalendarScreen() {
         }
 
         return marks;
-    }, [classes, selectedDate]);
+    }, [classes, selectedDate, classColors]);
 
     const selectedDateClasses = useMemo(() => {
         if (!classes || !selectedDate) return [];
@@ -83,6 +102,11 @@ export default function CalendarScreen() {
             return date >= start && date <= end && cls.dayOfWeek.includes(dayName);
         });
     }, [classes, selectedDate]);
+
+    const formatDate = (dateStr: string) => {
+        const [year, month, day] = dateStr.split('-');
+        return `${day}/${month}/${year}`;
+    };
 
     if (isLoading) return <LoadingOverlay />;
 
@@ -117,7 +141,7 @@ export default function CalendarScreen() {
                     borderRadius: 12,
                     margin: 16,
                     paddingBottom: 10,
-                    backgroundColor: 'white', // Or dark mode color, handled via wrapper usually but Calendar theme is object
+                    backgroundColor: 'white',
                     elevation: 2,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 1 },
@@ -128,7 +152,7 @@ export default function CalendarScreen() {
 
             <View className="flex-1 px-4">
                 <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                    {selectedDate ? `Classes on ${selectedDate}` : 'Select a date to view classes'}
+                    {selectedDate ? `Classes on ${formatDate(selectedDate)}` : 'Select a date to view classes'}
                 </Text>
 
                 <ScrollView showsVerticalScrollIndicator={false}>
@@ -137,7 +161,8 @@ export default function CalendarScreen() {
                             <TouchableOpacity
                                 key={cls.classId}
                                 onPress={() => router.push(`/dashboard/class-details?id=${cls.classId}`)}
-                                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border-l-4 border-blue-500"
+                                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3"
+                                style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >
                                 <View className="flex-row justify-between items-start">
                                     <View className="flex-1">
@@ -153,7 +178,6 @@ export default function CalendarScreen() {
                                 <View className="flex-row items-center mt-3">
                                     <Ionicons name="time-outline" size={16} color="#6B7280" />
                                     <Text className="text-gray-500 dark:text-gray-400 ml-1 text-sm">
-                                        {/* Placeholder for time, as sessionTime is duration not start time */}
                                         {cls.sessionTime ? `${Math.floor(cls.sessionTime.totalHours || 0)}h ${Math.floor((cls.sessionTime.totalMinutes || 0) % 60)}m duration` : 'Time N/A'}
                                     </Text>
                                 </View>

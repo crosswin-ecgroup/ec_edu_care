@@ -11,12 +11,12 @@ export default function Profile() {
 
     // Mock data since API is missing
     const profileData = {
-        email: user?.email || 'student@example.com',
+        email: user?.email || 'admin@ecgroup.com',
         phone: '+1 234 567 8900',
         address: '123 Education Lane, Learning City, 10001',
         joinDate: 'September 1, 2023',
-        studentId: 'ST-2023-001',
-        grade: '10th Grade'
+        adminId: 'ADM-2023-001',
+        role: 'Administrator'
     };
 
     return (
@@ -33,8 +33,8 @@ export default function Profile() {
                     <View className="w-24 h-24 bg-white rounded-full items-center justify-center mb-4 border-4 border-blue-400">
                         <Ionicons name="person" size={48} color="#3B82F6" />
                     </View>
-                    <Text className="text-2xl font-bold text-white">{user?.name || 'Student Name'}</Text>
-                    <Text className="text-blue-200 font-medium">{user?.role || 'Student'}</Text>
+                    <Text className="text-2xl font-bold text-white">{user?.name || 'Admin'}</Text>
+                    <Text className="text-blue-200 font-medium">{user?.role || 'Administrator'}</Text>
                 </View>
             </View>
 
@@ -77,17 +77,17 @@ export default function Profile() {
 
                 <View className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 mb-6">
                     <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
-                        Academic Details
+                        Account Details
                     </Text>
 
                     <View className="flex-row justify-between mb-3">
-                        <Text className="text-gray-500 dark:text-gray-400">Student ID</Text>
-                        <Text className="text-gray-800 dark:text-gray-100 font-medium">{profileData.studentId}</Text>
+                        <Text className="text-gray-500 dark:text-gray-400">Admin ID</Text>
+                        <Text className="text-gray-800 dark:text-gray-100 font-medium">{profileData.adminId}</Text>
                     </View>
 
                     <View className="flex-row justify-between mb-3">
-                        <Text className="text-gray-500 dark:text-gray-400">Current Grade</Text>
-                        <Text className="text-gray-800 dark:text-gray-100 font-medium">{profileData.grade}</Text>
+                        <Text className="text-gray-500 dark:text-gray-400">Role</Text>
+                        <Text className="text-gray-800 dark:text-gray-100 font-medium">{profileData.role}</Text>
                     </View>
 
                     <View className="flex-row justify-between">
@@ -103,6 +103,15 @@ export default function Profile() {
                     <Ionicons name="log-out-outline" size={24} color="white" />
                     <Text className="text-white font-bold text-lg ml-2">Logout</Text>
                 </TouchableOpacity>
+
+                <View className="items-center pb-6">
+                    <Text className="text-gray-400 dark:text-gray-500 text-sm mb-1">
+                        Made with ❤️ by EC EduCare Team
+                    </Text>
+                    <Text className="text-gray-400 dark:text-gray-500 text-xs">
+                        v1.0.0 (Build 1)
+                    </Text>
+                </View>
             </View>
         </ScrollView>
     );
