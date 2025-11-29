@@ -70,6 +70,20 @@ export default function DashboardLayout() {
                     href: null, // Hide from tab bar
                 }}
             />
+            <Tabs.Screen
+                name="create-student"
+                options={{
+                    title: 'Create Student',
+                    href: null, // Hide from tab bar
+                }}
+            />
+            <Tabs.Screen
+                name="create-teacher"
+                options={{
+                    title: 'Create Teacher',
+                    href: null, // Hide from tab bar
+                }}
+            />
         </Tabs>
     );
 }
