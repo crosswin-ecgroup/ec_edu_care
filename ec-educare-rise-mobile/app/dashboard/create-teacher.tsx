@@ -3,10 +3,9 @@ import { View, Text, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingVi
 import { useRouter } from 'expo-router';
 import { useCreateTeacherMutation } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { PrimaryButton } from '../../components/PrimaryButton';
 import { CustomAlert } from '../../components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function CreateTeacher() {
     const router = useRouter();
@@ -51,8 +50,6 @@ export default function CreateTeacher() {
 
     const [createTeacher, { isLoading }] = useCreateTeacherMutation();
 
-    // ... existing state ...
-
     const handleCreate = async () => {
         // Validation
         if (!name.trim()) {
@@ -79,11 +76,11 @@ export default function CreateTeacher() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
+        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
             <KeyboardAvoidingView
                 className="flex-1"
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
                 {isLoading && <LoadingOverlay message="Creating Teacher..." />}
                 <CustomAlert
@@ -94,37 +91,45 @@ export default function CreateTeacher() {
                     onClose={hideAlert}
                 />
 
-                <View className="bg-white dark:bg-gray-800 p-4 pt-4 shadow-sm flex-row items-center border-b border-gray-100 dark:border-gray-700">
-                    <TouchableOpacity onPress={() => router.back()} className="mr-4">
-                        <Ionicons name="arrow-back" size={24} color="#4F46E5" />
-                    </TouchableOpacity>
-                    <Text className="text-xl font-bold text-gray-800 dark:text-gray-100">Create Teacher</Text>
-                </View>
+                {/* Gradient Header */}
+                <LinearGradient
+                    colors={['#4F46E5', '#3730A3']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    className="pt-14 pb-6 px-6 rounded-b-[32px] shadow-lg z-10"
+                >
+                    <View className="flex-row items-center">
+                        <TouchableOpacity onPress={() => router.back()} className="bg-white/20 p-2 rounded-full mr-4">
+                            <Ionicons name="arrow-back" size={24} color="white" />
+                        </TouchableOpacity>
+                        <Text className="text-2xl font-bold text-white">Create Teacher</Text>
+                    </View>
+                </LinearGradient>
 
                 <ScrollView
-                    className="flex-1 p-4"
+                    className="flex-1 px-4 pt-6"
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={{ paddingBottom: 40 }}
                 >
-                    <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
-                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Teacher Information</Text>
+                    <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex-row items-center">
+                            <Ionicons name="person-circle-outline" size={20} color="#4F46E5" />
+                            <Text className="ml-2"> Teacher Information</Text>
+                        </Text>
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Full Name *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Full Name *</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-blue-500"
                             placeholder="Enter teacher name"
                             placeholderTextColor="#9CA3AF"
                             value={name}
                             onChangeText={setName}
                         />
 
-
-
-                        // ... existing code ...
-
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Email *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Email *</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-blue-500"
                             placeholder="teacher@example.com"
                             placeholderTextColor="#9CA3AF"
                             value={email}
@@ -133,16 +138,17 @@ export default function CreateTeacher() {
                             autoCapitalize="none"
                         />
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Phone Number</Text>
-                        <View className="flex-row items-center bg-gray-100 dark:bg-gray-700 rounded-lg mb-4">
-                            <Text className="text-gray-800 dark:text-gray-100 pl-3 pr-1">+91</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Phone Number</Text>
+                        <View className="flex-row items-center bg-gray-50 dark:bg-gray-900 rounded-xl mb-4 border border-gray-200 dark:border-gray-700 focus:border-blue-500 overflow-hidden">
+                            <View className="bg-gray-100 dark:bg-gray-800 px-4 py-4 border-r border-gray-200 dark:border-gray-700">
+                                <Text className="text-gray-600 dark:text-gray-300 font-medium">+91</Text>
+                            </View>
                             <TextInput
-                                className="flex-1 p-3 text-gray-800 dark:text-gray-100"
+                                className="flex-1 p-4 text-gray-800 dark:text-gray-100"
                                 placeholder="9876543210"
                                 placeholderTextColor="#9CA3AF"
                                 value={phone}
                                 onChangeText={(text) => {
-                                    // Only allow numbers and limit to 10 digits
                                     const cleaned = text.replace(/[^0-9]/g, '').slice(0, 10);
                                     setPhone(cleaned);
                                 }}
@@ -151,21 +157,21 @@ export default function CreateTeacher() {
                             />
                         </View>
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Subject Specialization *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Subject Specialization *</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 setShowSubjectPicker(!showSubjectPicker);
                                 setShowQualificationPicker(false);
                             }}
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-2 flex-row justify-between items-center border border-gray-200 dark:border-gray-700"
                         >
-                            <Text className={subject ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
+                            <Text className={subject ? "text-gray-800 dark:text-gray-100 font-medium" : "text-gray-400"}>
                                 {subject || 'Select subject'}
                             </Text>
                             <Ionicons name="chevron-down" size={20} color="#3B82F6" />
                         </TouchableOpacity>
                         {showSubjectPicker && (
-                            <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
+                            <View className="bg-gray-50 dark:bg-gray-900 rounded-xl mb-4 border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ maxHeight: 200 }}>
                                 <ScrollView nestedScrollEnabled={true}>
                                     {SUBJECTS.map((s) => (
                                         <TouchableOpacity
@@ -174,30 +180,30 @@ export default function CreateTeacher() {
                                                 setSubject(s);
                                                 setShowSubjectPicker(false);
                                             }}
-                                            className="p-3 border-b border-gray-200 dark:border-gray-600"
+                                            className="p-4 border-b border-gray-200 dark:border-gray-700 active:bg-blue-50 dark:active:bg-blue-900/20"
                                         >
-                                            <Text className="text-gray-800 dark:text-gray-100">{s}</Text>
+                                            <Text className="text-gray-800 dark:text-gray-100 font-medium">{s}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </ScrollView>
                             </View>
                         )}
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Qualification</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Qualification</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 setShowQualificationPicker(!showQualificationPicker);
                                 setShowSubjectPicker(false);
                             }}
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-2 flex-row justify-between items-center border border-gray-200 dark:border-gray-700"
                         >
-                            <Text className={qualification ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
+                            <Text className={qualification ? "text-gray-800 dark:text-gray-100 font-medium" : "text-gray-400"}>
                                 {qualification || 'Select qualification'}
                             </Text>
                             <Ionicons name="chevron-down" size={20} color="#3B82F6" />
                         </TouchableOpacity>
                         {showQualificationPicker && (
-                            <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
+                            <View className="bg-gray-50 dark:bg-gray-900 rounded-xl mb-4 border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ maxHeight: 200 }}>
                                 <ScrollView nestedScrollEnabled={true}>
                                     {QUALIFICATIONS.map((q) => (
                                         <TouchableOpacity
@@ -206,18 +212,18 @@ export default function CreateTeacher() {
                                                 setQualification(q);
                                                 setShowQualificationPicker(false);
                                             }}
-                                            className="p-3 border-b border-gray-200 dark:border-gray-600"
+                                            className="p-4 border-b border-gray-200 dark:border-gray-700 active:bg-blue-50 dark:active:bg-blue-900/20"
                                         >
-                                            <Text className="text-gray-800 dark:text-gray-100">{q}</Text>
+                                            <Text className="text-gray-800 dark:text-gray-100 font-medium">{q}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </ScrollView>
                             </View>
                         )}
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Years of Experience</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Years of Experience</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-blue-500"
                             placeholder="Enter years of experience"
                             placeholderTextColor="#9CA3AF"
                             value={experience}
@@ -225,22 +231,34 @@ export default function CreateTeacher() {
                             keyboardType="numeric"
                         />
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Address</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Address</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-blue-500"
                             placeholder="Enter address"
                             placeholderTextColor="#9CA3AF"
                             value={address}
                             onChangeText={setAddress}
                             multiline
                             numberOfLines={3}
+                            style={{ minHeight: 100, textAlignVertical: 'top' }}
                         />
                     </View>
 
-                    <PrimaryButton title="Create Teacher" onPress={handleCreate} />
-                    <View className="h-8" />
+                    <TouchableOpacity
+                        onPress={handleCreate}
+                        className="active:opacity-90 mb-8"
+                    >
+                        <LinearGradient
+                            colors={['#4F46E5', '#3730A3']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            className="p-4 rounded-xl items-center justify-center shadow-lg"
+                        >
+                            <Text className="text-white font-bold text-lg">Create Teacher</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
     );
 }

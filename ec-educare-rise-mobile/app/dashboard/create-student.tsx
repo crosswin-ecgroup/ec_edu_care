@@ -3,10 +3,9 @@ import { View, Text, TextInput, ScrollView, TouchableOpacity, KeyboardAvoidingVi
 import { useRouter } from 'expo-router';
 import { useCreateStudentMutation } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { PrimaryButton } from '../../components/PrimaryButton';
 import { CustomAlert } from '../../components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function CreateStudent() {
     const router = useRouter();
@@ -45,8 +44,6 @@ export default function CreateStudent() {
 
     const [createStudent, { isLoading }] = useCreateStudentMutation();
 
-    // ... existing state ...
-
     const handleCreate = async () => {
         // Validation
         if (!name.trim()) {
@@ -72,11 +69,11 @@ export default function CreateStudent() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
+        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
             <KeyboardAvoidingView
                 className="flex-1"
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
                 {isLoading && <LoadingOverlay message="Creating Student..." />}
                 <CustomAlert
@@ -87,33 +84,45 @@ export default function CreateStudent() {
                     onClose={hideAlert}
                 />
 
-                <View className="bg-white dark:bg-gray-800 p-4 pt-4 shadow-sm flex-row items-center border-b border-gray-100 dark:border-gray-700">
-                    <TouchableOpacity onPress={() => router.back()} className="mr-4">
-                        <Ionicons name="arrow-back" size={24} color="#4F46E5" />
-                    </TouchableOpacity>
-                    <Text className="text-xl font-bold text-gray-800 dark:text-gray-100">Create Student</Text>
-                </View>
+                {/* Gradient Header */}
+                <LinearGradient
+                    colors={['#10B981', '#059669']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    className="pt-14 pb-6 px-6 rounded-b-[32px] shadow-lg z-10"
+                >
+                    <View className="flex-row items-center">
+                        <TouchableOpacity onPress={() => router.back()} className="bg-white/20 p-2 rounded-full mr-4">
+                            <Ionicons name="arrow-back" size={24} color="white" />
+                        </TouchableOpacity>
+                        <Text className="text-2xl font-bold text-white">Create Student</Text>
+                    </View>
+                </LinearGradient>
 
                 <ScrollView
-                    className="flex-1 p-4"
+                    className="flex-1 px-4 pt-6"
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps="handled"
+                    contentContainerStyle={{ paddingBottom: 40 }}
                 >
-                    <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
-                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Student Information</Text>
+                    <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex-row items-center">
+                            <Ionicons name="person-circle-outline" size={20} color="#10B981" />
+                            <Text className="ml-2"> Student Information</Text>
+                        </Text>
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Full Name *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Full Name *</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-green-500"
                             placeholder="Enter student name"
                             placeholderTextColor="#9CA3AF"
                             value={name}
                             onChangeText={setName}
                         />
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Email *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Email *</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-green-500"
                             placeholder="student@example.com"
                             placeholderTextColor="#9CA3AF"
                             value={email}
@@ -122,16 +131,17 @@ export default function CreateStudent() {
                             autoCapitalize="none"
                         />
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Phone Number</Text>
-                        <View className="flex-row items-center bg-gray-100 dark:bg-gray-700 rounded-lg mb-4">
-                            <Text className="text-gray-800 dark:text-gray-100 pl-3 pr-1">+91</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Phone Number</Text>
+                        <View className="flex-row items-center bg-gray-50 dark:bg-gray-900 rounded-xl mb-4 border border-gray-200 dark:border-gray-700 focus:border-green-500 overflow-hidden">
+                            <View className="bg-gray-100 dark:bg-gray-800 px-4 py-4 border-r border-gray-200 dark:border-gray-700">
+                                <Text className="text-gray-600 dark:text-gray-300 font-medium">+91</Text>
+                            </View>
                             <TextInput
-                                className="flex-1 p-3 text-gray-800 dark:text-gray-100"
+                                className="flex-1 p-4 text-gray-800 dark:text-gray-100"
                                 placeholder="9876543210"
                                 placeholderTextColor="#9CA3AF"
                                 value={phone}
                                 onChangeText={(text) => {
-                                    // Only allow numbers and limit to 10 digits
                                     const cleaned = text.replace(/[^0-9]/g, '').slice(0, 10);
                                     setPhone(cleaned);
                                 }}
@@ -140,18 +150,18 @@ export default function CreateStudent() {
                             />
                         </View>
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Grade *</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Grade *</Text>
                         <TouchableOpacity
                             onPress={() => setShowGradePicker(!showGradePicker)}
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-2 flex-row justify-between items-center border border-gray-200 dark:border-gray-700"
                         >
-                            <Text className={grade ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
+                            <Text className={grade ? "text-gray-800 dark:text-gray-100 font-medium" : "text-gray-400"}>
                                 {grade || 'Select grade'}
                             </Text>
-                            <Ionicons name="chevron-down" size={20} color="#3B82F6" />
+                            <Ionicons name="chevron-down" size={20} color="#10B981" />
                         </TouchableOpacity>
                         {showGradePicker && (
-                            <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
+                            <View className="bg-gray-50 dark:bg-gray-900 rounded-xl mb-4 border border-gray-200 dark:border-gray-700 overflow-hidden" style={{ maxHeight: 200 }}>
                                 <ScrollView nestedScrollEnabled={true}>
                                     {GRADES.map((g) => (
                                         <TouchableOpacity
@@ -160,42 +170,46 @@ export default function CreateStudent() {
                                                 setGrade(g);
                                                 setShowGradePicker(false);
                                             }}
-                                            className="p-3 border-b border-gray-200 dark:border-gray-600"
+                                            className="p-4 border-b border-gray-200 dark:border-gray-700 active:bg-green-50 dark:active:bg-green-900/20"
                                         >
-                                            <Text className="text-gray-800 dark:text-gray-100">{g}</Text>
+                                            <Text className="text-gray-800 dark:text-gray-100 font-medium">{g}</Text>
                                         </TouchableOpacity>
                                     ))}
                                 </ScrollView>
                             </View>
                         )}
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Address</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Address</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-green-500"
                             placeholder="Enter address"
                             placeholderTextColor="#9CA3AF"
                             value={address}
                             onChangeText={setAddress}
                             multiline
                             numberOfLines={3}
+                            style={{ minHeight: 100, textAlignVertical: 'top' }}
                         />
                     </View>
 
-                    <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
-                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Guardian Information</Text>
+                    <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-6 flex-row items-center">
+                            <Ionicons name="people-circle-outline" size={20} color="#10B981" />
+                            <Text className="ml-2"> Guardian Information</Text>
+                        </Text>
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Guardian Name</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Guardian Name</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-green-500"
                             placeholder="Enter guardian name"
                             placeholderTextColor="#9CA3AF"
                             value={guardianName}
                             onChangeText={setGuardianName}
                         />
 
-                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Guardian Phone</Text>
+                        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-2">Guardian Phone</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            className="bg-gray-50 dark:bg-gray-900 p-4 rounded-xl mb-4 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 focus:border-green-500"
                             placeholder="+1 234 567 8900"
                             placeholderTextColor="#9CA3AF"
                             value={guardianPhone}
@@ -204,10 +218,21 @@ export default function CreateStudent() {
                         />
                     </View>
 
-                    <PrimaryButton title="Create Student" onPress={handleCreate} />
-                    <View className="h-8" />
+                    <TouchableOpacity
+                        onPress={handleCreate}
+                        className="active:opacity-90 mb-8"
+                    >
+                        <LinearGradient
+                            colors={['#10B981', '#059669']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            className="p-4 rounded-xl items-center justify-center shadow-lg"
+                        >
+                            <Text className="text-white font-bold text-lg">Create Student</Text>
+                        </LinearGradient>
+                    </TouchableOpacity>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </SafeAreaView>
+        </View>
     );
 }

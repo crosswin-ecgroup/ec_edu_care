@@ -5,7 +5,7 @@ import { useGetClassesQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const CLASS_COLORS = [
     '#3B82F6', // blue-500
@@ -83,7 +83,7 @@ export default function CalendarScreen() {
             marks[selectedDate] = {
                 ...marks[selectedDate],
                 selected: true,
-                selectedColor: '#2563EB', // blue-600
+                selectedColor: '#4F46E5', // indigo-600
             };
         }
 
@@ -112,74 +112,85 @@ export default function CalendarScreen() {
     if (isLoading) return <LoadingOverlay />;
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
-            <Calendar
-                onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
-                markedDates={markedDates}
-                markingType={'multi-dot'}
-                theme={{
-                    backgroundColor: 'transparent',
-                    calendarBackground: 'transparent',
-                    textSectionTitleColor: '#6B7280',
-                    selectedDayBackgroundColor: '#2563EB',
-                    selectedDayTextColor: '#ffffff',
-                    todayTextColor: '#2563EB',
-                    dayTextColor: '#1F2937',
-                    textDisabledColor: '#D1D5DB',
-                    dotColor: '#3B82F6',
-                    selectedDotColor: '#ffffff',
-                    arrowColor: '#2563EB',
-                    monthTextColor: '#1F2937',
-                    indicatorColor: '#2563EB',
-                    textDayFontWeight: '400',
-                    textMonthFontWeight: 'bold',
-                    textDayHeaderFontWeight: '400',
-                    textDayFontSize: 16,
-                    textMonthFontSize: 18,
-                    textDayHeaderFontSize: 14
-                }}
-                style={{
-                    borderRadius: 12,
-                    margin: 16,
-                    paddingBottom: 10,
-                    backgroundColor: 'white',
-                    elevation: 2,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 2,
-                }}
-            />
+        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+            {/* Gradient Header */}
+            <LinearGradient
+                colors={['#4F46E5', '#3730A3']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                className="pt-14 pb-6 px-6 rounded-b-[32px] shadow-lg z-10"
+            >
+                <View className="flex-row items-center justify-between">
+                    <View className="flex-row items-center">
+                        <TouchableOpacity onPress={() => router.back()} className="bg-white/20 p-2 rounded-full mr-4">
+                            <Ionicons name="arrow-back" size={24} color="white" />
+                        </TouchableOpacity>
+                        <Text className="text-2xl font-bold text-white">Calendar</Text>
+                    </View>
+                    <View className="bg-white/20 p-2 rounded-full">
+                        <Ionicons name="calendar" size={24} color="white" />
+                    </View>
+                </View>
+            </LinearGradient>
 
-            <View className="flex-1 px-4">
-                <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                    {selectedDate ? `Classes on ${formatDate(selectedDate)}` : 'Select a date to view classes'}
-                </Text>
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                <View className="mx-4 mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-2 border border-gray-100 dark:border-gray-700">
+                    <Calendar
+                        onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
+                        markedDates={markedDates}
+                        markingType={'multi-dot'}
+                        theme={{
+                            backgroundColor: 'transparent',
+                            calendarBackground: 'transparent',
+                            textSectionTitleColor: '#6B7280',
+                            selectedDayBackgroundColor: '#4F46E5',
+                            selectedDayTextColor: '#ffffff',
+                            todayTextColor: '#4F46E5',
+                            dayTextColor: '#1F2937',
+                            textDisabledColor: '#D1D5DB',
+                            dotColor: '#4F46E5',
+                            selectedDotColor: '#ffffff',
+                            arrowColor: '#4F46E5',
+                            monthTextColor: '#1F2937',
+                            indicatorColor: '#4F46E5',
+                            textDayFontWeight: '500',
+                            textMonthFontWeight: 'bold',
+                            textDayHeaderFontWeight: '500',
+                            textDayFontSize: 16,
+                            textMonthFontSize: 18,
+                            textDayHeaderFontSize: 14
+                        }}
+                    />
+                </View>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <View className="px-6 mt-6 pb-10">
+                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 flex-row items-center">
+                        <Ionicons name="list" size={20} color="#4F46E5" />
+                        <Text className="ml-2"> {selectedDate ? `Classes on ${formatDate(selectedDate)}` : 'Select a date'}</Text>
+                    </Text>
+
                     {selectedDateClasses.length > 0 ? (
                         selectedDateClasses.map((cls) => (
                             <TouchableOpacity
                                 key={cls.classId}
                                 onPress={() => router.push(`/dashboard/class-details?id=${cls.classId}`)}
-                                className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3"
+                                className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
                                 style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >
                                 <View className="flex-row justify-between items-start">
                                     <View className="flex-1">
-                                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">{cls.name}</Text>
-                                        <Text className="text-gray-600 dark:text-gray-400">{cls.subject}</Text>
+                                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">{cls.name}</Text>
+                                        <Text className="text-gray-500 dark:text-gray-400 font-medium">{cls.subject}</Text>
                                     </View>
-                                    <View className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">
-                                        <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold">
+                                    <View className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-lg border border-blue-100 dark:border-blue-800">
+                                        <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase">
                                             {cls.standard}
                                         </Text>
                                     </View>
                                 </View>
-                                <View className="flex-row items-center mt-3">
-                                    <Ionicons name="time-outline" size={16} color="#6B7280" />
-                                    <Text className="text-gray-500 dark:text-gray-400 ml-1 text-sm">
+                                <View className="flex-row items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                    <Ionicons name="time-outline" size={18} color="#6B7280" />
+                                    <Text className="text-gray-500 dark:text-gray-400 ml-2 text-sm font-medium">
                                         {cls.sessionTime ? `${Math.floor(cls.sessionTime.totalHours || 0)}h ${Math.floor((cls.sessionTime.totalMinutes || 0) % 60)}m duration` : 'Time N/A'}
                                     </Text>
                                 </View>
@@ -187,13 +198,19 @@ export default function CalendarScreen() {
                         ))
                     ) : (
                         selectedDate ? (
-                            <View className="items-center py-8">
-                                <Text className="text-gray-500 dark:text-gray-400">No classes scheduled for this day.</Text>
+                            <View className="items-center py-12 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                                <Ionicons name="calendar-outline" size={48} color="#9CA3AF" />
+                                <Text className="text-gray-500 dark:text-gray-400 mt-4 font-medium">No classes scheduled for this day.</Text>
                             </View>
-                        ) : null
+                        ) : (
+                            <View className="items-center py-12 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                                <Ionicons name="finger-print-outline" size={48} color="#9CA3AF" />
+                                <Text className="text-gray-500 dark:text-gray-400 mt-4 font-medium">Tap a date to view scheduled classes.</Text>
+                            </View>
+                        )
                     )}
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+                </View>
+            </ScrollView>
+        </View>
     );
 }
