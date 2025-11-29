@@ -94,10 +94,15 @@ export default function Directory() {
             <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
                 <View className="p-4">
                     {/* Type Toggle */}
-                    <View className="flex-row mb-6 bg-gray-200 dark:bg-gray-800 p-1 rounded-xl">
+                    <View className="flex-row mb-6 bg-gray-200 dark:bg-gray-800 p-1 rounded-2xl">
                         <TouchableOpacity
-                            onPress={() => setSelectedType('teacher')}
-                            className={`flex-1 py-3 rounded-lg ${selectedType === 'teacher' ? 'bg-white shadow-sm' : 'bg-transparent'
+                            onPress={() => {
+                                // Use requestAnimationFrame to avoid potential navigation/render conflicts
+                                requestAnimationFrame(() => {
+                                    setSelectedType('teacher');
+                                });
+                            }}
+                            className={`flex-1 py-3 rounded-xl ${selectedType === 'teacher' ? 'bg-white shadow-sm' : 'bg-transparent'
                                 }`}
                         >
                             <Text className={`text-center font-bold ${selectedType === 'teacher' ? 'text-blue-600' : 'text-gray-500 dark:text-gray-400'
@@ -106,8 +111,12 @@ export default function Directory() {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => setSelectedType('student')}
-                            className={`flex-1 py-3 rounded-lg ${selectedType === 'student' ? 'bg-white shadow-sm' : 'bg-transparent'
+                            onPress={() => {
+                                requestAnimationFrame(() => {
+                                    setSelectedType('student');
+                                });
+                            }}
+                            className={`flex-1 py-3 rounded-xl ${selectedType === 'student' ? 'bg-white shadow-sm' : 'bg-transparent'
                                 }`}
                         >
                             <Text className={`text-center font-bold ${selectedType === 'student' ? 'text-green-600' : 'text-gray-500 dark:text-gray-400'

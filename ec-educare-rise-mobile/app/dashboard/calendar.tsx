@@ -121,12 +121,7 @@ export default function CalendarScreen() {
                 className="pt-14 pb-6 px-6 rounded-b-[32px] shadow-lg z-10"
             >
                 <View className="flex-row items-center justify-between">
-                    <View className="flex-row items-center">
-                        <TouchableOpacity onPress={() => router.back()} className="bg-white/20 p-2 rounded-full mr-4">
-                            <Ionicons name="arrow-back" size={24} color="white" />
-                        </TouchableOpacity>
-                        <Text className="text-2xl font-bold text-white">Calendar</Text>
-                    </View>
+                    <Text className="text-2xl font-bold text-white">Calendar</Text>
                     <View className="bg-white/20 p-2 rounded-full">
                         <Ionicons name="calendar" size={24} color="white" />
                     </View>

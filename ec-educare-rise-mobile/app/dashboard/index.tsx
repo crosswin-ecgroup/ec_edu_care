@@ -104,24 +104,27 @@ export default function Dashboard() {
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 8 }}
+                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 10 }}
+                            className="-mx-6"
                         >
                             {quickActions.map((action, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => router.push(action.route as any)}
-                                    className="mr-4 items-center"
+                                    className="mr-5 items-center"
                                     activeOpacity={0.8}
                                 >
-                                    <LinearGradient
-                                        colors={action.color as any}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 1 }}
-                                        className="w-16 h-16 rounded-2xl items-center justify-center shadow-md mb-2"
-                                    >
-                                        <Ionicons name={action.icon as any} size={28} color="white" />
-                                    </LinearGradient>
-                                    <Text className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center w-20">
+                                    <View className="shadow-lg shadow-blue-500/30">
+                                        <LinearGradient
+                                            colors={action.color as any}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 1, y: 1 }}
+                                            className="w-20 h-20 rounded-3xl items-center justify-center border-2 border-white/20"
+                                        >
+                                            <Ionicons name={action.icon as any} size={32} color="white" />
+                                        </LinearGradient>
+                                    </View>
+                                    <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 text-center mt-3 w-24 leading-4">
                                         {action.label}
                                     </Text>
                                 </TouchableOpacity>

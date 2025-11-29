@@ -27,7 +27,7 @@ export default function DashboardLayout() {
                     title: 'Dashboard',
                     tabBarLabel: 'Dashboard',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="grid" size={size} color={color} />
+                        <Ionicons name="grid-outline" size={size} color={color} />
                     ),
                 }}
             />
@@ -37,7 +37,7 @@ export default function DashboardLayout() {
                     title: 'Classes',
                     tabBarLabel: 'Classes',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="book" size={size} color={color} />
+                        <Ionicons name="book-outline" size={size} color={color} />
                     ),
                 }}
             />
@@ -47,7 +47,7 @@ export default function DashboardLayout() {
                     title: 'Calendar',
                     tabBarLabel: 'Calendar',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="calendar" size={size} color={color} />
+                        <Ionicons name="calendar-outline" size={size} color={color} />
                     ),
                 }}
             />
@@ -57,7 +57,7 @@ export default function DashboardLayout() {
                     title: 'Directory',
                     tabBarLabel: 'Directory',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="people" size={size} color={color} />
+                        <Ionicons name="people-outline" size={size} color={color} />
                     ),
                 }}
             />
