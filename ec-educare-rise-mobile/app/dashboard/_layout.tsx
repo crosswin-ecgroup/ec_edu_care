@@ -40,21 +40,34 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
+                name="directory"
+                options={{
+                    title: 'Directory',
+                    tabBarLabel: 'Directory',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="people" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="class-details"
                 options={{
-                    href: null,
+                    title: 'Class Details',
+                    href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
                 name="create-class"
                 options={{
-                    href: null,
+                    title: 'Create Class',
+                    href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
                 name="profile"
                 options={{
-                    href: null,
+                    title: 'Profile',
+                    href: null, // Hide from tab bar
                 }}
             />
         </Tabs>
