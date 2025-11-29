@@ -8,7 +8,9 @@ import Animated, {
     runOnJS,
     withSequence,
     withSpring,
-    Easing
+    withDelay,
+    Easing,
+    interpolate
 } from 'react-native-reanimated';
 
 // Keep the splash screen visible while we fetch resources
@@ -23,14 +25,15 @@ export function AnimatedSplashScreen({ children, image }: AnimatedSplashScreenPr
     const [isAppReady, setAppReady] = useState(false);
     const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
 
-    const opacity = useSharedValue(1);
-    const scale = useSharedValue(1);
+    const opacity = useSharedValue(0);
+    const scale = useSharedValue(0.3);
+    const translateY = useSharedValue(50);
 
     useEffect(() => {
         async function prepare() {
             try {
-                // Artificially delay for a moment to show the splash (optional, remove in production if not needed)
-                // await new Promise(resolve => setTimeout(resolve, 1000));
+                // Simulate loading time
+                await new Promise(resolve => setTimeout(resolve, 500));
             } catch (e) {
                 console.warn(e);
             } finally {
@@ -44,25 +47,50 @@ export function AnimatedSplashScreen({ children, image }: AnimatedSplashScreenPr
     const onImageLoaded = useCallback(async () => {
         try {
             await SplashScreen.hideAsync();
-            // Start animation
-            scale.value = withSequence(
-                withTiming(1.1, { duration: 200 }),
-                withTiming(0, { duration: 400, easing: Easing.in(Easing.exp) })
-            );
-            opacity.value = withTiming(0, { duration: 400 }, (finished) => {
-                if (finished) {
-                    runOnJS(setAnimationComplete)(true);
-                }
+
+            // Entrance animation - fade in and scale up
+            opacity.value = withTiming(1, { duration: 600, easing: Easing.out(Easing.cubic) });
+            scale.value = withSpring(1, {
+                damping: 12,
+                stiffness: 100,
             });
+            translateY.value = withSpring(0, {
+                damping: 12,
+                stiffness: 100,
+            });
+
+            // Wait a bit, then exit
+            opacity.value = withDelay(
+                1200,
+                withTiming(0, { duration: 500, easing: Easing.in(Easing.cubic) }, (finished) => {
+                    if (finished) {
+                        runOnJS(setAnimationComplete)(true);
+                    }
+                })
+            );
+
+            scale.value = withDelay(
+                1200,
+                withTiming(1.2, { duration: 500, easing: Easing.in(Easing.cubic) })
+            );
         } catch (e) {
-            // handle errors
+            console.warn(e);
         }
     }, []);
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
             opacity: opacity.value,
-            transform: [{ scale: scale.value }],
+            transform: [
+                { scale: scale.value },
+                { translateY: translateY.value }
+            ],
+        };
+    });
+
+    const backgroundStyle = useAnimatedStyle(() => {
+        return {
+            opacity: interpolate(opacity.value, [0, 1], [1, 1]),
         };
     });
 
@@ -74,16 +102,30 @@ export function AnimatedSplashScreen({ children, image }: AnimatedSplashScreenPr
         <View style={{ flex: 1 }}>
             {isSplashAnimationComplete && children}
             {!isSplashAnimationComplete && (
-                <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff', alignItems: 'center', justifyContent: 'center' }]}>
+                <Animated.View
+                    style={[
+                        StyleSheet.absoluteFill,
+                        {
+                            backgroundColor: '#3B82F6', // Blue background
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                        },
+                        backgroundStyle
+                    ]}
+                >
                     <Animated.Image
                         source={image}
                         style={[
-                            { width: 200, height: 200, resizeMode: 'contain' },
+                            {
+                                width: 200,
+                                height: 200,
+                                resizeMode: 'contain'
+                            },
                             animatedStyle,
                         ]}
                         onLoadEnd={onImageLoaded}
                     />
-                </View>
+                </Animated.View>
             )}
         </View>
     );

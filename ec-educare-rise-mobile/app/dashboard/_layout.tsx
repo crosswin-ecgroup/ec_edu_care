@@ -22,7 +22,7 @@ export default function DashboardLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Home',
+                    title: 'Dashboard',
                     tabBarLabel: 'Home',
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="home" size={size} color={color} />

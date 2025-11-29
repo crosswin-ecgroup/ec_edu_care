@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, FlatList, RefreshControl, TouchableOpacity, TextInput } from 'react-native';
 import { useAuthStore } from '../../store/auth.store';
 import { useGetClassesQuery } from '../../services/classes.api';
@@ -13,20 +13,24 @@ export default function Dashboard() {
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStandard, setFilterStandard] = useState('All');
 
-    const handleClassPress = (classId: string) => {
+    const handleClassPress = useCallback((classId: string) => {
         router.push(`/dashboard/class-details?id=${classId}`);
-    };
+    }, [router]);
 
-    const filteredClasses = classes?.filter(cls => {
-        const matchesSearch = cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (cls.subject?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-        const matchesFilter = filterStandard === 'All' || cls.standard === filterStandard;
-        return matchesSearch && matchesFilter;
-    }) || [];
+    const filteredClasses = useMemo(() => {
+        return classes?.filter(cls => {
+            const matchesSearch = cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (cls.subject?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+            const matchesFilter = filterStandard === 'All' || cls.standard === filterStandard;
+            return matchesSearch && matchesFilter;
+        }) || [];
+    }, [classes, searchQuery, filterStandard]);
 
-    const standards = ['All', ...Array.from(new Set(classes?.map(c => c.standard).filter(Boolean) || []))];
+    const standards = useMemo(() => {
+        return ['All', ...Array.from(new Set(classes?.map(c => c.standard).filter(Boolean) || []))];
+    }, [classes]);
 
-    const renderHeader = () => (
+    const renderHeader = useCallback(() => (
         <View className="mb-4">
             <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
                 Class Management
@@ -56,14 +60,14 @@ export default function Dashboard() {
                         key={std}
                         onPress={() => setFilterStandard(std || 'All')}
                         className={`mr-2 mb-2 px-4 py-2 rounded-full ${filterStandard === std
-                            ? 'bg-blue-600'
-                            : 'bg-gray-200 dark:bg-gray-700'
+                                ? 'bg-blue-600'
+                                : 'bg-gray-200 dark:bg-gray-700'
                             }`}
                     >
                         <Text
                             className={`text-sm font-medium ${filterStandard === std
-                                ? 'text-white'
-                                : 'text-gray-700 dark:text-gray-300'
+                                    ? 'text-white'
+                                    : 'text-gray-700 dark:text-gray-300'
                                 }`}
                         >
                             {std}
@@ -76,8 +80,53 @@ export default function Dashboard() {
                 {filteredClasses.length} {filteredClasses.length === 1 ? 'class' : 'classes'} found
             </Text>
         </View>
-    );
+    ), [searchQuery, filterStandard, standards, filteredClasses.length]);
 
+    const renderItem = useCallback(({ item }: any) => (
+        <TouchableOpacity
+            onPress={() => handleClassPress(item.classId)}
+            className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:opacity-90"
+        >
+            <View className="flex-row justify-between items-start mb-2">
+                <View className="flex-1 mr-2">
+                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
+                        {item.name}
+                    </Text>
+                    <Text className="text-gray-600 dark:text-gray-400 mt-1">
+                        {item.subject}
+                    </Text>
+                </View>
+                {item.standard && (
+                    <View className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">
+                        <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold">
+                            {item.standard}
+                        </Text>
+                    </View>
+                )}
+            </View>
+
+            <View className="flex-row items-center mt-3">
+                <Ionicons name="people-outline" size={16} color="#6B7280" />
+                <Text className="text-gray-500 dark:text-gray-400 ml-1 text-sm">
+                    {item.teachers?.length || 0} teachers • {item.students?.length || 0} students
+                </Text>
+            </View>
+        </TouchableOpacity>
+    ), [handleClassPress]);
+
+    const renderEmpty = useCallback(() => (
+        <View className="items-center py-12">
+            <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
+                <Ionicons name="book-outline" size={48} color="#9CA3AF" />
+            </View>
+            <Text className="text-gray-500 dark:text-gray-400 text-lg font-medium">No classes found</Text>
+            <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2 text-center px-8">
+                {searchQuery || filterStandard !== 'All'
+                    ? 'Try adjusting your search or filters'
+                    : 'No classes have been created yet.'}
+            </Text>
+        </View>
+    ), [searchQuery, filterStandard]);
 
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
@@ -87,70 +136,9 @@ export default function Dashboard() {
                 keyboardShouldPersistTaps="handled"
                 refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#3B82F6" />}
                 contentContainerClassName="p-4 pb-20"
-                ListHeaderComponent={() => (
-                    <>
-                        {renderHeader()}
-                        <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 ml-1">
-                            All Classes
-                        </Text>
-                    </>
-                )}
-                renderItem={({ item }) => (
-                    <TouchableOpacity
-                        onPress={() => handleClassPress(item.classId)}
-                        className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:opacity-90"
-                    >
-                        <View className="flex-row justify-between items-start mb-2">
-                            <View className="flex-1 mr-2">
-                                <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
-                                    {item.name}
-                                </Text>
-                                <Text className="text-blue-600 dark:text-blue-400 font-medium mt-1">
-                                    {item.subject}
-                                </Text>
-                            </View>
-                            {item.standard && (
-                                <View className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                                    <Text className="text-gray-600 dark:text-gray-300 text-xs font-bold">
-                                        {item.standard}
-                                    </Text>
-                                </View>
-                            )}
-                        </View>
-
-                        <View className="flex-row items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                            <View className="flex-row items-center mr-4">
-                                <Ionicons name="calendar-outline" size={16} color="#9CA3AF" />
-                                <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
-                                    {item.dayOfWeek ? item.dayOfWeek.length : 0} Days
-                                </Text>
-                            </View>
-                            <View className="flex-row items-center">
-                                <Ionicons name="people-outline" size={16} color="#9CA3AF" />
-                                <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
-                                    {item.students ? item.students.length : 0} Students
-                                </Text>
-                            </View>
-                            <View className="flex-1 flex-row justify-end items-center">
-                                <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold mr-1">View Details</Text>
-                                <Ionicons name="chevron-forward" size={14} color="#3B82F6" />
-                            </View>
-                        </View>
-                    </TouchableOpacity>
-                )}
-                ListEmptyComponent={
-                    <View className="items-center py-12">
-                        <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
-                            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
-                        </View>
-                        <Text className="text-gray-500 dark:text-gray-400 text-lg font-medium">No classes found</Text>
-                        <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2 text-center px-8">
-                            {searchQuery || filterStandard !== 'All'
-                                ? 'Try adjusting your search or filters'
-                                : 'No classes have been created yet.'}
-                        </Text>
-                    </View>
-                }
+                ListHeaderComponent={renderHeader}
+                renderItem={renderItem}
+                ListEmptyComponent={renderEmpty}
             />
 
             {isLoading && <LoadingOverlay />}
