@@ -1,156 +1,227 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, TextInput } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useAuthStore } from '../../store/auth.store';
 import { useGetClassesQuery } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function Dashboard() {
-    const user = useAuthStore((state) => state.user);
-    const { data: classes, isLoading, refetch } = useGetClassesQuery();
     const router = useRouter();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [filterStandard, setFilterStandard] = useState('All');
+    const user = useAuthStore((state) => state.user);
+    const { data: classes } = useGetClassesQuery();
 
-    const handleClassPress = useCallback((classId: string) => {
-        router.push(`/dashboard/class-details?id=${classId}`);
-    }, [router]);
+    // Calculate statistics
+    const stats = useMemo(() => {
+        if (!classes) return { totalClasses: 0, totalTeachers: 0, totalStudents: 0, activeClasses: 0 };
 
-    const filteredClasses = useMemo(() => {
-        return classes?.filter(cls => {
-            const matchesSearch = cls.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (cls.subject?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-            const matchesFilter = filterStandard === 'All' || cls.standard === filterStandard;
-            return matchesSearch && matchesFilter;
-        }) || [];
-    }, [classes, searchQuery, filterStandard]);
+        const teacherSet = new Set<string>();
+        const studentSet = new Set<string>();
+        const now = new Date();
 
-    const standards = useMemo(() => {
-        return ['All', ...Array.from(new Set(classes?.map(c => c.standard).filter(Boolean) || []))];
+        classes.forEach(cls => {
+            cls.teachers?.forEach(t => teacherSet.add(t.userId));
+            cls.students?.forEach(s => studentSet.add(s.userId));
+        });
+
+        const activeClasses = classes.filter(cls => {
+            const endDate = new Date(cls.endDate);
+            return endDate >= now;
+        }).length;
+
+        return {
+            totalClasses: classes.length,
+            totalTeachers: teacherSet.size,
+            totalStudents: studentSet.size,
+            activeClasses
+        };
     }, [classes]);
 
-    const renderHeader = useCallback(() => (
-        <View className="mb-4">
-            <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                Class Management
-            </Text>
+    // Get recent/upcoming classes
+    const recentClasses = useMemo(() => {
+        if (!classes) return [];
+        return [...classes]
+            .sort((a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime())
+            .slice(0, 3);
+    }, [classes]);
 
-            {/* Search Bar */}
-            <View className="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm mb-3 flex-row items-center">
-                <Ionicons name="search" size={20} color="#9CA3AF" />
-                <TextInput
-                    className="flex-1 ml-2 text-gray-800 dark:text-gray-100"
-                    placeholder="Search classes..."
-                    placeholderTextColor="#9CA3AF"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                />
-                {searchQuery.length > 0 && (
-                    <TouchableOpacity onPress={() => setSearchQuery('')}>
-                        <Ionicons name="close-circle" size={20} color="#9CA3AF" />
-                    </TouchableOpacity>
-                )}
-            </View>
-
-            {/* Filter Pills */}
-            <View className="flex-row flex-wrap mb-2">
-                {standards.map((std) => (
-                    <TouchableOpacity
-                        key={std}
-                        onPress={() => setFilterStandard(std || 'All')}
-                        className={`mr-2 mb-2 px-4 py-2 rounded-full ${filterStandard === std
-                                ? 'bg-blue-600'
-                                : 'bg-gray-200 dark:bg-gray-700'
-                            }`}
-                    >
-                        <Text
-                            className={`text-sm font-medium ${filterStandard === std
-                                    ? 'text-white'
-                                    : 'text-gray-700 dark:text-gray-300'
-                                }`}
-                        >
-                            {std}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
-
-            <Text className="text-sm text-gray-500 dark:text-gray-400">
-                {filteredClasses.length} {filteredClasses.length === 1 ? 'class' : 'classes'} found
-            </Text>
-        </View>
-    ), [searchQuery, filterStandard, standards, filteredClasses.length]);
-
-    const renderItem = useCallback(({ item }: any) => (
-        <TouchableOpacity
-            onPress={() => handleClassPress(item.classId)}
-            className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:opacity-90"
-        >
-            <View className="flex-row justify-between items-start mb-2">
-                <View className="flex-1 mr-2">
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
-                        {item.name}
-                    </Text>
-                    <Text className="text-gray-600 dark:text-gray-400 mt-1">
-                        {item.subject}
-                    </Text>
-                </View>
-                {item.standard && (
-                    <View className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">
-                        <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold">
-                            {item.standard}
-                        </Text>
-                    </View>
-                )}
-            </View>
-
-            <View className="flex-row items-center mt-3">
-                <Ionicons name="people-outline" size={16} color="#6B7280" />
-                <Text className="text-gray-500 dark:text-gray-400 ml-1 text-sm">
-                    {item.teachers?.length || 0} teachers • {item.students?.length || 0} students
-                </Text>
-            </View>
-        </TouchableOpacity>
-    ), [handleClassPress]);
-
-    const renderEmpty = useCallback(() => (
-        <View className="items-center py-12">
-            <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
-                <Ionicons name="book-outline" size={48} color="#9CA3AF" />
-            </View>
-            <Text className="text-gray-500 dark:text-gray-400 text-lg font-medium">No classes found</Text>
-            <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2 text-center px-8">
-                {searchQuery || filterStandard !== 'All'
-                    ? 'Try adjusting your search or filters'
-                    : 'No classes have been created yet.'}
-            </Text>
-        </View>
-    ), [searchQuery, filterStandard]);
+    const quickActions = [
+        { icon: 'add-circle', label: 'Create Class', color: 'bg-blue-600', route: '/dashboard/create-class' },
+        { icon: 'person-add', label: 'Add Teacher', color: 'bg-purple-600', route: '/dashboard/create-teacher' },
+        { icon: 'school', label: 'Add Student', color: 'bg-green-600', route: '/dashboard/create-student' },
+        { icon: 'calendar', label: 'View Calendar', color: 'bg-orange-600', route: '/dashboard/calendar' },
+    ];
 
     return (
-        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
-            <FlatList
-                data={filteredClasses}
-                keyExtractor={(item) => item.classId}
-                keyboardShouldPersistTaps="handled"
-                refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#3B82F6" />}
-                contentContainerClassName="p-4 pb-20"
-                ListHeaderComponent={renderHeader}
-                renderItem={renderItem}
-                ListEmptyComponent={renderEmpty}
-            />
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
+            <ScrollView className="flex-1 bg-gray-50 dark:bg-gray-900">
+                <View className="p-4">
+                    {/* Welcome Section */}
+                    <View className="mb-6 flex-row justify-between items-start">
+                        <View>
+                            <Text className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+                                Welcome back! 👋
+                            </Text>
+                            <Text className="text-gray-600 dark:text-gray-400 mt-1">
+                                {user?.name || 'Administrator'}
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => router.push('/dashboard/profile')}
+                            className="bg-white dark:bg-gray-800 p-2 rounded-full shadow-sm"
+                        >
+                            <Ionicons name="person-circle-outline" size={32} color="#4F46E5" />
+                        </TouchableOpacity>
+                    </View>
 
-            {isLoading && <LoadingOverlay />}
+                    {/* Statistics Cards */}
+                    <View className="mb-6">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3">
+                            Overview
+                        </Text>
+                        <View className="flex-row flex-wrap -mx-2">
+                            {/* Total Classes */}
+                            <View className="w-1/2 px-2 mb-4">
+                                <View className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center justify-between mb-2">
+                                        <View className="bg-blue-100 dark:bg-blue-900 p-2 rounded-lg">
+                                            <Ionicons name="book" size={24} color="#3B82F6" />
+                                        </View>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                        {stats.totalClasses}
+                                    </Text>
+                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                        Total Classes
+                                    </Text>
+                                </View>
+                            </View>
 
-            {/* Floating Action Button for Creating Class */}
-            <TouchableOpacity
-                onPress={() => router.push('/dashboard/create-class')}
-                className="absolute bottom-6 right-6 bg-blue-600 dark:bg-blue-500 w-14 h-14 rounded-full items-center justify-center shadow-lg active:bg-blue-700 dark:active:bg-blue-600"
-                style={{ elevation: 5 }}
-            >
-                <Ionicons name="add" size={30} color="white" />
-            </TouchableOpacity>
-        </View>
+                            {/* Active Classes */}
+                            <View className="w-1/2 px-2 mb-4">
+                                <View className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center justify-between mb-2">
+                                        <View className="bg-green-100 dark:bg-green-900 p-2 rounded-lg">
+                                            <Ionicons name="checkmark-circle" size={24} color="#22C55E" />
+                                        </View>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                        {stats.activeClasses}
+                                    </Text>
+                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                        Active Classes
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Total Teachers */}
+                            <View className="w-1/2 px-2 mb-4">
+                                <View className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center justify-between mb-2">
+                                        <View className="bg-purple-100 dark:bg-purple-900 p-2 rounded-lg">
+                                            <Ionicons name="people" size={24} color="#A855F7" />
+                                        </View>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                        {stats.totalTeachers}
+                                    </Text>
+                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                        Teachers
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Total Students */}
+                            <View className="w-1/2 px-2 mb-4">
+                                <View className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center justify-between mb-2">
+                                        <View className="bg-orange-100 dark:bg-orange-900 p-2 rounded-lg">
+                                            <Ionicons name="school" size={24} color="#F97316" />
+                                        </View>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                                        {stats.totalStudents}
+                                    </Text>
+                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                        Students
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* Quick Actions */}
+                    <View className="mb-6">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-3">
+                            Quick Actions
+                        </Text>
+                        <View className="flex-row flex-wrap -mx-2">
+                            {quickActions.map((action, index) => (
+                                <View key={index} className="w-1/2 px-2 mb-3">
+                                    <TouchableOpacity
+                                        onPress={() => router.push(action.route as any)}
+                                        className={`${action.color} p-4 rounded-xl shadow-sm active:opacity-90`}
+                                    >
+                                        <View className="items-center">
+                                            <Ionicons name={action.icon as any} size={32} color="white" />
+                                            <Text className="text-white font-semibold mt-2 text-center">
+                                                {action.label}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+
+                    {/* Recent Classes */}
+                    {recentClasses.length > 0 && (
+                        <View className="mb-6">
+                            <View className="flex-row justify-between items-center mb-3">
+                                <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                    Recent Classes
+                                </Text>
+                                <TouchableOpacity onPress={() => router.push('/dashboard/classes')}>
+                                    <Text className="text-blue-600 dark:text-blue-400 font-medium">
+                                        View All
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            {recentClasses.map((cls) => (
+                                <TouchableOpacity
+                                    key={cls.classId}
+                                    onPress={() => router.push(`/dashboard/class-details?id=${cls.classId}`)}
+                                    className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700 active:opacity-90"
+                                >
+                                    <View className="flex-row justify-between items-start">
+                                        <View className="flex-1">
+                                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                                {cls.name}
+                                            </Text>
+                                            <Text className="text-gray-600 dark:text-gray-400 mt-1">
+                                                {cls.subject}
+                                            </Text>
+                                            <View className="flex-row items-center mt-2">
+                                                <Ionicons name="people-outline" size={16} color="#6B7280" />
+                                                <Text className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+                                                    {cls.teachers?.length || 0} teachers • {cls.students?.length || 0} students
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        {cls.standard && (
+                                            <View className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded">
+                                                <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold">
+                                                    {cls.standard}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 }

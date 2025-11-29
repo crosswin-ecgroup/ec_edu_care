@@ -7,6 +7,7 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { CustomAlert } from '../../components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const GRADES = [
     '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade',
@@ -97,176 +98,178 @@ export default function CreateClass() {
     };
 
     return (
-        <KeyboardAvoidingView
-            className="flex-1 bg-gray-50 dark:bg-gray-900"
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        >
-            {isLoading && <LoadingOverlay message="Creating Class..." />}
-
-            <CustomAlert
-                visible={alertConfig.visible}
-                title={alertConfig.title}
-                message={alertConfig.message}
-                type={alertConfig.type}
-                onClose={hideAlert}
-            />
-
-            <View className="bg-white dark:bg-gray-800 p-4 shadow-sm flex-row items-center">
-                <TouchableOpacity onPress={() => router.back()} className="mr-4">
-                    <Ionicons name="arrow-back" size={24} color="#3B82F6" />
-                </TouchableOpacity>
-                <Text className="text-xl font-bold text-gray-800 dark:text-gray-100">Create Class</Text>
-            </View>
-
-            <ScrollView
-                className="flex-1 p-4"
-                showsVerticalScrollIndicator={false}
-                keyboardShouldPersistTaps="handled"
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
+            <KeyboardAvoidingView
+                className="flex-1"
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
             >
-                <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Basic Info</Text>
+                {isLoading && <LoadingOverlay message="Creating Class..." />}
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Class Name</Text>
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
-                        placeholder="e.g. Mathematics 101"
-                        placeholderTextColor="#9CA3AF"
-                        value={name}
-                        onChangeText={setName}
-                    />
+                <CustomAlert
+                    visible={alertConfig.visible}
+                    title={alertConfig.title}
+                    message={alertConfig.message}
+                    type={alertConfig.type}
+                    onClose={hideAlert}
+                />
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Subject</Text>
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
-                        placeholder="e.g. Mathematics"
-                        placeholderTextColor="#9CA3AF"
-                        value={subject}
-                        onChangeText={setSubject}
-                    />
-
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Standard/Grade</Text>
-                    <TouchableOpacity
-                        onPress={() => setShowGradePicker(!showGradePicker)}
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
-                    >
-                        <Text className={standard ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
-                            {standard || 'Select grade'}
-                        </Text>
-                        <Ionicons name="chevron-down" size={20} color="#3B82F6" />
+                <View className="bg-white dark:bg-gray-800 p-4 shadow-sm flex-row items-center">
+                    <TouchableOpacity onPress={() => router.back()} className="mr-4">
+                        <Ionicons name="arrow-back" size={24} color="#3B82F6" />
                     </TouchableOpacity>
-                    {showGradePicker && (
-                        <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
-                            <ScrollView nestedScrollEnabled={true}>
-                                {GRADES.map((grade) => (
-                                    <TouchableOpacity
-                                        key={grade}
-                                        onPress={() => {
-                                            setStandard(grade);
-                                            setShowGradePicker(false);
-                                        }}
-                                        className="p-3 border-b border-gray-200 dark:border-gray-600"
-                                    >
-                                        <Text className="text-gray-800 dark:text-gray-100">{grade}</Text>
-                                    </TouchableOpacity>
-                                ))}
-                            </ScrollView>
-                        </View>
-                    )}
+                    <Text className="text-xl font-bold text-gray-800 dark:text-gray-100">Create Class</Text>
                 </View>
 
-                <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Schedule</Text>
+                <ScrollView
+                    className="flex-1 p-4"
+                    showsVerticalScrollIndicator={false}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Basic Info</Text>
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Start Date</Text>
-                    <TouchableOpacity
-                        onPress={() => setShowStartPicker(true)}
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
-                    >
-                        <Text className="text-gray-800 dark:text-gray-100">{formatDate(startDate)}</Text>
-                        <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
-                    </TouchableOpacity>
-                    {showStartPicker && (
-                        <DateTimePicker
-                            value={startDate}
-                            mode="date"
-                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                            onChange={(event, selectedDate) => {
-                                setShowStartPicker(Platform.OS === 'ios');
-                                if (selectedDate) setStartDate(selectedDate);
-                            }}
-                        />
-                    )}
-
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">End Date</Text>
-                    <TouchableOpacity
-                        onPress={() => setShowEndPicker(true)}
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
-                    >
-                        <Text className="text-gray-800 dark:text-gray-100">{formatDate(endDate)}</Text>
-                        <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
-                    </TouchableOpacity>
-                    {showEndPicker && (
-                        <DateTimePicker
-                            value={endDate}
-                            mode="date"
-                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                            onChange={(event, selectedDate) => {
-                                setShowEndPicker(Platform.OS === 'ios');
-                                if (selectedDate) setEndDate(selectedDate);
-                            }}
-                        />
-                    )}
-
-                    <Text className="text-gray-600 dark:text-gray-400 mb-1">Session Duration</Text>
-                    <View className="flex-row items-center mb-4">
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Class Name</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex-1 mr-2 text-gray-800 dark:text-gray-100"
-                            placeholder="Hours"
+                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            placeholder="e.g. Mathematics 101"
                             placeholderTextColor="#9CA3AF"
-                            value={durationHours}
-                            onChangeText={setDurationHours}
-                            keyboardType="numeric"
+                            value={name}
+                            onChangeText={setName}
                         />
-                        <Text className="text-gray-600 dark:text-gray-400 mr-4">Hrs</Text>
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Subject</Text>
                         <TextInput
-                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex-1 mr-2 text-gray-800 dark:text-gray-100"
-                            placeholder="Minutes"
+                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
+                            placeholder="e.g. Mathematics"
                             placeholderTextColor="#9CA3AF"
-                            value={durationMinutes}
-                            onChangeText={setDurationMinutes}
-                            keyboardType="numeric"
+                            value={subject}
+                            onChangeText={setSubject}
                         />
-                        <Text className="text-gray-600 dark:text-gray-400">Mins</Text>
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Standard/Grade</Text>
+                        <TouchableOpacity
+                            onPress={() => setShowGradePicker(!showGradePicker)}
+                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
+                        >
+                            <Text className={standard ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
+                                {standard || 'Select grade'}
+                            </Text>
+                            <Ionicons name="chevron-down" size={20} color="#3B82F6" />
+                        </TouchableOpacity>
+                        {showGradePicker && (
+                            <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
+                                <ScrollView nestedScrollEnabled={true}>
+                                    {GRADES.map((grade) => (
+                                        <TouchableOpacity
+                                            key={grade}
+                                            onPress={() => {
+                                                setStandard(grade);
+                                                setShowGradePicker(false);
+                                            }}
+                                            className="p-3 border-b border-gray-200 dark:border-gray-600"
+                                        >
+                                            <Text className="text-gray-800 dark:text-gray-100">{grade}</Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                        )}
                     </View>
 
-                    <Text className="text-gray-600 dark:text-gray-400 mb-2">Days of Week</Text>
-                    <View className="flex-row flex-wrap">
-                        {days.map((day) => (
-                            <TouchableOpacity
-                                key={day}
-                                onPress={() => toggleDay(day)}
-                                className={`mr-2 mb-2 px-3 py-2 rounded-full border ${selectedDays.includes(day)
-                                    ? 'bg-blue-600 border-blue-600'
-                                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
-                                    }`}
-                            >
-                                <Text
-                                    className={`${selectedDays.includes(day)
-                                        ? 'text-white font-bold'
-                                        : 'text-gray-600 dark:text-gray-300'
+                    <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Schedule</Text>
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Start Date</Text>
+                        <TouchableOpacity
+                            onPress={() => setShowStartPicker(true)}
+                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
+                        >
+                            <Text className="text-gray-800 dark:text-gray-100">{formatDate(startDate)}</Text>
+                            <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
+                        </TouchableOpacity>
+                        {showStartPicker && (
+                            <DateTimePicker
+                                value={startDate}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                onChange={(event, selectedDate) => {
+                                    setShowStartPicker(Platform.OS === 'ios');
+                                    if (selectedDate) setStartDate(selectedDate);
+                                }}
+                            />
+                        )}
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">End Date</Text>
+                        <TouchableOpacity
+                            onPress={() => setShowEndPicker(true)}
+                            className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 flex-row justify-between items-center"
+                        >
+                            <Text className="text-gray-800 dark:text-gray-100">{formatDate(endDate)}</Text>
+                            <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
+                        </TouchableOpacity>
+                        {showEndPicker && (
+                            <DateTimePicker
+                                value={endDate}
+                                mode="date"
+                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                onChange={(event, selectedDate) => {
+                                    setShowEndPicker(Platform.OS === 'ios');
+                                    if (selectedDate) setEndDate(selectedDate);
+                                }}
+                            />
+                        )}
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-1">Session Duration</Text>
+                        <View className="flex-row items-center mb-4">
+                            <TextInput
+                                className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex-1 mr-2 text-gray-800 dark:text-gray-100"
+                                placeholder="Hours"
+                                placeholderTextColor="#9CA3AF"
+                                value={durationHours}
+                                onChangeText={setDurationHours}
+                                keyboardType="numeric"
+                            />
+                            <Text className="text-gray-600 dark:text-gray-400 mr-4">Hrs</Text>
+                            <TextInput
+                                className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg flex-1 mr-2 text-gray-800 dark:text-gray-100"
+                                placeholder="Minutes"
+                                placeholderTextColor="#9CA3AF"
+                                value={durationMinutes}
+                                onChangeText={setDurationMinutes}
+                                keyboardType="numeric"
+                            />
+                            <Text className="text-gray-600 dark:text-gray-400">Mins</Text>
+                        </View>
+
+                        <Text className="text-gray-600 dark:text-gray-400 mb-2">Days of Week</Text>
+                        <View className="flex-row flex-wrap">
+                            {days.map((day) => (
+                                <TouchableOpacity
+                                    key={day}
+                                    onPress={() => toggleDay(day)}
+                                    className={`mr-2 mb-2 px-3 py-2 rounded-full border ${selectedDays.includes(day)
+                                        ? 'bg-blue-600 border-blue-600'
+                                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
                                         }`}
                                 >
-                                    {day.slice(0, 3)}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
+                                    <Text
+                                        className={`${selectedDays.includes(day)
+                                            ? 'text-white font-bold'
+                                            : 'text-gray-600 dark:text-gray-300'
+                                            }`}
+                                    >
+                                        {day.slice(0, 3)}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
                     </View>
-                </View>
 
-                <PrimaryButton title="Create Class" onPress={handleCreate} />
-                <View className="h-8" />
-            </ScrollView>
-        </KeyboardAvoidingView>
+                    <PrimaryButton title="Create Class" onPress={handleCreate} />
+                    <View className="h-8" />
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 }

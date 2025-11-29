@@ -9,23 +9,35 @@ export default function DashboardLayout() {
     return (
         <Tabs
             screenOptions={{
-                headerRight: () => (
-                    <TouchableOpacity
-                        onPress={() => router.push('/dashboard/profile')}
-                        className="mr-4"
-                    >
-                        <Ionicons name="person-circle-outline" size={32} color="#3B82F6" />
-                    </TouchableOpacity>
-                ),
+                headerShown: false,
+                tabBarActiveTintColor: '#4F46E5', // Primary indigo
+                tabBarInactiveTintColor: '#9CA3AF',
+                tabBarStyle: {
+                    borderTopWidth: 1,
+                    borderTopColor: '#E5E7EB', // gray-200
+                    height: 60,
+                    paddingBottom: 8,
+                    paddingTop: 8,
+                },
             }}
         >
             <Tabs.Screen
                 name="index"
                 options={{
                     title: 'Dashboard',
-                    tabBarLabel: 'Home',
+                    tabBarLabel: 'Dashboard',
                     tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
+                        <Ionicons name="grid" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="classes"
+                options={{
+                    title: 'Classes',
+                    tabBarLabel: 'Classes',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="book" size={size} color={color} />
                     ),
                 }}
             />

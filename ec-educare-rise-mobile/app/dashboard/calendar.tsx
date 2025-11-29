@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CLASS_COLORS = [
     '#3B82F6', // blue-500
@@ -111,7 +112,7 @@ export default function CalendarScreen() {
     if (isLoading) return <LoadingOverlay />;
 
     return (
-        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
             <Calendar
                 onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
                 markedDates={markedDates}
@@ -144,6 +145,7 @@ export default function CalendarScreen() {
                     backgroundColor: 'white',
                     elevation: 2,
                     shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.1,
                     shadowRadius: 2,
@@ -192,6 +194,6 @@ export default function CalendarScreen() {
                     )}
                 </ScrollView>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }

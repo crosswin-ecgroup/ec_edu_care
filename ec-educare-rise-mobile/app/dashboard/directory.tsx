@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { Ionicons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type PersonType = 'teacher' | 'student';
 
@@ -86,9 +87,14 @@ export default function Directory() {
     }
 
     return (
-        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <SafeAreaView className="flex-1 bg-gray-50 dark:bg-gray-900" edges={['top']}>
             <ScrollView className="flex-1">
                 <View className="p-4">
+                    {/* Header */}
+                    <Text className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                        Directory
+                    </Text>
+
                     {/* Type Toggle */}
                     <View className="flex-row mb-4 bg-gray-200 dark:bg-gray-800 p-1 rounded-xl">
                         <TouchableOpacity
@@ -239,6 +245,6 @@ export default function Directory() {
             >
                 <Ionicons name="add" size={30} color="white" />
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 }
