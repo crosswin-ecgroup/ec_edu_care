@@ -78,80 +78,82 @@ export default function Dashboard() {
         </View>
     );
 
+
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
-            {isLoading ? (
-                <LoadingOverlay />
-            ) : (
-                <FlatList
-                    data={filteredClasses}
-                    keyExtractor={(item) => item.classId}
-                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#3B82F6" />}
-                    contentContainerClassName="p-4 pb-20"
-                    ListHeaderComponent={() => (
-                        <>
-                            {renderHeader()}
-                            <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 ml-1">
-                                All Classes
-                            </Text>
-                        </>
-                    )}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            onPress={() => handleClassPress(item.classId)}
-                            className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:opacity-90"
-                        >
-                            <View className="flex-row justify-between items-start mb-2">
-                                <View className="flex-1 mr-2">
-                                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
-                                        {item.name}
-                                    </Text>
-                                    <Text className="text-blue-600 dark:text-blue-400 font-medium mt-1">
-                                        {item.subject}
-                                    </Text>
-                                </View>
-                                {item.standard && (
-                                    <View className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
-                                        <Text className="text-gray-600 dark:text-gray-300 text-xs font-bold">
-                                            {item.standard}
-                                        </Text>
-                                    </View>
-                                )}
+            <FlatList
+                data={filteredClasses}
+                keyExtractor={(item) => item.classId}
+                keyboardShouldPersistTaps="handled"
+                refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#3B82F6" />}
+                contentContainerClassName="p-4 pb-20"
+                ListHeaderComponent={() => (
+                    <>
+                        {renderHeader()}
+                        <Text className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 ml-1">
+                            All Classes
+                        </Text>
+                    </>
+                )}
+                renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={() => handleClassPress(item.classId)}
+                        className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:opacity-90"
+                    >
+                        <View className="flex-row justify-between items-start mb-2">
+                            <View className="flex-1 mr-2">
+                                <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight">
+                                    {item.name}
+                                </Text>
+                                <Text className="text-blue-600 dark:text-blue-400 font-medium mt-1">
+                                    {item.subject}
+                                </Text>
                             </View>
-
-                            <View className="flex-row items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                                <View className="flex-row items-center mr-4">
-                                    <Ionicons name="calendar-outline" size={16} color="#9CA3AF" />
-                                    <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
-                                        {item.dayOfWeek ? item.dayOfWeek.length : 0} Days
+                            {item.standard && (
+                                <View className="bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                                    <Text className="text-gray-600 dark:text-gray-300 text-xs font-bold">
+                                        {item.standard}
                                     </Text>
                                 </View>
-                                <View className="flex-row items-center">
-                                    <Ionicons name="people-outline" size={16} color="#9CA3AF" />
-                                    <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
-                                        {item.students ? item.students.length : 0} Students
-                                    </Text>
-                                </View>
-                                <View className="flex-1 flex-row justify-end items-center">
-                                    <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold mr-1">View Details</Text>
-                                    <Ionicons name="chevron-forward" size={14} color="#3B82F6" />
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                    ListEmptyComponent={
-                        <View className="items-center py-12">
-                            <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
-                                <Ionicons name="book-outline" size={48} color="#9CA3AF" />
-                            </View>
-                            <Text className="text-gray-500 dark:text-gray-400 text-lg font-medium">No classes found</Text>
-                            <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2 text-center px-8">
-                                You haven't been assigned to any classes yet.
-                            </Text>
+                            )}
                         </View>
-                    }
-                />
-            )}
+
+                        <View className="flex-row items-center mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                            <View className="flex-row items-center mr-4">
+                                <Ionicons name="calendar-outline" size={16} color="#9CA3AF" />
+                                <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
+                                    {item.dayOfWeek ? item.dayOfWeek.length : 0} Days
+                                </Text>
+                            </View>
+                            <View className="flex-row items-center">
+                                <Ionicons name="people-outline" size={16} color="#9CA3AF" />
+                                <Text className="text-gray-500 dark:text-gray-400 text-xs ml-1">
+                                    {item.students ? item.students.length : 0} Students
+                                </Text>
+                            </View>
+                            <View className="flex-1 flex-row justify-end items-center">
+                                <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold mr-1">View Details</Text>
+                                <Ionicons name="chevron-forward" size={14} color="#3B82F6" />
+                            </View>
+                        </View>
+                    </TouchableOpacity>
+                )}
+                ListEmptyComponent={
+                    <View className="items-center py-12">
+                        <View className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full mb-4">
+                            <Ionicons name="book-outline" size={48} color="#9CA3AF" />
+                        </View>
+                        <Text className="text-gray-500 dark:text-gray-400 text-lg font-medium">No classes found</Text>
+                        <Text className="text-gray-400 dark:text-gray-500 text-sm mt-2 text-center px-8">
+                            {searchQuery || filterStandard !== 'All'
+                                ? 'Try adjusting your search or filters'
+                                : 'No classes have been created yet.'}
+                        </Text>
+                    </View>
+                }
+            />
+
+            {isLoading && <LoadingOverlay />}
 
             {/* Floating Action Button for Creating Class */}
             <TouchableOpacity

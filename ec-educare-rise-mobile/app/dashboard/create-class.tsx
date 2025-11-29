@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useCreateClassMutation } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
@@ -7,6 +7,12 @@ import { PrimaryButton } from '../../components/PrimaryButton';
 import { CustomAlert } from '../../components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+const GRADES = [
+    '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade',
+    '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade',
+    '11th Grade', '12th Grade'
+];
 
 export default function CreateClass() {
     const router = useRouter();
@@ -19,7 +25,7 @@ export default function CreateClass() {
     const [endDate, setEndDate] = useState(new Date(new Date().setMonth(new Date().getMonth() + 3)));
     const [showStartPicker, setShowStartPicker] = useState(false);
     const [showEndPicker, setShowEndPicker] = useState(false);
-
+    const [showGradePicker, setShowGradePicker] = useState(false);
     // Duration
     const [durationHours, setDurationHours] = useState('1');
     const [durationMinutes, setDurationMinutes] = useState('0');
@@ -91,7 +97,11 @@ export default function CreateClass() {
     };
 
     return (
-        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+        <KeyboardAvoidingView
+            className="flex-1 bg-gray-50 dark:bg-gray-900"
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        >
             {isLoading && <LoadingOverlay message="Creating Class..." />}
 
             <CustomAlert
@@ -109,7 +119,11 @@ export default function CreateClass() {
                 <Text className="text-xl font-bold text-gray-800 dark:text-gray-100">Create Class</Text>
             </View>
 
-            <ScrollView className="flex-1 p-4" showsVerticalScrollIndicator={false}>
+            <ScrollView
+                className="flex-1 p-4"
+                showsVerticalScrollIndicator={false}
+                keyboardShouldPersistTaps="handled"
+            >
                 <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
                     <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Basic Info</Text>
 
@@ -132,13 +146,33 @@ export default function CreateClass() {
                     />
 
                     <Text className="text-gray-600 dark:text-gray-400 mb-1">Standard/Grade</Text>
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-4 text-gray-800 dark:text-gray-100"
-                        placeholder="e.g. 10th Grade"
-                        placeholderTextColor="#9CA3AF"
-                        value={standard}
-                        onChangeText={setStandard}
-                    />
+                    <TouchableOpacity
+                        onPress={() => setShowGradePicker(!showGradePicker)}
+                        className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg mb-2 flex-row justify-between items-center"
+                    >
+                        <Text className={standard ? "text-gray-800 dark:text-gray-100" : "text-gray-400"}>
+                            {standard || 'Select grade'}
+                        </Text>
+                        <Ionicons name="chevron-down" size={20} color="#3B82F6" />
+                    </TouchableOpacity>
+                    {showGradePicker && (
+                        <View className="bg-gray-100 dark:bg-gray-700 rounded-lg mb-4" style={{ maxHeight: 200 }}>
+                            <ScrollView nestedScrollEnabled={true}>
+                                {GRADES.map((grade) => (
+                                    <TouchableOpacity
+                                        key={grade}
+                                        onPress={() => {
+                                            setStandard(grade);
+                                            setShowGradePicker(false);
+                                        }}
+                                        className="p-3 border-b border-gray-200 dark:border-gray-600"
+                                    >
+                                        <Text className="text-gray-800 dark:text-gray-100">{grade}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
                 </View>
 
                 <View className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm mb-6">
@@ -213,14 +247,14 @@ export default function CreateClass() {
                                 key={day}
                                 onPress={() => toggleDay(day)}
                                 className={`mr-2 mb-2 px-3 py-2 rounded-full border ${selectedDays.includes(day)
-                                        ? 'bg-blue-600 border-blue-600'
-                                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
+                                    ? 'bg-blue-600 border-blue-600'
+                                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600'
                                     }`}
                             >
                                 <Text
                                     className={`${selectedDays.includes(day)
-                                            ? 'text-white font-bold'
-                                            : 'text-gray-600 dark:text-gray-300'
+                                        ? 'text-white font-bold'
+                                        : 'text-gray-600 dark:text-gray-300'
                                         }`}
                                 >
                                     {day.slice(0, 3)}
@@ -233,6 +267,6 @@ export default function CreateClass() {
                 <PrimaryButton title="Create Class" onPress={handleCreate} />
                 <View className="h-8" />
             </ScrollView>
-        </View>
+        </KeyboardAvoidingView>
     );
 }

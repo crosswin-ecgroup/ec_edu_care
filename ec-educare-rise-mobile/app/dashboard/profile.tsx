@@ -105,11 +105,14 @@ export default function Profile() {
                 </TouchableOpacity>
 
                 <View className="items-center pb-6">
+                    <Text className="text-gray-400 dark:text-gray-500 text-xs mb-1">
+                        v1.0.0 (Build 1)
+                    </Text>
                     <Text className="text-gray-400 dark:text-gray-500 text-sm mb-1">
                         Made with ❤️ by EC EduCare Team
                     </Text>
                     <Text className="text-gray-400 dark:text-gray-500 text-xs">
-                        v1.0.0 (Build 1)
+                        Prompt Patrol
                     </Text>
                 </View>
             </View>
