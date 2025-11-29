@@ -9,10 +9,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 type PersonType = 'teacher' | 'student';
 
 export default function Directory() {
-    const router = useRouter();
-    const { data: teachers, isLoading: teachersLoading } = useGetTeachersQuery();
-    const { data: students, isLoading: studentsLoading } = useGetStudentsQuery();
     const [selectedType, setSelectedType] = useState<PersonType>('teacher');
+    const router = useRouter();
+    const { data: teachers, isLoading: teachersLoading } = useGetTeachersQuery(undefined, {
+        skip: selectedType !== 'teacher'
+    });
+    const { data: students, isLoading: studentsLoading } = useGetStudentsQuery(undefined, {
+        skip: selectedType !== 'student'
+    });
     const [selectedGrade, setSelectedGrade] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -143,48 +147,57 @@ export default function Directory() {
                             const grade = selectedType === 'student' ? (person as any).grade : null;
 
                             return (
-                                <View
+                                <TouchableOpacity
                                     key={personId}
-                                    className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
-                                >
-                                    <View className="flex-row items-center">
-                                        <View className={`w-12 h-12 rounded-full items-center justify-center ${selectedType === 'teacher'
-                                            ? 'bg-blue-100 dark:bg-blue-900'
-                                            : 'bg-green-100 dark:bg-green-900'
-                                            }`}>
-                                            <Text className={`font-bold text-lg ${selectedType === 'teacher'
-                                                ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-green-600 dark:text-green-400'
-                                                }`}>
-                                                {person.fullName[0].toUpperCase()}
-                                            </Text>
-                                        </View>
-                                        <View className="ml-3 flex-1">
-                                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                                {person.fullName}
-                                            </Text>
-                                            {selectedType === 'teacher' && (person as NonNullable<typeof teachers>[number]).email && (
-                                                <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {(person as NonNullable<typeof teachers>[number]).email}
+                                    onPress={() => {
+                                        if (selectedType === 'teacher') {
+                                            router.push(`/dashboard/teacher-details?id=${personId}`);
+                                        } else {
+                                            router.push(`/dashboard/student-details?id=${personId}`);
+                                        }
+                                    }}>
+                                    <View
+                                        className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
+                                    >
+                                        <View className="flex-row items-center">
+                                            <View className={`w-12 h-12 rounded-full items-center justify-center ${selectedType === 'teacher'
+                                                ? 'bg-blue-100 dark:bg-blue-900'
+                                                : 'bg-green-100 dark:bg-green-900'}
+                                            `}>
+                                                <Text className={`font-bold text-lg ${selectedType === 'teacher'
+                                                    ? 'text-blue-600 dark:text-blue-400'
+                                                    : 'text-green-600 dark:text-green-400'}
+                                                `}>
+                                                    {person.fullName[0].toUpperCase()}
                                                 </Text>
-                                            )}
-                                            {person.mobileNumber && (
-                                                <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                                    {person.mobileNumber}
+                                            </View>
+                                            <View className="ml-3 flex-1">
+                                                <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                                    {person.fullName}
                                                 </Text>
-                                            )}
-                                            {grade && (
-                                                <View className="flex-row flex-wrap mt-2">
-                                                    <View className="mr-2 mb-1 px-2 py-1 rounded bg-green-100 dark:bg-green-900">
-                                                        <Text className="text-xs font-medium text-green-700 dark:text-green-300">
-                                                            {grade}
-                                                        </Text>
+                                                {selectedType === 'teacher' && (person as NonNullable<typeof teachers>[number]).email && (
+                                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                                        {(person as NonNullable<typeof teachers>[number]).email}
+                                                    </Text>
+                                                )}
+                                                {person.mobileNumber && (
+                                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                                        {person.mobileNumber}
+                                                    </Text>
+                                                )}
+                                                {grade && (
+                                                    <View className="flex-row flex-wrap mt-2">
+                                                        <View className="mr-2 mb-1 px-2 py-1 rounded bg-green-100 dark:bg-green-900">
+                                                            <Text className="text-xs font-medium text-green-700 dark:text-green-300">
+                                                                {grade}
+                                                            </Text>
+                                                        </View>
                                                     </View>
-                                                </View>
-                                            )}
+                                                )}
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
+                                </TouchableOpacity>
                             );
                         })
                     ) : (
