@@ -45,7 +45,7 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
-                name="calendar"
+                name="calendar/index"
                 options={{
                     title: 'Calendar',
                     tabBarLabel: 'Calendar',
@@ -55,7 +55,7 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
-                name="directory"
+                name="directory/index"
                 options={{
                     title: 'Directory',
                     tabBarLabel: 'Directory',
@@ -79,7 +79,7 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
-                name="profile"
+                name="profile/index"
                 options={{
                     title: 'Profile',
                     href: null, // Hide from tab bar

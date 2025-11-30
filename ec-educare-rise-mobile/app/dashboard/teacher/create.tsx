@@ -252,7 +252,7 @@ export default function CreateTeacher() {
                             colors={['#4F46E5', '#3730A3']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
-                            className="p-4 rounded-xl items-center justify-center shadow-lg"
+                            className="p-4 rounded-2xl items-center justify-center shadow-lg"
                         >
                             <Text className="text-white font-bold text-lg">Create Teacher</Text>
                         </LinearGradient>
