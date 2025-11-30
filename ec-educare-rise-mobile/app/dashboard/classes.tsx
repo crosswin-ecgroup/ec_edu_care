@@ -17,7 +17,7 @@ export default function Classes() {
     const insets = useSafeAreaInsets();
 
     const handleClassPress = useCallback((classId: string) => {
-        router.push(`/dashboard/class-details?id=${classId}`);
+        router.push(`/dashboard/class/${classId}`);
     }, [router]);
 
     const filteredClasses = useMemo(() => {
@@ -198,7 +198,7 @@ export default function Classes() {
 
             {/* Floating Action Button */}
             <TouchableOpacity
-                onPress={() => router.push('/dashboard/create-class')}
+                onPress={() => router.push('/dashboard/class/create')}
                 style={{ borderRadius: 32 }}
                 className="absolute bottom-6 right-6 w-16 h-16 items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
             >

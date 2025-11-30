@@ -47,9 +47,9 @@ export default function Dashboard() {
     }, [classes]);
 
     const quickActions = [
-        { icon: 'add-circle', label: 'Create Class', color: ['#4F46E5', '#3730A3'], route: '/dashboard/create-class' },
-        { icon: 'person-add', label: 'Add Teacher', color: ['#7C3AED', '#5B21B6'], route: '/dashboard/create-teacher' },
-        { icon: 'school', label: 'Add Student', color: ['#059669', '#047857'], route: '/dashboard/create-student' },
+        { icon: 'add-circle', label: 'Create Class', color: ['#4F46E5', '#3730A3'], route: '/dashboard/class/create' },
+        { icon: 'person-add', label: 'Add Teacher', color: ['#7C3AED', '#5B21B6'], route: '/dashboard/teacher/create' },
+        { icon: 'school', label: 'Add Student', color: ['#059669', '#047857'], route: '/dashboard/student/create' },
         { icon: 'calendar', label: 'Calendar', color: ['#EA580C', '#C2410C'], route: '/dashboard/calendar' },
     ];
 
@@ -138,7 +138,7 @@ export default function Dashboard() {
                             {recentClasses.map((item, index) => (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => router.push(`/dashboard/class-details?id=${item.classId}`)}
+                                    onPress={() => router.push(`/dashboard/class/${item.classId}`)}
                                     className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
                                     activeOpacity={0.9}
                                 >

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useAuthStore } from '../../store/auth.store';
+import { useAuthStore } from '@/store/auth.store';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -80,7 +80,7 @@ export default function Profile() {
                     <View className="relative">
                         <View className="w-24 h-24 bg-white rounded-full items-center justify-center mb-3 border-4 border-white/30 shadow-2xl">
                             <Image
-                                source={require('../../assets/images/logo.jpg')}
+                                source={require('@/assets/images/logo.jpg')}
                                 className="w-full h-full rounded-full"
                                 resizeMode="cover"
                             />

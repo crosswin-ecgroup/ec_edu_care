@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, ScrollView, TextInput, Pressable } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useGetTeachersQuery, useGetStudentsQuery } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { useGetTeachersQuery, useGetStudentsQuery } from '@/services/classes.api';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -56,17 +56,17 @@ export default function Directory() {
 
     const handlePress = (personId: string) => {
         if (selectedType === 'teacher') {
-            router.push(`/dashboard/teacher-details?id=${personId}`);
+            router.push(`/dashboard/teacher/${personId}`);
         } else {
-            router.push(`/dashboard/student-details?id=${personId}`);
+            router.push(`/dashboard/student/${personId}`);
         }
     };
 
     const handleCreatePress = () => {
         if (selectedType === 'teacher') {
-            router.push('/dashboard/create-teacher');
+            router.push('/dashboard/teacher/create');
         } else {
-            router.push('/dashboard/create-student');
+            router.push('/dashboard/student/create');
         }
     };
 
@@ -102,30 +102,30 @@ export default function Directory() {
                         onChangeText={setSearchQuery}
                     />
                     {searchQuery.length > 0 && (
-                        <Pressable onPress={() => setSearchQuery('')} className="p-3">
+                        <TouchableOpacity onPress={() => setSearchQuery('')} className="p-3">
                             <Ionicons name="close-circle" size={20} color="white" />
-                        </Pressable>
+                        </TouchableOpacity>
                     )}
                 </View>
 
                 {/* Integrated Tabs */}
                 <View className="bg-white/10 p-1 rounded-2xl flex-row backdrop-blur-md border border-white/20 z-50">
-                    <Pressable
+                    <TouchableOpacity
                         onPress={() => setSelectedType('teacher')}
                         className={`flex-1 py-2.5 rounded-xl items-center justify-center ${selectedType === 'teacher' ? 'bg-white shadow-sm' : 'bg-transparent'}`}
                     >
                         <Text className={`font-bold text-base ${selectedType === 'teacher' ? 'text-blue-600' : 'text-blue-100'}`}>
                             Teachers
                         </Text>
-                    </Pressable>
-                    <Pressable
+                    </TouchableOpacity>
+                    <TouchableOpacity
                         onPress={() => setSelectedType('student')}
                         className={`flex-1 py-2.5 rounded-xl items-center justify-center ${selectedType === 'student' ? 'bg-white shadow-sm' : 'bg-transparent'}`}
                     >
                         <Text className={`font-bold text-base ${selectedType === 'student' ? 'text-blue-600' : 'text-blue-100'}`}>
                             Students
                         </Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </LinearGradient>
 
@@ -135,7 +135,7 @@ export default function Directory() {
                     <View className="mb-4 pl-2">
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} className="overflow-visible">
                             {grades.map((grade) => (
-                                <Pressable
+                                <TouchableOpacity
                                     key={grade}
                                     onPress={() => setSelectedGrade(grade)}
                                     className={`mr-2 px-5 py-2.5 rounded-2xl border ${selectedGrade === grade
@@ -146,7 +146,7 @@ export default function Directory() {
                                     <Text className={`text-sm font-bold ${selectedGrade === grade ? 'text-white' : 'text-gray-600 dark:text-gray-300'}`}>
                                         {grade}
                                     </Text>
-                                </Pressable>
+                                </TouchableOpacity>
                             ))}
                         </ScrollView>
                     </View>
@@ -174,19 +174,19 @@ export default function Directory() {
                             const grade = selectedType === 'student' ? person.grade : null;
 
                             return (
-                                <Pressable
+                                <TouchableOpacity
                                     key={personId}
                                     onPress={() => handlePress(personId)}
                                     className="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 flex-row items-center active:scale-[0.98] transition-all"
                                 >
                                     <View className={`w-14 h-14 rounded-3xl items-center justify-center shadow-lg border ${selectedType === 'teacher'
-                                            ? 'bg-blue-500/20 border-blue-400/30'
-                                            : 'bg-green-500/20 border-green-400/30'
+                                        ? 'bg-blue-500/20 border-blue-400/30'
+                                        : 'bg-green-500/20 border-green-400/30'
                                         }`}>
                                         <View className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-3xl" />
                                         <Text className={`font-bold text-xl z-10 ${selectedType === 'teacher'
-                                                ? 'text-blue-600 dark:text-blue-400'
-                                                : 'text-green-600 dark:text-green-400'
+                                            ? 'text-blue-600 dark:text-blue-400'
+                                            : 'text-green-600 dark:text-green-400'
                                             }`}>
                                             {person.fullName[0].toUpperCase()}
                                         </Text>
@@ -219,7 +219,7 @@ export default function Directory() {
                                     <View className="bg-gray-50 dark:bg-gray-700 p-2 rounded-full">
                                         <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
                                     </View>
-                                </Pressable>
+                                </TouchableOpacity>
                             );
                         })
                     ) : (
@@ -241,7 +241,7 @@ export default function Directory() {
             </View>
 
             {/* Floating Action Button */}
-            <Pressable
+            <TouchableOpacity
                 onPress={handleCreatePress}
                 style={{ borderRadius: 32 }}
                 className="absolute bottom-6 right-6 w-16 h-16 items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
@@ -253,7 +253,7 @@ export default function Directory() {
                 >
                     <Ionicons name="add" size={32} color="white" />
                 </LinearGradient>
-            </Pressable>
+            </TouchableOpacity>
         </View>
     );
 }

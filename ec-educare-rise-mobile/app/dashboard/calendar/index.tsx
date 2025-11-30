@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
-import { useGetClassesQuery } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { useGetClassesQuery } from '@/services/classes.api';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -174,7 +174,7 @@ export default function CalendarScreen() {
                         selectedDateClasses.map((cls) => (
                             <TouchableOpacity
                                 key={cls.classId}
-                                onPress={() => router.push(`/dashboard/class-details?id=${cls.classId}`)}
+                                onPress={() => router.push(`/dashboard/class/${cls.classId}`)}
                                 className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
                                 style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >

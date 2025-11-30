@@ -65,14 +65,14 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
-                name="class-details"
+                name="class/[id]"
                 options={{
                     title: 'Class Details',
                     href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
-                name="create-class"
+                name="class/create"
                 options={{
                     title: 'Create Class',
                     href: null, // Hide from tab bar
@@ -86,28 +86,28 @@ export default function DashboardLayout() {
                 }}
             />
             <Tabs.Screen
-                name="create-student"
+                name="student/create"
                 options={{
                     title: 'Create Student',
                     href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
-                name="create-teacher"
+                name="teacher/create"
                 options={{
                     title: 'Create Teacher',
                     href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
-                name="teacher-details"
+                name="teacher/[id]"
                 options={{
                     title: 'Teacher Details',
                     href: null, // Hide from tab bar
                 }}
             />
             <Tabs.Screen
-                name="student-details"
+                name="student/[id]"
                 options={{
                     title: 'Student Details',
                     href: null, // Hide from tab bar

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useCreateClassMutation } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { CustomAlert } from '../../components/CustomAlert';
+import { useCreateClassMutation, useGetTeachersQuery, useGetStudentsQuery } from '@/services/classes.api';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { CustomAlert } from '@/components/CustomAlert';
 import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';

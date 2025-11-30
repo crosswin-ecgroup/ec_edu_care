@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useGetClassByIdQuery } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { useGetClassByIdQuery } from '@/services/classes.api';
+import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
