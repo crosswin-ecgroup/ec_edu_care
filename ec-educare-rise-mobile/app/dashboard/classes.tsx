@@ -201,11 +201,11 @@ export default function Classes() {
             {/* Floating Action Button */}
             <TouchableOpacity
                 onPress={() => router.push('/dashboard/create-class')}
-                className="absolute bottom-6 right-6 w-16 h-16 rounded-full items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
+                className="absolute bottom-6 right-6 w-16 h-16 rounded-2xl items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
             >
                 <LinearGradient
                     colors={['#4F46E5', '#3730A3']}
-                    className="w-full h-full rounded-full items-center justify-center"
+                    className="w-full h-full rounded-2xl items-center justify-center"
                 >
                     <Ionicons name="add" size={32} color="white" />
                 </LinearGradient>

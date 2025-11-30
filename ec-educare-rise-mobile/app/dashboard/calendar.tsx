@@ -6,6 +6,7 @@ import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const CLASS_COLORS = [
     '#3B82F6', // blue-500
@@ -22,6 +23,7 @@ export default function CalendarScreen() {
     const { data: classes, isLoading } = useGetClassesQuery();
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState('');
+    const insets = useSafeAreaInsets();
 
     // Assign colors to classes
     const classColors = useMemo(() => {
@@ -118,11 +120,12 @@ export default function CalendarScreen() {
                 colors={['#4F46E5', '#3730A3']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                className="pt-14 pb-6 px-6 rounded-b-[32px] shadow-lg z-10"
+                style={{ paddingTop: insets.top + 10, paddingBottom: 24 }}
+                className="px-6 rounded-b-[32px] shadow-lg z-10"
             >
                 <View className="flex-row items-center justify-between">
-                    <Text className="text-2xl font-bold text-white">Calendar</Text>
-                    <View className="bg-white/20 p-2 rounded-full">
+                    <Text className="text-3xl font-bold text-white">Calendar</Text>
+                    <View className="bg-white/20 p-2 rounded-full backdrop-blur-md">
                         <Ionicons name="calendar" size={24} color="white" />
                     </View>
                 </View>
