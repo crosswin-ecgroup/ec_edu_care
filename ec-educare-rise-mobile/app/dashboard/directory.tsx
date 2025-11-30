@@ -1,19 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, TextInput, Pressable } from 'react-native';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useGetTeachersQuery, useGetStudentsQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type PersonType = 'teacher' | 'student';
 
 export default function Directory() {
+    const router = useRouter();
     const [selectedType, setSelectedType] = useState<PersonType>('teacher');
     const { data: teachers, isLoading: teachersLoading } = useGetTeachersQuery();
     const { data: students, isLoading: studentsLoading } = useGetStudentsQuery();
     const [selectedGrade, setSelectedGrade] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
+    const insets = useSafeAreaInsets();
 
     const isLoading = teachersLoading || studentsLoading;
 
@@ -51,14 +54,31 @@ export default function Directory() {
         });
     }, [selectedType, teachers, students, searchQuery, selectedGrade]);
 
+    const handlePress = (personId: string) => {
+        if (selectedType === 'teacher') {
+            router.push(`/dashboard/teacher-details?id=${personId}`);
+        } else {
+            router.push(`/dashboard/student-details?id=${personId}`);
+        }
+    };
+
+    const handleCreatePress = () => {
+        if (selectedType === 'teacher') {
+            router.push('/dashboard/create-teacher');
+        } else {
+            router.push('/dashboard/create-student');
+        }
+    };
+
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
-            {/* Modern Gradient Header */}
+            {/* Modern Gradient Header with Tabs */}
             <LinearGradient
                 colors={['#4F46E5', '#3730A3']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                className="pt-14 pb-8 px-6 rounded-b-[32px] shadow-lg z-10"
+                style={{ paddingTop: insets.top + 10, paddingBottom: 24 }}
+                className="px-6 rounded-b-[32px] shadow-lg z-50"
             >
                 <View className="flex-row justify-between items-center mb-6">
                     <Text className="text-3xl font-bold text-white">
@@ -70,7 +90,7 @@ export default function Directory() {
                 </View>
 
                 {/* Search Bar */}
-                <View className="bg-white/20 p-1 rounded-2xl flex-row items-center border border-white/30 backdrop-blur-md overflow-hidden">
+                <View className="bg-white/20 p-1 rounded-2xl flex-row items-center border border-white/30 backdrop-blur-md overflow-hidden mb-6 z-50">
                     <View className="p-3">
                         <Ionicons name="search" size={20} color="white" />
                     </View>
@@ -87,35 +107,29 @@ export default function Directory() {
                         </Pressable>
                     )}
                 </View>
-            </LinearGradient>
 
-            <View className="flex-1 -mt-6 px-4">
-                {/* Segmented Control Tabs */}
-                <View className="bg-white dark:bg-gray-800 p-1.5 rounded-2xl shadow-lg shadow-blue-900/5 flex-row mb-6 mx-2">
+                {/* Integrated Tabs */}
+                <View className="bg-white/10 p-1 rounded-2xl flex-row backdrop-blur-md border border-white/20 z-50">
                     <Pressable
                         onPress={() => setSelectedType('teacher')}
-                        className={`flex-1 py-3 rounded-xl items-center justify-center ${selectedType === 'teacher' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-transparent'}`}
+                        className={`flex-1 py-2.5 rounded-xl items-center justify-center ${selectedType === 'teacher' ? 'bg-white shadow-sm' : 'bg-transparent'}`}
                     >
-                        <Text className={`font-bold text-base ${selectedType === 'teacher' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <Text className={`font-bold text-base ${selectedType === 'teacher' ? 'text-blue-600' : 'text-blue-100'}`}>
                             Teachers
                         </Text>
-                        {selectedType === 'teacher' && (
-                            <View className="w-1 h-1 rounded-full bg-blue-600 mt-1" />
-                        )}
                     </Pressable>
                     <Pressable
                         onPress={() => setSelectedType('student')}
-                        className={`flex-1 py-3 rounded-xl items-center justify-center ${selectedType === 'student' ? 'bg-green-50 dark:bg-green-900/20' : 'bg-transparent'}`}
+                        className={`flex-1 py-2.5 rounded-xl items-center justify-center ${selectedType === 'student' ? 'bg-white shadow-sm' : 'bg-transparent'}`}
                     >
-                        <Text className={`font-bold text-base ${selectedType === 'student' ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                        <Text className={`font-bold text-base ${selectedType === 'student' ? 'text-blue-600' : 'text-blue-100'}`}>
                             Students
                         </Text>
-                        {selectedType === 'student' && (
-                            <View className="w-1 h-1 rounded-full bg-green-600 mt-1" />
-                        )}
                     </Pressable>
                 </View>
+            </LinearGradient>
 
+            <View className="flex-1 px-4 pt-4 z-0">
                 {/* Grade Filter Pills (Students Only) */}
                 {selectedType === 'student' && (
                     <View className="mb-4 pl-2">
@@ -158,54 +172,53 @@ export default function Directory() {
                         filteredPeople.map((person: any) => {
                             const personId = selectedType === 'teacher' ? person.teacherId : person.studentId;
                             const grade = selectedType === 'student' ? person.grade : null;
-                            const route = selectedType === 'teacher'
-                                ? `/dashboard/teacher-details?id=${personId}`
-                                : `/dashboard/student-details?id=${personId}`;
 
                             return (
-                                <Link key={personId} href={route as any} asChild>
-                                    <Pressable className="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 flex-row items-center active:scale-[0.98] transition-all">
-                                        <LinearGradient
-                                            colors={selectedType === 'teacher' ? ['#EFF6FF', '#DBEAFE'] : ['#ECFDF5', '#D1FAE5']}
-                                            className="w-14 h-14 rounded-2xl items-center justify-center shadow-inner"
-                                        >
-                                            <Text className={`font-bold text-xl ${selectedType === 'teacher'
-                                                ? 'text-blue-600'
-                                                : 'text-green-600'}
-                                            `}>
-                                                {person.fullName[0].toUpperCase()}
-                                            </Text>
-                                        </LinearGradient>
+                                <Pressable
+                                    key={personId}
+                                    onPress={() => handlePress(personId)}
+                                    className="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 flex-row items-center active:scale-[0.98] transition-all"
+                                >
+                                    <LinearGradient
+                                        colors={selectedType === 'teacher' ? ['#EFF6FF', '#DBEAFE'] : ['#ECFDF5', '#D1FAE5']}
+                                        className="w-14 h-14 rounded-2xl items-center justify-center shadow-inner"
+                                    >
+                                        <Text className={`font-bold text-xl ${selectedType === 'teacher'
+                                            ? 'text-blue-600'
+                                            : 'text-green-600'}
+                                        `}>
+                                            {person.fullName[0].toUpperCase()}
+                                        </Text>
+                                    </LinearGradient>
 
-                                        <View className="ml-4 flex-1">
-                                            <Text className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                                                {person.fullName}
-                                            </Text>
+                                    <View className="ml-4 flex-1">
+                                        <Text className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+                                            {person.fullName}
+                                        </Text>
 
-                                            <View className="flex-row flex-wrap gap-2">
-                                                {selectedType === 'teacher' && person.email && (
-                                                    <View className="flex-row items-center">
-                                                        <Ionicons name="mail-outline" size={12} color="#6B7280" />
-                                                        <Text className="text-xs text-gray-500 ml-1" numberOfLines={1}>
-                                                            {person.email}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                                {grade && (
-                                                    <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-lg border border-green-200 dark:border-green-800">
-                                                        <Text className="text-xs font-bold text-green-700 dark:text-green-400">
-                                                            {grade}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                            </View>
+                                        <View className="flex-row flex-wrap gap-2">
+                                            {selectedType === 'teacher' && person.email && (
+                                                <View className="flex-row items-center">
+                                                    <Ionicons name="mail-outline" size={12} color="#6B7280" />
+                                                    <Text className="text-xs text-gray-500 ml-1" numberOfLines={1}>
+                                                        {person.email}
+                                                    </Text>
+                                                </View>
+                                            )}
+                                            {grade && (
+                                                <View className="bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-lg border border-green-200 dark:border-green-800">
+                                                    <Text className="text-xs font-bold text-green-700 dark:text-green-400">
+                                                        {grade}
+                                                    </Text>
+                                                </View>
+                                            )}
                                         </View>
+                                    </View>
 
-                                        <View className="bg-gray-50 dark:bg-gray-700 p-2 rounded-full">
-                                            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                                        </View>
-                                    </Pressable>
-                                </Link>
+                                    <View className="bg-gray-50 dark:bg-gray-700 p-2 rounded-full">
+                                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                                    </View>
+                                </Pressable>
                             );
                         })
                     ) : (
@@ -227,18 +240,17 @@ export default function Directory() {
             </View>
 
             {/* Floating Action Button */}
-            <Link href={selectedType === 'teacher' ? '/dashboard/create-teacher' : '/dashboard/create-student'} asChild>
-                <Pressable
-                    className="absolute bottom-6 right-6 w-16 h-16 rounded-2xl items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all"
+            <Pressable
+                onPress={handleCreatePress}
+                className="absolute bottom-6 right-6 w-16 h-16 rounded-2xl items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
+            >
+                <LinearGradient
+                    colors={selectedType === 'teacher' ? ['#4F46E5', '#3730A3'] : ['#059669', '#047857']}
+                    className="w-full h-full rounded-2xl items-center justify-center"
                 >
-                    <LinearGradient
-                        colors={selectedType === 'teacher' ? ['#4F46E5', '#3730A3'] : ['#059669', '#047857']}
-                        className="w-full h-full rounded-2xl items-center justify-center"
-                    >
-                        <Ionicons name="add" size={32} color="white" />
-                    </LinearGradient>
-                </Pressable>
-            </Link>
+                    <Ionicons name="add" size={32} color="white" />
+                </LinearGradient>
+            </Pressable>
         </View>
     );
 }

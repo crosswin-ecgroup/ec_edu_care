@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, ScrollView, Image, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { PrimaryButton } from '../../components/PrimaryButton';
-import { AuthCard } from '../../components/AuthCard';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
 import { CustomAlert } from '../../components/CustomAlert';
 import { loginWithPassword } from '../../utils/oauth';
@@ -87,104 +87,142 @@ export default function Login() {
     };
 
     return (
-        <KeyboardAvoidingView
-            behavior="padding"
-            className="flex-1 bg-gray-50 dark:bg-gray-900"
-            keyboardVerticalOffset={0}
+        <LinearGradient
+            colors={['#4F46E5', '#3730A3']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="flex-1"
         >
-            <ScrollView
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
-                contentContainerClassName="flex-grow items-center justify-center p-4"
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
             >
-                {isLoading && <LoadingOverlay message="Authenticating..." />}
+                <ScrollView
+                    contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 24 }}
+                    keyboardShouldPersistTaps="handled"
+                    showsVerticalScrollIndicator={false}
+                >
+                    {isLoading && <LoadingOverlay message="Authenticating..." />}
 
-                <CustomAlert
-                    visible={alertConfig.visible}
-                    title={alertConfig.title}
-                    message={alertConfig.message}
-                    type={alertConfig.type}
-                    onClose={hideAlert}
-                />
-
-                <View className="mb-8 items-center">
-                    <Image
-                        source={require('../../assets/images/logo.jpg')}
-                        className="w-32 h-32 mb-4 rounded-full"
-                        resizeMode="contain"
-                    />
-                    <Text className="text-3xl font-bold text-blue-800 dark:text-blue-400">EC Edu Care</Text>
-                </View>
-
-                <AuthCard title="Welcome Back">
-                    <TextInput
-                        className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 mb-4 text-gray-900 dark:text-gray-100"
-                        placeholder="Username"
-                        placeholderTextColor="#9CA3AF"
-                        value={username}
-                        onChangeText={setUsername}
-                        autoCapitalize="none"
+                    <CustomAlert
+                        visible={alertConfig.visible}
+                        title={alertConfig.title}
+                        message={alertConfig.message}
+                        type={alertConfig.type}
+                        onClose={hideAlert}
                     />
 
-                    <View className="flex-row items-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 pr-3">
-                        <TextInput
-                            className="flex-1 p-3 text-gray-900 dark:text-gray-100"
-                            placeholder="Password"
-                            placeholderTextColor="#9CA3AF"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry={!showPassword}
-                        />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                            <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={22} color="#6B7280" />
+                    <View className="items-center mb-12">
+                        <View className="bg-white/20 p-6 rounded-[32px] backdrop-blur-md border border-white/20 mb-6 shadow-xl">
+                            <Ionicons name="school" size={64} color="white" />
+                        </View>
+                        <Text className="text-4xl font-bold text-white tracking-tight text-center">
+                            Welcome Back
+                        </Text>
+                        <Text className="text-blue-200 text-lg mt-2 text-center">
+                            Sign in to continue
+                        </Text>
+                    </View>
+
+                    <View className="bg-white/10 p-6 rounded-[32px] backdrop-blur-md border border-white/20 shadow-2xl">
+                        <View className="mb-4">
+                            <Text className="text-blue-100 text-sm font-medium mb-2 ml-1">Username</Text>
+                            <View className="bg-white/10 border border-white/20 rounded-2xl flex-row items-center px-4 h-14">
+                                <Ionicons name="person-outline" size={20} color="#BFDBFE" />
+                                <TextInput
+                                    className="flex-1 ml-3 text-white text-base font-medium"
+                                    placeholder="Enter username"
+                                    placeholderTextColor="rgba(219, 234, 254, 0.5)"
+                                    value={username}
+                                    onChangeText={setUsername}
+                                    autoCapitalize="none"
+                                />
+                            </View>
+                        </View>
+
+                        <View className="mb-6">
+                            <Text className="text-blue-100 text-sm font-medium mb-2 ml-1">Password</Text>
+                            <View className="bg-white/10 border border-white/20 rounded-2xl flex-row items-center px-4 h-14">
+                                <Ionicons name="lock-closed-outline" size={20} color="#BFDBFE" />
+                                <TextInput
+                                    className="flex-1 ml-3 text-white text-base font-medium"
+                                    placeholder="Enter password"
+                                    placeholderTextColor="rgba(219, 234, 254, 0.5)"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry={!showPassword}
+                                />
+                                <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                                    <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#BFDBFE" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={handlePasswordLogin}
+                            className="bg-white h-14 rounded-2xl items-center justify-center shadow-lg active:scale-[0.98] transition-all mb-6"
+                        >
+                            <Text className="text-blue-600 font-bold text-lg">Sign In</Text>
                         </TouchableOpacity>
+
+                        <View className="flex-row items-center mb-6">
+                            <View className="flex-1 h-[1px] bg-white/20" />
+                            <Text className="mx-4 text-blue-200 text-sm font-medium">OR</Text>
+                            <View className="flex-1 h-[1px] bg-white/20" />
+                        </View>
+
+                        {!showOtpInput ? (
+                            <View>
+                                <Text className="text-blue-100 text-sm font-medium mb-2 ml-1">Phone Number</Text>
+                                <View className="bg-white/10 border border-white/20 rounded-2xl flex-row items-center px-4 h-14 mb-4">
+                                    <Ionicons name="call-outline" size={20} color="#BFDBFE" />
+                                    <TextInput
+                                        className="flex-1 ml-3 text-white text-base font-medium"
+                                        placeholder="+1234567890"
+                                        placeholderTextColor="rgba(219, 234, 254, 0.5)"
+                                        value={phoneNumber}
+                                        onChangeText={setPhoneNumber}
+                                        keyboardType="phone-pad"
+                                    />
+                                </View>
+                                <TouchableOpacity
+                                    onPress={handleTelegramLogin}
+                                    className="bg-blue-500/20 border border-blue-400/30 h-14 rounded-2xl items-center justify-center active:scale-[0.98] transition-all"
+                                >
+                                    <View className="flex-row items-center">
+                                        <Ionicons name="paper-plane-outline" size={20} color="white" />
+                                        <Text className="text-white font-bold text-base ml-2">Send OTP via Telegram</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        ) : (
+                            <View>
+                                <Text className="text-blue-100 text-sm font-medium mb-2 ml-1">Enter OTP</Text>
+                                <View className="bg-white/10 border border-white/20 rounded-2xl flex-row items-center px-4 h-14 mb-4">
+                                    <Ionicons name="keypad-outline" size={20} color="#BFDBFE" />
+                                    <TextInput
+                                        className="flex-1 ml-3 text-white text-base font-medium"
+                                        placeholder="123456"
+                                        placeholderTextColor="rgba(219, 234, 254, 0.5)"
+                                        value={otp}
+                                        onChangeText={setOtp}
+                                        keyboardType="number-pad"
+                                    />
+                                </View>
+                                <TouchableOpacity
+                                    onPress={handleVerifyOtp}
+                                    className="bg-green-500 h-14 rounded-2xl items-center justify-center shadow-lg active:scale-[0.98] transition-all mb-4"
+                                >
+                                    <Text className="text-white font-bold text-lg">Verify & Login</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setShowOtpInput(false)}>
+                                    <Text className="text-blue-200 text-center font-medium">Change Phone Number</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
-
-                    <PrimaryButton title="Login" onPress={handlePasswordLogin} />
-
-                    <View className="my-6 flex-row items-center">
-                        <View className="flex-1 h-px bg-gray-300 dark:bg-gray-600" />
-                        <Text className="mx-4 text-gray-500 dark:text-gray-400">OR</Text>
-                        <View className="flex-1 h-px bg-gray-300 dark:bg-gray-600" />
-                    </View>
-
-                    <Text className="text-center mb-4 text-gray-700 dark:text-gray-300 font-medium">Telegram Login</Text>
-
-                    {!showOtpInput ? (
-                        <>
-                            <TextInput
-                                className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 mb-4 text-gray-900 dark:text-gray-100"
-                                placeholder="Phone Number (e.g. +1234567890)"
-                                placeholderTextColor="#9CA3AF"
-                                value={phoneNumber}
-                                onChangeText={setPhoneNumber}
-                                keyboardType="phone-pad"
-                                autoCapitalize="none"
-                            />
-                            <PrimaryButton title="Send OTP" onPress={handleTelegramLogin} />
-                        </>
-                    ) : (
-                        <>
-                            <TextInput
-                                className="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 mb-4 text-gray-900 dark:text-gray-100"
-                                placeholder="Enter OTP"
-                                placeholderTextColor="#9CA3AF"
-                                value={otp}
-                                onChangeText={setOtp}
-                                keyboardType="number-pad"
-                            />
-                            <PrimaryButton title="Verify OTP" onPress={handleVerifyOtp} />
-                            <Text
-                                className="text-blue-600 dark:text-blue-400 text-center mt-4"
-                                onPress={() => setShowOtpInput(false)}
-                            >
-                                Change Phone Number
-                            </Text>
-                        </>
-                    )}
-                </AuthCard>
-            </ScrollView>
-        </KeyboardAvoidingView>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </LinearGradient>
     );
 }
