@@ -98,84 +98,69 @@ export default function Dashboard() {
                 <View className="px-6 -mt-6">
                     {/* Quick Actions */}
                     <View className="mb-8">
-                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 px-2">
-                            Quick Actions
-                        </Text>
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 20 }}
+                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 10 }}
                             className="-mx-6"
                         >
                             {quickActions.map((action, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => router.push(action.route as any)}
-                                    className="mr-4"
+                                    className="mr-3"
                                     activeOpacity={0.9}
                                 >
-                                    <View className="w-32 h-40 bg-white dark:bg-gray-800 rounded-3xl p-4 justify-between shadow-lg shadow-blue-900/10 border border-gray-100 dark:border-gray-700">
-                                        <View className="w-12 h-12 rounded-2xl items-center justify-center bg-gray-50 dark:bg-gray-700">
-                                            <LinearGradient
-                                                colors={action.color as any}
-                                                start={{ x: 0, y: 0 }}
-                                                end={{ x: 1, y: 1 }}
-                                                className="w-12 h-12 rounded-2xl items-center justify-center opacity-90"
-                                                style={{ borderRadius: 14 }}
-                                            >
-                                                <Ionicons name={action.icon as any} size={24} color="white" />
-                                            </LinearGradient>
-                                        </View>
-
-                                        <View>
-                                            <Text className="text-gray-900 dark:text-white font-bold text-lg leading-6">
-                                                {action.label.split(' ')[0]}
-                                            </Text>
-                                            <Text className="text-gray-500 dark:text-gray-400 text-sm font-medium">
-                                                {action.label.split(' ').slice(1).join(' ')}
-                                            </Text>
-                                        </View>
-
-                                        <View className="absolute right-0 bottom-0 opacity-5">
-                                            <Ionicons name={action.icon as any} size={80} color="black" />
-                                        </View>
+                                    <View className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex-row items-center pr-6">
+                                        <LinearGradient
+                                            colors={action.color as any}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 1, y: 1 }}
+                                            className="w-10 h-10 rounded-xl items-center justify-center shadow-sm mr-3"
+                                        >
+                                            <Ionicons name={action.icon as any} size={20} color="white" />
+                                        </LinearGradient>
+                                        <Text className="text-gray-800 dark:text-gray-100 font-bold text-sm">
+                                            {action.label}
+                                        </Text>
                                     </View>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>
-                    </View>{/* Recent Classes Section */}
-                    {recentClasses.length > 0 && (
-                        <View className="mt-4 mb-20">
-                            <View className="flex-row justify-between items-center mb-4">
-                                <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                    Recent Classes
-                                </Text>
-                                <TouchableOpacity onPress={() => router.push('/dashboard/classes')}>
-                                    <Text className="text-blue-600 dark:text-blue-400 font-medium">See All</Text>
-                                </TouchableOpacity>
-                            </View>
+                    </View>
 
-                            {recentClasses.map((cls) => (
+                    {/* Recent Classes Section */}
+                    {recentClasses.length > 0 && (
+                        <View className="mt-6 mb-20 px-2">
+                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                                Recent Classes
+                            </Text>
+                            {recentClasses.map((item, index) => (
                                 <TouchableOpacity
-                                    key={cls.classId}
-                                    onPress={() => router.push(`/dashboard/class-details?id=${cls.classId}`)}
-                                    className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
-                                    activeOpacity={0.7}
+                                    key={index}
+                                    onPress={() => router.push(`/dashboard/class-details?id=${item.classId}`)}
+                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
+                                    activeOpacity={0.9}
                                 >
-                                    <View className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 items-center justify-center mr-4">
+                                    <View className="w-1 bg-blue-500 h-full absolute left-0 rounded-l-2xl" />
+                                    <View className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 items-center justify-center ml-2">
                                         <Text className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                                            {cls.name.charAt(0).toUpperCase()}
+                                            {item.name.charAt(0).toUpperCase()}
                                         </Text>
                                     </View>
-                                    <View className="flex-1">
-                                        <Text className="text-base font-bold text-gray-800 dark:text-gray-100 mb-1">
-                                            {cls.name}
+                                    <View className="flex-1 ml-4">
+                                        <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
+                                            {item.name}
                                         </Text>
-                                        <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                            {cls.subject} • {cls.standard || 'No Grade'}
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                            {item.subject} • {item.standard || 'N/A'}
                                         </Text>
                                     </View>
-                                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                                    <View className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
+                                        <Text className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                            View
+                                        </Text>
+                                    </View>
                                 </TouchableOpacity>
                             ))}
                         </View>
