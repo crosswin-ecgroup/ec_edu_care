@@ -78,26 +78,32 @@ export default function TeacherDetails() {
 
                         {teacherData.email && (
                             <View className="mb-4">
-                                <Text className="text-xs font-medium text-gray-400 uppercase mb-1">Email</Text>
+                                <Text className="text-xs font-medium text-gray-400 uppercase mb-2">Email</Text>
                                 <TouchableOpacity
                                     onPress={() => Linking.openURL(`mailto:${teacherData.email}`)}
-                                    className="flex-row items-center"
+                                    className="flex-row items-center bg-blue-50 dark:bg-blue-900/20 p-3 rounded-2xl border border-blue-100 dark:border-blue-800 active:bg-blue-100 dark:active:bg-blue-900/30"
                                 >
-                                    <Ionicons name="mail-outline" size={18} color="#4F46E5" />
-                                    <Text className="text-gray-800 dark:text-gray-100 ml-2 text-base font-medium">{teacherData.email}</Text>
+                                    <View className="bg-blue-500/20 p-2 rounded-xl mr-3">
+                                        <Ionicons name="mail" size={18} color="#4F46E5" />
+                                    </View>
+                                    <Text className="text-gray-800 dark:text-gray-100 text-base font-medium flex-1">{teacherData.email}</Text>
+                                    <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
                                 </TouchableOpacity>
                             </View>
                         )}
 
                         {teacherData.mobileNumber && (
                             <View className="mb-4">
-                                <Text className="text-xs font-medium text-gray-400 uppercase mb-1">Mobile Number</Text>
+                                <Text className="text-xs font-medium text-gray-400 uppercase mb-2">Mobile Number</Text>
                                 <TouchableOpacity
                                     onPress={() => Linking.openURL(`tel:${teacherData.mobileNumber}`)}
-                                    className="flex-row items-center"
+                                    className="flex-row items-center bg-green-50 dark:bg-green-900/20 p-3 rounded-2xl border border-green-100 dark:border-green-800 active:bg-green-100 dark:active:bg-green-900/30"
                                 >
-                                    <Ionicons name="call-outline" size={18} color="#4F46E5" />
-                                    <Text className="text-gray-800 dark:text-gray-100 ml-2 text-base font-medium">{teacherData.mobileNumber}</Text>
+                                    <View className="bg-green-500/20 p-2 rounded-xl mr-3">
+                                        <Ionicons name="call" size={18} color="#10B981" />
+                                    </View>
+                                    <Text className="text-gray-800 dark:text-gray-100 text-base font-medium flex-1">{teacherData.mobileNumber}</Text>
+                                    <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -136,38 +142,6 @@ export default function TeacherDetails() {
                                 <Text className="text-gray-800 dark:text-gray-100 ml-2 font-medium">{formatDate(teacherData.createdOn)}</Text>
                             </View>
                         </View>
-                    </View>
-
-                    {/* Action Buttons */}
-                    <View className="flex-row mb-8">
-                        {teacherData.email && (
-                            <TouchableOpacity
-                                onPress={() => Linking.openURL(`mailto:${teacherData.email}`)}
-                                className="flex-1 mr-2 active:opacity-90"
-                            >
-                                <LinearGradient
-                                    colors={['#3B82F6', '#2563EB']}
-                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-md"
-                                >
-                                    <Ionicons name="mail" size={20} color="white" />
-                                    <Text className="text-white font-bold ml-2">Email</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        )}
-                        {teacherData.mobileNumber && (
-                            <TouchableOpacity
-                                onPress={() => Linking.openURL(`tel:${teacherData.mobileNumber}`)}
-                                className="flex-1 ml-2 active:opacity-90"
-                            >
-                                <LinearGradient
-                                    colors={['#10B981', '#059669']}
-                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-md"
-                                >
-                                    <Ionicons name="call" size={20} color="white" />
-                                    <Text className="text-white font-bold ml-2">Call</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        )}
                     </View>
                 </View>
             </ScrollView>

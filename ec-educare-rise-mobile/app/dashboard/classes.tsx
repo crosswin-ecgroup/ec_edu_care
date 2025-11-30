@@ -40,14 +40,12 @@ export default function Classes() {
         >
             <View className="flex-row justify-between items-start mb-3">
                 <View className="flex-row items-center flex-1 mr-2">
-                    <LinearGradient
-                        colors={['#EFF6FF', '#DBEAFE']}
-                        className="w-14 h-14 rounded-2xl items-center justify-center mr-4"
-                    >
-                        <Text className="text-xl font-bold text-blue-600">
+                    <View className="w-14 h-14 rounded-3xl items-center justify-center mr-4 bg-blue-500/20 border border-blue-400/30 backdrop-blur-md shadow-lg">
+                        <View className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-3xl" />
+                        <Text className="text-xl font-bold text-blue-600 dark:text-blue-400 z-10">
                             {item.name.charAt(0).toUpperCase()}
                         </Text>
-                    </LinearGradient>
+                    </View>
                     <View className="flex-1">
                         <Text className="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-1">
                             {item.name}

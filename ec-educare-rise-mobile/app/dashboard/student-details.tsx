@@ -78,15 +78,18 @@ export default function StudentDetails() {
 
                         {studentData.mobileNumber && (
                             <View className="mb-4">
-                                <Text className="text-xs font-medium text-gray-400 uppercase mb-1">Mobile Number</Text>
+                                <Text className="text-xs font-medium text-gray-400 uppercase mb-2">Mobile Number</Text>
                                 <TouchableOpacity
                                     onPress={() => Linking.openURL(`tel:${studentData.mobileNumber}`)}
-                                    className="flex-row items-center"
+                                    className="flex-row items-center bg-green-50 dark:bg-green-900/20 p-3 rounded-2xl border border-green-100 dark:border-green-800 active:bg-green-100 dark:active:bg-green-900/30"
                                 >
-                                    <Ionicons name="call-outline" size={18} color="#059669" />
-                                    <Text className="text-gray-800 dark:text-gray-100 ml-2 text-base font-medium">
+                                    <View className="bg-green-500/20 p-2 rounded-xl mr-3">
+                                        <Ionicons name="call" size={18} color="#10B981" />
+                                    </View>
+                                    <Text className="text-gray-800 dark:text-gray-100 text-base font-medium flex-1">
                                         {studentData.mobileNumber}
                                     </Text>
+                                    <Ionicons name="chevron-forward" size={18} color="#9CA3AF" />
                                 </TouchableOpacity>
                             </View>
                         )}
@@ -120,24 +123,6 @@ export default function StudentDetails() {
                             </View>
                         </View>
                     </View>
-
-                    {/* Action Buttons */}
-                    {studentData.mobileNumber && (
-                        <View className="flex-row mb-8">
-                            <TouchableOpacity
-                                onPress={() => Linking.openURL(`tel:${studentData.mobileNumber}`)}
-                                className="flex-1 active:opacity-90"
-                            >
-                                <LinearGradient
-                                    colors={['#10B981', '#059669']}
-                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-md"
-                                >
-                                    <Ionicons name="call" size={20} color="white" />
-                                    <Text className="text-white font-bold ml-2">Call Student</Text>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        </View>
-                    )}
                 </View>
             </ScrollView>
         </View>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, useColorScheme } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { LoadingOverlay } from '../../components/LoadingOverlay';
@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useColorScheme } from 'nativewind';
 
 const CLASS_COLORS = [
     '#3B82F6', // blue-500
@@ -24,7 +25,7 @@ export default function CalendarScreen() {
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState('');
     const insets = useSafeAreaInsets();
-    const colorScheme = useColorScheme();
+    const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
 
     // Assign colors to classes

@@ -179,17 +179,18 @@ export default function Directory() {
                                     onPress={() => handlePress(personId)}
                                     className="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 flex-row items-center active:scale-[0.98] transition-all"
                                 >
-                                    <LinearGradient
-                                        colors={selectedType === 'teacher' ? ['#EFF6FF', '#DBEAFE'] : ['#ECFDF5', '#D1FAE5']}
-                                        className="w-14 h-14 rounded-2xl items-center justify-center shadow-inner"
-                                    >
-                                        <Text className={`font-bold text-xl ${selectedType === 'teacher'
-                                            ? 'text-blue-600'
-                                            : 'text-green-600'}
-                                        `}>
+                                    <View className={`w-14 h-14 rounded-3xl items-center justify-center shadow-lg border ${selectedType === 'teacher'
+                                            ? 'bg-blue-500/20 border-blue-400/30'
+                                            : 'bg-green-500/20 border-green-400/30'
+                                        }`}>
+                                        <View className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-3xl" />
+                                        <Text className={`font-bold text-xl z-10 ${selectedType === 'teacher'
+                                                ? 'text-blue-600 dark:text-blue-400'
+                                                : 'text-green-600 dark:text-green-400'
+                                            }`}>
                                             {person.fullName[0].toUpperCase()}
                                         </Text>
-                                    </LinearGradient>
+                                    </View>
 
                                     <View className="ml-4 flex-1">
                                         <Text className="text-lg font-bold text-gray-900 dark:text-white mb-1">

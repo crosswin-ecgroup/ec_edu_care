@@ -10,22 +10,34 @@ export default function Index() {
                 end={{ x: 1, y: 1 }}
                 className="flex-1 items-center justify-center"
             >
-                <View className="bg-white/10 p-6 rounded-[32px] backdrop-blur-md border border-white/20 mb-8 shadow-2xl">
-                    <Image
-                        source={require('../assets/images/logo.jpg')}
-                        className="w-32 h-32 rounded-full"
-                        resizeMode="contain"
-                    />
+                <View className="flex-1 items-center justify-center">
+                    <View className="bg-white/10 p-6 rounded-[32px] backdrop-blur-md border border-white/20 mb-8 shadow-2xl">
+                        <Image
+                            source={require('../assets/images/logo.jpg')}
+                            className="w-32 h-32 rounded-full"
+                            resizeMode="contain"
+                        />
+                    </View>
+
+                    <Text className="text-4xl font-bold text-white mb-2 tracking-tight">
+                        EC Edu Care
+                    </Text>
+                    <Text className="text-blue-200 text-lg font-medium mb-12 tracking-wide">
+                        Empowering Education
+                    </Text>
+
+                    <ActivityIndicator size="large" color="white" />
                 </View>
 
-                <Text className="text-4xl font-bold text-white mb-2 tracking-tight">
-                    EC Edu Care
-                </Text>
-                <Text className="text-blue-200 text-lg font-medium mb-12 tracking-wide">
-                    Empowering Education
-                </Text>
-
-                <ActivityIndicator size="large" color="white" />
+                {/* Footer */}
+                <View className="items-center pb-10">
+                    <Text className="text-white/60 text-sm mb-1">
+                        Made with ❤️ by EC Group Datasoft Private Limited
+                    </Text>
+                    <Text className="text-white/40 text-xs">
+                        Prompt Patrol
+                    </Text>
+                </View>
             </LinearGradient>
         </View>
     );
