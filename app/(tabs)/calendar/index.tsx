@@ -1,13 +1,13 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Calendar, DateData } from 'react-native-calendars';
-import { useGetClassesQuery } from '@/services/classes.api';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
-import { useRouter } from 'expo-router';
+import { useGetClassesQuery } from '@/services/classes.api';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Calendar, DateData } from 'react-native-calendars';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const CLASS_COLORS = [
     '#3B82F6', // blue-500
@@ -174,7 +174,7 @@ export default function CalendarScreen() {
                         selectedDateClasses.map((cls) => (
                             <TouchableOpacity
                                 key={cls.classId}
-                                onPress={() => router.push(`/dashboard/class/${cls.classId}`)}
+                                onPress={() => router.push(`/(tabs)/class/${cls.classId}` as any)}
                                 className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
                                 style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >

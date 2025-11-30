@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { useAuthStore } from '../../store/auth.store';
-import { useGetClassesQuery } from '../../services/classes.api';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useMemo, useState } from 'react';
+import { FlatList, KeyboardAvoidingView, Platform, RefreshControl, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { useGetClassesQuery } from '../../services/classes.api';
+import { useAuthStore } from '../../store/auth.store';
 
 export default function Classes() {
     const user = useAuthStore((state) => state.user);
@@ -17,7 +17,7 @@ export default function Classes() {
     const insets = useSafeAreaInsets();
 
     const handleClassPress = useCallback((classId: string) => {
-        router.push(`/dashboard/class/${classId}`);
+        router.push(`/(tabs)/class/${classId}` as any);
     }, [router]);
 
     const filteredClasses = useMemo(() => {
@@ -198,7 +198,7 @@ export default function Classes() {
 
             {/* Floating Action Button */}
             <TouchableOpacity
-                onPress={() => router.push('/dashboard/class/create')}
+                onPress={() => router.push('/(tabs)/class/create' as any)}
                 style={{ borderRadius: 32 }}
                 className="absolute bottom-6 right-6 w-16 h-16 items-center justify-center shadow-lg shadow-blue-600/30 active:scale-90 transition-all z-50"
             >

@@ -1,98 +1,171 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React, { useMemo } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useGetClassesQuery } from '../../services/classes.api';
+import { useAuthStore } from '../../store/auth.store';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function Dashboard() {
+    const router = useRouter();
+    const user = useAuthStore((state) => state.user);
+    const { data: classes } = useGetClassesQuery();
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    // Calculate statistics
+    const stats = useMemo(() => {
+        if (!classes) return { totalClasses: 0, totalTeachers: 0, totalStudents: 0, activeClasses: 0 };
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+        const teacherSet = new Set<string>();
+        const studentSet = new Set<string>();
+        const now = new Date();
+
+        classes.forEach(cls => {
+            cls.teachers?.forEach(t => teacherSet.add(t.teacherId));
+            cls.students?.forEach(s => studentSet.add(s.studentId));
+        });
+
+        const activeClasses = classes.filter(cls => {
+            const endDate = new Date(cls.endDate);
+            return endDate >= now;
+        }).length;
+
+        return {
+            totalClasses: classes.length,
+            totalTeachers: teacherSet.size,
+            totalStudents: studentSet.size,
+            activeClasses
+        };
+    }, [classes]);
+
+    // Get recent/upcoming classes
+    const recentClasses = useMemo(() => {
+        if (!classes) return [];
+        return [...classes]
+            .sort((a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime())
+            .slice(0, 3);
+    }, [classes]);
+
+    const quickActions = [
+        { icon: 'people', label: 'Teachers', color: ['#4F46E5', '#3730A3'], route: '/(tabs)/directory?type=teacher' },
+        { icon: 'school', label: 'Students', color: ['#059669', '#047857'], route: '/(tabs)/directory?type=student' },
+        { icon: 'calendar', label: 'Calendar', color: ['#D97706', '#B45309'], route: '/(tabs)/calendar' },
+        { icon: 'add-circle', label: 'New Class', color: ['#DC2626', '#991B1B'], route: '/(tabs)/class/create' },
+    ];
+
+    return (
+        <View className="flex-1 bg-gray-50 dark:bg-gray-900">
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                {/* Modern Header with Gradient */}
+                <LinearGradient
+                    colors={['#4F46E5', '#3730A3']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    className="pt-14 pb-8 px-6 rounded-b-[32px] shadow-lg"
+                >
+                    <View className="flex-row justify-between items-center mb-6">
+                        <View>
+                            <Text className="text-blue-100 text-lg font-medium">Welcome back,</Text>
+                            <Text className="text-white text-3xl font-bold mt-1">
+                                {user?.name || 'Administrator'}
+                            </Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => router.push('/(tabs)/profile' as any)}
+                            className="bg-white/20 p-2 rounded-full border border-white/30"
+                        >
+                            <Ionicons name="person" size={24} color="white" />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Main Stats Row */}
+                    <View className="flex-row justify-between bg-white/10 p-4 rounded-2xl border border-white/20 backdrop-blur-md">
+                        <View className="items-center flex-1 border-r border-white/20">
+                            <Text className="text-3xl font-bold text-white">{stats.totalClasses}</Text>
+                            <Text className="text-blue-100 text-xs mt-1">Classes</Text>
+                        </View>
+                        <View className="items-center flex-1 border-r border-white/20">
+                            <Text className="text-3xl font-bold text-white">{stats.totalTeachers}</Text>
+                            <Text className="text-blue-100 text-xs mt-1">Teachers</Text>
+                        </View>
+                        <View className="items-center flex-1">
+                            <Text className="text-3xl font-bold text-white">{stats.totalStudents}</Text>
+                            <Text className="text-blue-100 text-xs mt-1">Students</Text>
+                        </View>
+                    </View>
+                </LinearGradient>
+
+                <View className="px-6 -mt-6">
+                    {/* Quick Actions */}
+                    <View className="mb-8">
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 10 }}
+                            className="-mx-6"
+                        >
+                            {quickActions.map((action, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => router.push(action.route as any)}
+                                    className="mr-3"
+                                    activeOpacity={0.9}
+                                >
+                                    <View className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex-row items-center pr-6">
+                                        <LinearGradient
+                                            colors={action.color as any}
+                                            start={{ x: 0, y: 0 }}
+                                            end={{ x: 1, y: 1 }}
+                                            className="w-10 h-10 rounded-xl items-center justify-center shadow-sm mr-3"
+                                        >
+                                            <Ionicons name={action.icon as any} size={20} color="white" />
+                                        </LinearGradient>
+                                        <Text className="text-gray-800 dark:text-gray-100 font-bold text-sm">
+                                            {action.label}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+
+                    {/* Recent Classes Section */}
+                    {recentClasses.length > 0 && (
+                        <View className="mt-6 mb-20 px-2">
+                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                                Recent Classes
+                            </Text>
+                            {recentClasses.map((item, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => router.push(`/(tabs)/class/${item.classId}` as any)}
+                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
+                                    activeOpacity={0.9}
+                                >
+                                    <View className="w-1 bg-blue-500 h-full absolute left-0 rounded-l-2xl" />
+                                    <View className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 items-center justify-center ml-2">
+                                        <Text className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                                            {item.name.charAt(0).toUpperCase()}
+                                        </Text>
+                                    </View>
+                                    <View className="flex-1 ml-4">
+                                        <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
+                                            {item.name}
+                                        </Text>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                            {item.subject} • {item.standard || 'N/A'}
+                                        </Text>
+                                    </View>
+                                    <View className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
+                                        <Text className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                            View
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                </View>
+            </ScrollView>
+        </View>
+    );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

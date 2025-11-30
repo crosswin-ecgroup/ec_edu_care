@@ -1,11 +1,9 @@
-import { Stack } from 'expo-router';
-import { Provider } from 'react-redux';
-import { View, ActivityIndicator } from 'react-native';
-import { store } from '../store';
+import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
-import { useAuthStore } from '../store/auth.store';
-import { useRouter, useSegments, useRootNavigationState } from 'expo-router';
+import { Provider } from 'react-redux';
 import '../global.css';
+import { store } from '../store';
+import { useAuthStore } from '../store/auth.store';
 
 function RootLayoutNav() {
   const { isAuthenticated, isHydrated, setHydrated } = useAuthStore();
@@ -32,7 +30,7 @@ function RootLayoutNav() {
       // If authenticated and in auth group OR at root, go to dashboard
       if (inAuthGroup || !segments[0]) {
         console.log('Redirecting to dashboard');
-        setTimeout(() => router.replace('/dashboard'), 0);
+        setTimeout(() => router.replace('/(tabs)'), 0);
       }
     } else if (!isAuthenticated && segments[0] !== 'auth') {
       console.log('Redirecting to login');
@@ -51,7 +49,7 @@ function RootLayoutNav() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="auth/login" options={{ headerShown: false }} />
       <Stack.Screen name="auth/callback" options={{ title: 'Authenticating...' }} />
-      <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
     </Stack>
   );
 }

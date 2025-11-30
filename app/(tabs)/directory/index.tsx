@@ -1,9 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { View, ScrollView, TouchableWithoutFeedback, Text } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useGetTeachersQuery, useGetStudentsQuery } from '@/services/classes.api';
+import { useGetStudentsQuery, useGetTeachersQuery } from '@/services/classes.api';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DirectoryHeader } from './components/DirectoryHeader';
 import { PersonList } from './components/PersonList';
@@ -58,17 +58,17 @@ export default function Directory() {
 
     const handlePress = (personId: string) => {
         if (selectedType === 'teacher') {
-            router.push(`/dashboard/teacher/${personId}`);
+            router.push(`/(tabs)/teacher/${personId}` as any);
         } else {
-            router.push(`/dashboard/student/${personId}`);
+            router.push(`/(tabs)/student/${personId}` as any);
         }
     };
 
     const handleCreatePress = () => {
         if (selectedType === 'teacher') {
-            router.push('/dashboard/teacher/create');
+            router.push('/(tabs)/teacher/create' as any);
         } else {
-            router.push('/dashboard/student/create');
+            router.push('/(tabs)/student/create' as any);
         }
     };
 

@@ -1,35 +1,117 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { Tabs, useRouter } from 'expo-router';
+import { useColorScheme } from 'react-native';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+export default function DashboardLayout() {
+    const router = useRouter();
+    const colorScheme = useColorScheme();
+    const isDark = colorScheme === 'dark';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
-    </Tabs>
-  );
+    return (
+        <Tabs
+            screenOptions={{
+                headerShown: false,
+                tabBarActiveTintColor: '#4F46E5', // Primary indigo
+                tabBarInactiveTintColor: isDark ? '#9CA3AF' : '#6B7280',
+                tabBarStyle: {
+                    backgroundColor: isDark ? '#1F2937' : '#FFFFFF',
+                    borderTopWidth: 1,
+                    borderTopColor: isDark ? '#374151' : '#E5E7EB',
+                    height: 60,
+                    paddingBottom: 8,
+                    paddingTop: 8,
+                },
+            }}
+        >
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Dashboard',
+                    tabBarLabel: 'Dashboard',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="grid-outline" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="classes"
+                options={{
+                    title: 'Classes',
+                    tabBarLabel: 'Classes',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="book-outline" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="calendar/index"
+                options={{
+                    title: 'Calendar',
+                    tabBarLabel: 'Calendar',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="calendar-outline" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="directory/index"
+                options={{
+                    title: 'Directory',
+                    tabBarLabel: 'Directory',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="people-outline" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="class/[id]"
+                options={{
+                    title: 'Class Details',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="class/create"
+                options={{
+                    title: 'Create Class',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="profile/index"
+                options={{
+                    title: 'Profile',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="student/create"
+                options={{
+                    title: 'Create Student',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="teacher/create"
+                options={{
+                    title: 'Create Teacher',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="teacher/[id]"
+                options={{
+                    title: 'Teacher Details',
+                    tabBarButton: () => null,
+                }}
+            />
+            <Tabs.Screen
+                name="student/[id]"
+                options={{
+                    title: 'Student Details',
+                    tabBarButton: () => null,
+                }}
+            />
+        </Tabs>
+    );
 }
