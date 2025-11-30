@@ -228,7 +228,7 @@ export default function ClassDetails() {
                         >
                             <LinearGradient
                                 colors={['#3B82F6', '#2563EB']}
-                                className="p-4 rounded-xl flex-row items-center justify-center shadow-lg"
+                                className="p-4 rounded-2xl flex-row items-center justify-center shadow-lg"
                             >
                                 <Ionicons name="paper-plane" size={20} color="white" />
                                 <Text className="text-white font-bold ml-2 text-base">Join Telegram Group</Text>

@@ -147,7 +147,7 @@ export default function TeacherDetails() {
                             >
                                 <LinearGradient
                                     colors={['#3B82F6', '#2563EB']}
-                                    className="p-4 rounded-xl flex-row items-center justify-center shadow-md"
+                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-md"
                                 >
                                     <Ionicons name="mail" size={20} color="white" />
                                     <Text className="text-white font-bold ml-2">Email</Text>
@@ -161,7 +161,7 @@ export default function TeacherDetails() {
                             >
                                 <LinearGradient
                                     colors={['#10B981', '#059669']}
-                                    className="p-4 rounded-xl flex-row items-center justify-center shadow-md"
+                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-md"
                                 >
                                     <Ionicons name="call" size={20} color="white" />
                                     <Text className="text-white font-bold ml-2">Call</Text>

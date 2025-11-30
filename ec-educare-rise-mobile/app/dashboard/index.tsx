@@ -104,29 +104,42 @@ export default function Dashboard() {
                         <ScrollView
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 10 }}
+                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 20 }}
                             className="-mx-6"
                         >
                             {quickActions.map((action, index) => (
                                 <TouchableOpacity
                                     key={index}
                                     onPress={() => router.push(action.route as any)}
-                                    className="mr-5 items-center"
-                                    activeOpacity={0.8}
+                                    className="mr-4"
+                                    activeOpacity={0.9}
                                 >
-                                    <View className="shadow-lg shadow-blue-500/30">
-                                        <LinearGradient
-                                            colors={action.color as any}
-                                            start={{ x: 0, y: 0 }}
-                                            end={{ x: 1, y: 1 }}
-                                            className="w-20 h-20 rounded-3xl items-center justify-center border-2 border-white/20"
-                                        >
-                                            <Ionicons name={action.icon as any} size={32} color="white" />
-                                        </LinearGradient>
+                                    <View className="w-32 h-40 bg-white dark:bg-gray-800 rounded-3xl p-4 justify-between shadow-lg shadow-blue-900/10 border border-gray-100 dark:border-gray-700">
+                                        <View className="w-12 h-12 rounded-2xl items-center justify-center bg-gray-50 dark:bg-gray-700">
+                                            <LinearGradient
+                                                colors={action.color as any}
+                                                start={{ x: 0, y: 0 }}
+                                                end={{ x: 1, y: 1 }}
+                                                className="w-12 h-12 rounded-2xl items-center justify-center opacity-90"
+                                                style={{ borderRadius: 14 }}
+                                            >
+                                                <Ionicons name={action.icon as any} size={24} color="white" />
+                                            </LinearGradient>
+                                        </View>
+
+                                        <View>
+                                            <Text className="text-gray-900 dark:text-white font-bold text-lg leading-6">
+                                                {action.label.split(' ')[0]}
+                                            </Text>
+                                            <Text className="text-gray-500 dark:text-gray-400 text-sm font-medium">
+                                                {action.label.split(' ').slice(1).join(' ')}
+                                            </Text>
+                                        </View>
+
+                                        <View className="absolute right-0 bottom-0 opacity-5">
+                                            <Ionicons name={action.icon as any} size={80} color="black" />
+                                        </View>
                                     </View>
-                                    <Text className="text-xs font-bold text-gray-700 dark:text-gray-300 text-center mt-3 w-24 leading-4">
-                                        {action.label}
-                                    </Text>
                                 </TouchableOpacity>
                             ))}
                         </ScrollView>
