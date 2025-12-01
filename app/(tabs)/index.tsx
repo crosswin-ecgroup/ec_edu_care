@@ -13,43 +13,39 @@ export default function Dashboard() {
 
     // Calculate statistics
     const stats = useMemo(() => {
-        if (!classes) return { totalClasses: 0, totalTeachers: 0, totalStudents: 0, activeClasses: 0 };
+        if (!classes) return { totalClasses: 0, totalTeachers: 0, totalStudents: 0 };
 
         const teacherSet = new Set<string>();
         const studentSet = new Set<string>();
-        const now = new Date();
 
         classes.forEach(cls => {
             cls.teachers?.forEach(t => teacherSet.add(t.teacherId));
             cls.students?.forEach(s => studentSet.add(s.studentId));
         });
 
-        const activeClasses = classes.filter(cls => {
-            const endDate = new Date(cls.endDate);
-            return endDate >= now;
-        }).length;
-
         return {
             totalClasses: classes.length,
             totalTeachers: teacherSet.size,
-            totalStudents: studentSet.size,
-            activeClasses
+            totalStudents: studentSet.size
         };
     }, [classes]);
 
-    // Get recent/upcoming classes
-    const recentClasses = useMemo(() => {
+    // Get Today's Classes
+    const todaysClasses = useMemo(() => {
         if (!classes) return [];
-        return [...classes]
-            .sort((a, b) => new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime())
-            .slice(0, 3);
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const today = days[new Date().getDay()];
+
+        return classes.filter(cls =>
+            cls.dayOfWeek?.includes(today)
+        );
     }, [classes]);
 
     const quickActions = [
-        { icon: 'people', label: 'Teachers', color: ['#4F46E5', '#3730A3'], route: '/(tabs)/directory?type=teacher' },
-        { icon: 'school', label: 'Students', color: ['#059669', '#047857'], route: '/(tabs)/directory?type=student' },
-        { icon: 'calendar', label: 'Calendar', color: ['#D97706', '#B45309'], route: '/(tabs)/calendar' },
-        { icon: 'add-circle', label: 'New Class', color: ['#DC2626', '#991B1B'], route: '/class/create' },
+        { icon: 'people', label: 'Teachers', subtitle: 'Manage Staff', color: ['#4F46E5', '#3730A3'], route: '/(tabs)/directory?type=teacher' },
+        { icon: 'school', label: 'Students', subtitle: 'View Roster', color: ['#059669', '#047857'], route: '/(tabs)/directory?type=student' },
+        { icon: 'calendar', label: 'Calendar', subtitle: 'Check Schedule', color: ['#D97706', '#B45309'], route: '/(tabs)/calendar' },
+        { icon: 'add-circle', label: 'New Class', subtitle: 'Create Session', color: ['#DC2626', '#991B1B'], route: '/class/create' },
     ];
 
     return (
@@ -94,76 +90,121 @@ export default function Dashboard() {
                     </View>
                 </LinearGradient>
 
-                <View className="px-6 -mt-6">
-                    {/* Quick Actions */}
-                    <View className="mb-8">
-                        <ScrollView
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ paddingHorizontal: 24, paddingBottom: 10 }}
-                            className="-mx-6"
-                        >
-                            {quickActions.map((action, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() => router.push(action.route as any)}
-                                    className="mr-3"
-                                    activeOpacity={0.9}
+                <View className="px-6 mt-4">
+                    {/* Quick Actions Grid */}
+                    <View className="flex-row flex-wrap justify-between mb-6">
+                        {quickActions.map((action, index) => (
+                            <TouchableOpacity
+                                key={index}
+                                onPress={() => router.push(action.route as any)}
+                                className="w-[48%] mb-4"
+                                activeOpacity={0.9}
+                            >
+                                <LinearGradient
+                                    colors={action.color as any}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{ borderRadius: 12 }}
+                                    className="p-5 shadow-sm h-36 justify-between"
                                 >
-                                    <View className="bg-white dark:bg-gray-800 rounded-2xl p-3 shadow-sm border border-gray-100 dark:border-gray-700 flex-row items-center pr-6">
-                                        <LinearGradient
-                                            colors={action.color as any}
-                                            start={{ x: 0, y: 0 }}
-                                            end={{ x: 1, y: 1 }}
-                                            className="w-10 h-10 rounded-xl items-center justify-center shadow-sm mr-3"
-                                        >
-                                            <Ionicons name={action.icon as any} size={20} color="white" />
-                                        </LinearGradient>
-                                        <Text className="text-gray-800 dark:text-gray-100 font-bold text-sm">
+                                    <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center backdrop-blur-sm">
+                                        <Ionicons name={action.icon as any} size={24} color="white" />
+                                    </View>
+                                    <View>
+                                        <Text className="text-white font-bold text-lg leading-tight">
                                             {action.label}
                                         </Text>
+                                        <Text className="text-white/80 text-xs font-medium mt-1">
+                                            {action.subtitle}
+                                        </Text>
                                     </View>
-                                </TouchableOpacity>
-                            ))}
-                        </ScrollView>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        ))}
                     </View>
 
-                    {/* Recent Classes Section */}
-                    {recentClasses.length > 0 && (
-                        <View className="mt-6 mb-20 px-2">
-                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
-                                Recent Classes
-                            </Text>
-                            {recentClasses.map((item, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() => router.push(`/class/${item.classId}` as any)}
-                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
-                                    activeOpacity={0.9}
-                                >
-                                    <View className="w-1 bg-blue-500 h-full absolute left-0 rounded-l-2xl" />
-                                    <View className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/30 items-center justify-center ml-2">
-                                        <Text className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                                            {item.name.charAt(0).toUpperCase()}
-                                        </Text>
-                                    </View>
-                                    <View className="flex-1 ml-4">
-                                        <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
-                                            {item.name}
-                                        </Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
-                                            {item.subject} • {item.standard || 'N/A'}
-                                        </Text>
-                                    </View>
-                                    <View className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
-                                        <Text className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                                            View
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            ))}
+                    {/* Interesting Content */}
+                    <View className="mb-8">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                            Did You Know?
+                        </Text>
+                        <View className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800 flex-row">
+                            <View className="bg-amber-100 dark:bg-amber-800 p-2 rounded-full h-10 w-10 items-center justify-center mr-3">
+                                <Ionicons name="bulb" size={20} color="#D97706" />
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-amber-900 dark:text-amber-100 font-bold mb-1">
+                                    Daily Tip
+                                </Text>
+                                <Text className="text-amber-800 dark:text-amber-200 text-sm leading-5">
+                                    Regular communication with parents improves student performance by 25%. Try sending a weekly update!
+                                </Text>
+                            </View>
                         </View>
-                    )}
+                    </View>
+
+                    {/* Today's Classes Section */}
+                    <View className="mb-20">
+                        <View className="flex-row justify-between items-center mb-4">
+                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                Today's Classes
+                            </Text>
+                            <Text className="text-blue-600 dark:text-blue-400 font-medium text-sm">
+                                {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
+                            </Text>
+                        </View>
+
+                        {todaysClasses.length > 0 ? (
+                            todaysClasses.map((item, index) => {
+                                // Safe time formatting
+                                let timeDisplay = 'View';
+                                if (item.sessionTime && item.sessionTime.hours !== undefined) {
+                                    timeDisplay = `${item.sessionTime.hours}:${String(item.sessionTime.minutes || 0).padStart(2, '0')}`;
+                                } else if (item.startDate) {
+                                    const date = new Date(item.startDate);
+                                    if (!isNaN(date.getTime())) {
+                                        timeDisplay = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                                    }
+                                }
+
+                                return (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => router.push(`/class/${item.classId}` as any)}
+                                        className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
+                                        activeOpacity={0.9}
+                                    >
+                                        <View className="w-1 bg-green-500 h-full absolute left-0 rounded-l-2xl" />
+                                        <View className="w-12 h-12 rounded-2xl bg-green-50 dark:bg-green-900/30 items-center justify-center ml-2">
+                                            <Text className="text-xl font-bold text-green-600 dark:text-green-400">
+                                                {item.name.charAt(0).toUpperCase()}
+                                            </Text>
+                                        </View>
+                                        <View className="flex-1 ml-4">
+                                            <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
+                                                {item.name}
+                                            </Text>
+                                            <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
+                                                {item.subject} • {item.standard || 'N/A'}
+                                            </Text>
+                                        </View>
+                                        <View className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
+                                            <Text className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                                                {timeDisplay}
+                                            </Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })
+                        ) : (
+                            <View className="bg-white dark:bg-gray-800 rounded-2xl p-8 items-center justify-center border border-dashed border-gray-300 dark:border-gray-700">
+                                <Ionicons name="calendar-outline" size={48} color="#9CA3AF" />
+                                <Text className="text-gray-500 dark:text-gray-400 mt-3 font-medium">
+                                    No classes scheduled for today
+                                </Text>
+                            </View>
+                        )}
+                    </View>
                 </View>
             </ScrollView>
         </View>

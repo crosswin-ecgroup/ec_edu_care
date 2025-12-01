@@ -137,6 +137,7 @@ export default function CalendarScreen() {
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 <View className="mx-4 mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-2 border border-gray-100 dark:border-gray-700">
                     <Calendar
+                        key={isDark ? 'dark' : 'light'}
                         onDayPress={(day: DateData) => setSelectedDate(day.dateString)}
                         markedDates={markedDates}
                         markingType={'multi-dot'}
@@ -147,12 +148,12 @@ export default function CalendarScreen() {
                             selectedDayBackgroundColor: '#4F46E5',
                             selectedDayTextColor: '#ffffff',
                             todayTextColor: '#4F46E5',
-                            dayTextColor: isDark ? '#F9FAFB' : '#1F2937',
+                            dayTextColor: isDark ? '#FFFFFF' : '#1F2937',
                             textDisabledColor: isDark ? '#4B5563' : '#D1D5DB',
                             dotColor: '#4F46E5',
                             selectedDotColor: '#ffffff',
-                            arrowColor: '#4F46E5',
-                            monthTextColor: isDark ? '#F9FAFB' : '#1F2937',
+                            arrowColor: isDark ? '#FFFFFF' : '#4F46E5',
+                            monthTextColor: isDark ? '#FFFFFF' : '#1F2937',
                             indicatorColor: '#4F46E5',
                             textDayFontWeight: '500',
                             textMonthFontWeight: 'bold',
