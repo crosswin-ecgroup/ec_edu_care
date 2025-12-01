@@ -720,6 +720,85 @@
                 }
             }
         },
+        "/api/Auth/send-otp": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendOtpDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendOtpDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SendOtpDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/Auth/verify-otp": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOtpDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOtpDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyOtpDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TelegramLoginResponseDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TelegramLoginResponseDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TelegramLoginResponseDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/Classes": {
             "post": {
                 "tags": [
@@ -928,10 +1007,97 @@
                 }
             }
         },
-        "/api/classes/materials": {
+        "/api/Classes/{id}/teachers/{teacherId}": {
+            "delete": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "teacherId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/Classes/{id}/students/{studentId}": {
+            "delete": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "tags": [
+                    "EC.EduCare.Rise.API"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/materials": {
             "post": {
                 "tags": [
                     "Materials"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
                 ],
                 "requestBody": {
                     "content": {
@@ -939,10 +1105,6 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "classId": {
-                                        "type": "string",
-                                        "format": "uuid"
-                                    },
                                     "ContentType": {
                                         "type": "string"
                                     },
@@ -971,9 +1133,6 @@
                                 }
                             },
                             "encoding": {
-                                "classId": {
-                                    "style": "form"
-                                },
                                 "ContentType": {
                                     "style": "form"
                                 },
@@ -1018,9 +1177,7 @@
                         }
                     }
                 }
-            }
-        },
-        "/api/classes/{classId}/materials": {
+            },
             "get": {
                 "tags": [
                     "Materials"
@@ -1433,6 +1590,201 @@
                 }
             }
         },
+        "/api/classes/{classId}/schedule/future-sessions": {
+            "get": {
+                "tags": [
+                    "SessionSchedule"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassSessionDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassSessionDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassSessionDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/schedule/update": {
+            "put": {
+                "tags": [
+                    "SessionSchedule"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionScheduleDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionScheduleDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionScheduleDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/schedule/sessions/{sessionId}": {
+            "put": {
+                "tags": [
+                    "SessionSchedule"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSingleSessionDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSingleSessionDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSingleSessionDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "SessionSchedule"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/schedule/regenerate": {
+            "post": {
+                "tags": [
+                    "SessionSchedule"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/students/{studentId}/assignments": {
             "get": {
                 "tags": [
@@ -1726,6 +2078,73 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/status": {
+            "get": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/request-code": {
+            "post": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/verify-code": {
+            "post": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyCodeRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyCodeRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/VerifyCodeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/logout": {
+            "post": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     }
                 }
             }
@@ -2355,6 +2774,16 @@
                 },
                 "additionalProperties": false
             },
+            "SendOtpDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "SessionAttendanceDto": {
                 "type": "object",
                 "properties": {
@@ -2425,13 +2854,6 @@
                     "createdOn": {
                         "type": "string",
                         "format": "date-time"
-                    },
-                    "classes": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/ClassDto"
-                        },
-                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -2866,6 +3288,34 @@
                 },
                 "additionalProperties": false
             },
+            "UpdateSessionScheduleDto": {
+                "type": "object",
+                "properties": {
+                    "newStartDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "newEndDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "dayOfWeek": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "sessionTime": {
+                        "$ref": "#/components/schemas/TimeSpan"
+                    },
+                    "sessionDurationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
             "UpdateSessionStatusDto": {
                 "type": "object",
                 "properties": {
@@ -2884,6 +3334,55 @@
                         "nullable": true
                     },
                     "notes": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "UpdateSingleSessionDto": {
+                "type": "object",
+                "properties": {
+                    "newDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "newTime": {
+                        "$ref": "#/components/schemas/TimeSpan"
+                    },
+                    "newDurationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "VerifyCodeRequest": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "phoneCodeHash": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "VerifyOtpDto": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "otp": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "key": {
                         "type": "string",
                         "nullable": true
                     }

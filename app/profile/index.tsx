@@ -1,3 +1,4 @@
+import { useGetTelegramAuthStatusQuery } from '@/services/telegram.api';
 import { useAuthStore } from '@/store/auth.store';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,6 +14,7 @@ export default function Profile() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { colorScheme, setColorScheme } = useColorScheme();
+    const { data: telegramStatus, isLoading: isTelegramLoading } = useGetTelegramAuthStatusQuery();
 
     // Profile data
     const profileData = {
@@ -97,6 +99,36 @@ export default function Profile() {
             </LinearGradient>
 
             <ScrollView className="flex-1 px-5 pt-6" showsVerticalScrollIndicator={false}>
+                {/* Telegram Status */}
+                <View className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm p-6 mb-6 border border-gray-100 dark:border-gray-700">
+                    <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">Telegram Status</Text>
+                    <View className="flex-row items-center justify-between">
+                        {!isTelegramLoading && (
+                            <View className="flex-1 flex-col gap-2">
+                                <View className={`px-3 py-1 rounded-lg flex-row items-center ${telegramStatus?.isAuthenticated
+                                    ? 'bg-green-100 dark:bg-green-900/40'
+                                    : 'bg-red-100 dark:bg-red-900/40'
+                                    }`}>
+                                    <View className={`w-2 h-2 rounded-full mr-2 ${telegramStatus?.isAuthenticated ? 'bg-green-500' : 'bg-red-500'
+                                        }`} />
+                                    <Text className={`text-md font-bold ${telegramStatus?.isAuthenticated
+                                        ? 'text-green-700 dark:text-green-300'
+                                        : 'text-red-700 dark:text-red-300'
+                                        }`}>
+                                        {telegramStatus?.isAuthenticated ? 'Authenticated' : 'Not Authenticated'}
+                                    </Text>
+
+                                </View>
+                                <Text className='text-sm font-italic'>{telegramStatus?.phoneNumber}</Text>
+                                <Text className={`text-sm font-bold ${telegramStatus?.isAuthenticated
+                                    ? 'text-green-700 dark:text-green-300'
+                                    : 'text-red-700 dark:text-red-300'
+                                    }`}>{telegramStatus?.message}</Text>
+                            </View>
+                        )}
+                    </View>
+                </View>
+
                 {/* Theme Selector */}
                 <View className="bg-white dark:bg-gray-800 rounded-3xl shadow-sm p-6 mb-6 border border-gray-100 dark:border-gray-700">
                     <Text className="text-lg font-bold text-gray-900 dark:text-white mb-4">Appearance</Text>
@@ -137,6 +169,7 @@ export default function Profile() {
                         <Text className="text-gray-900 dark:text-white font-bold">{profileData.joinDate}</Text>
                     </View>
                 </View>
+
 
                 <TouchableOpacity
                     onPress={clearAuth}
