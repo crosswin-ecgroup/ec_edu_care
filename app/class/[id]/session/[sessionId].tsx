@@ -135,57 +135,70 @@ export default function SessionDetails() {
                         </View>
                     </View>
 
-                    {/* Student List */}
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4 px-2">
-                        Mark Attendance
-                    </Text>
+                    <View className="mb-4 px-2">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                            Mark Attendance
+                        </Text>
+                        <Text className="text-sm text-gray-500 dark:text-gray-400">
+                            Tap icons to update student status
+                        </Text>
+                    </View>
 
-                    {classData.students?.map((student: any) => {
-                        const currentStatus = getStudentStatus(student.studentId);
-                        return (
-                            <View key={student.studentId} className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center justify-between">
-                                <View className="flex-row items-center flex-1 mr-2">
-                                    <View className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 items-center justify-center mr-3">
-                                        <Text className="text-indigo-600 dark:text-indigo-400 font-bold">
-                                            {(student.fullName || student.name || 'S')[0].toUpperCase()}
-                                        </Text>
+                    {classData.students && classData.students.length > 0 ? (
+                        classData.students.map((student: any) => {
+                            const currentStatus = getStudentStatus(student.studentId);
+                            return (
+                                <View key={student.studentId} className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center justify-between">
+                                    <View className="flex-row items-center flex-1 mr-2">
+                                        <View className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/30 items-center justify-center mr-3">
+                                            <Text className="text-indigo-600 dark:text-indigo-400 font-bold">
+                                                {(student.fullName || student.name || 'S')[0].toUpperCase()}
+                                            </Text>
+                                        </View>
+                                        <View className="flex-1">
+                                            <Text className="text-gray-800 dark:text-gray-100 font-bold text-base" numberOfLines={1}>
+                                                {student.fullName || student.name}
+                                            </Text>
+                                            <Text className="text-gray-500 dark:text-gray-400 text-xs">
+                                                {student.studentId.slice(0, 8)}...
+                                            </Text>
+                                        </View>
                                     </View>
-                                    <View className="flex-1">
-                                        <Text className="text-gray-800 dark:text-gray-100 font-bold text-base" numberOfLines={1}>
-                                            {student.fullName || student.name}
-                                        </Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">
-                                            {student.studentId.slice(0, 8)}...
-                                        </Text>
+
+                                    <View className="flex-row">
+                                        <StatusButton
+                                            studentId={student.studentId}
+                                            status="Present"
+                                            currentStatus={currentStatus}
+                                            color="green"
+                                            icon="checkmark-circle"
+                                        />
+                                        <StatusButton
+                                            studentId={student.studentId}
+                                            status="Absent"
+                                            currentStatus={currentStatus}
+                                            color="red"
+                                            icon="close-circle"
+                                        />
+                                        <StatusButton
+                                            studentId={student.studentId}
+                                            status="Late"
+                                            currentStatus={currentStatus}
+                                            color="yellow"
+                                            icon="time"
+                                        />
                                     </View>
                                 </View>
-
-                                <View className="flex-row">
-                                    <StatusButton
-                                        studentId={student.studentId}
-                                        status="Present"
-                                        currentStatus={currentStatus}
-                                        color="green"
-                                        icon="checkmark-circle"
-                                    />
-                                    <StatusButton
-                                        studentId={student.studentId}
-                                        status="Absent"
-                                        currentStatus={currentStatus}
-                                        color="red"
-                                        icon="close-circle"
-                                    />
-                                    <StatusButton
-                                        studentId={student.studentId}
-                                        status="Late"
-                                        currentStatus={currentStatus}
-                                        color="yellow"
-                                        icon="time"
-                                    />
-                                </View>
-                            </View>
-                        );
-                    })}
+                            );
+                        })
+                    ) : (
+                        <View className="items-center py-12 opacity-50">
+                            <Ionicons name="people-outline" size={48} color="#9CA3AF" />
+                            <Text className="text-gray-500 dark:text-gray-400 text-center mt-2">
+                                No students in this class
+                            </Text>
+                        </View>
+                    )}
                 </View>
                 <View className="h-10" />
             </ScrollView>

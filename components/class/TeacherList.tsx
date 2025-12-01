@@ -5,9 +5,10 @@ import { Text, TouchableOpacity, View } from 'react-native';
 interface TeacherListProps {
     teachers: any[];
     onAddTeacher: () => void;
+    onRemoveTeacher: (teacherId: string) => void;
 }
 
-export const TeacherList = ({ teachers, onAddTeacher }: TeacherListProps) => {
+export const TeacherList = ({ teachers, onAddTeacher, onRemoveTeacher }: TeacherListProps) => {
     return (
         <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
             <View className="flex-row items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
@@ -44,10 +45,19 @@ export const TeacherList = ({ teachers, onAddTeacher }: TeacherListProps) => {
                                 </Text>
                             )}
                         </View>
+                        <TouchableOpacity
+                            onPress={() => onRemoveTeacher(teacher.teacherId || teacher.id)}
+                            className="p-2 bg-red-50 dark:bg-red-900/20 rounded-full ml-2"
+                        >
+                            <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                        </TouchableOpacity>
                     </View>
                 ))
             ) : (
-                <Text className="text-gray-500 dark:text-gray-400 text-center py-4">No teachers assigned</Text>
+                <View className="items-center py-8 opacity-50">
+                    <Ionicons name="person-outline" size={48} color="#9CA3AF" />
+                    <Text className="text-gray-500 dark:text-gray-400 text-center mt-2">No teachers assigned</Text>
+                </View>
             )}
         </View>
     );

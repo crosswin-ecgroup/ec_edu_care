@@ -42,9 +42,7 @@ export const useAuthStore = create<AuthState>()(
                 removeItem: deleteItem,
             })),
             onRehydrateStorage: () => {
-                console.log('Start hydration...');
                 return (state, error) => {
-                    console.log('Hydration finished', { stateExists: !!state, error });
                     if (error) {
                         console.error('An error happened during hydration', error);
                     }

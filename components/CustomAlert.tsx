@@ -1,20 +1,23 @@
-import React from 'react';
-import { View, Text, Modal, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { Modal, Text, TouchableOpacity, View } from 'react-native';
 
 interface CustomAlertProps {
     visible: boolean;
     title: string;
     message: string;
     onClose: () => void;
-    type?: 'error' | 'success' | 'info';
+    type?: 'error' | 'success' | 'info' | 'warning';
+    onConfirm?: () => void;
+    showCancel?: boolean;
 }
 
-export const CustomAlert = ({ visible, title, message, onClose, type = 'error' }: CustomAlertProps) => {
+export const CustomAlert = ({ visible, title, message, onClose, type = 'error', onConfirm, showCancel = false }: CustomAlertProps) => {
     const getIconName = () => {
         switch (type) {
             case 'success': return 'checkmark-circle';
             case 'info': return 'information-circle';
+            case 'warning': return 'alert-circle';
             default: return 'alert-circle';
         }
     };
@@ -23,6 +26,7 @@ export const CustomAlert = ({ visible, title, message, onClose, type = 'error' }
         switch (type) {
             case 'success': return '#16A34A'; // green-600
             case 'info': return '#2563EB'; // blue-600
+            case 'warning': return '#F59E0B'; // amber-500
             default: return '#DC2626'; // red-600
         }
     };
@@ -34,12 +38,29 @@ export const CustomAlert = ({ visible, title, message, onClose, type = 'error' }
                     <Ionicons name={getIconName()} size={48} color={getColor()} />
                     <Text className="text-xl font-bold mt-4 text-gray-900 dark:text-gray-100">{title}</Text>
                     <Text className="text-gray-600 dark:text-gray-400 text-center mt-2 mb-6">{message}</Text>
-                    <TouchableOpacity
-                        onPress={onClose}
-                        className="bg-blue-600 dark:bg-blue-500 w-full py-3 rounded-xl active:bg-blue-700 dark:active:bg-blue-600"
-                    >
-                        <Text className="text-white text-center font-semibold text-lg">OK</Text>
-                    </TouchableOpacity>
+
+                    <View className="flex-row w-full space-x-3">
+                        {showCancel && (
+                            <TouchableOpacity
+                                onPress={onClose}
+                                className="flex-1 bg-gray-100 dark:bg-gray-700 py-3 rounded-xl active:bg-gray-200 dark:active:bg-gray-600 mr-2"
+                            >
+                                <Text className="text-gray-700 dark:text-gray-300 text-center font-semibold text-lg">Cancel</Text>
+                            </TouchableOpacity>
+                        )}
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (onConfirm) {
+                                    onConfirm();
+                                } else {
+                                    onClose();
+                                }
+                            }}
+                            className={`flex-1 py-3 rounded-xl active:opacity-90 ${type === 'warning' ? 'bg-amber-500' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`}
+                        >
+                            <Text className="text-white text-center font-semibold text-lg">{onConfirm ? 'Confirm' : 'OK'}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </Modal>

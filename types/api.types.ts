@@ -17,20 +17,32 @@ export interface Student {
     classes?: Class[];
 }
 
+export interface Material {
+    id: string;
+    title: string;
+    description?: string;
+    url: string;
+    type: 'document' | 'video' | 'link';
+    createdAt: string;
+}
+
 export interface Class {
     classId: string;
     name: string;
-    subject?: string;
-    standard?: string;
-    startDate: string;
-    endDate: string;
-    dayOfWeek?: string[];
-    sessionTime?: TimeSpan;
-    createdOn: string;
-    telegramGroupId?: number;
-    telegramGroupLink?: string;
+    standard: string;
+    section: string;
+    subject: string;
+    image?: string;
+    teacherId?: string;
+    teacherName?: string;
+    studentCount?: number;
+    startDate?: string;
+    endDate?: string;
+    sessionTime?: string;
+    dayOfWeek?: string;
     teachers?: Teacher[];
     students?: Student[];
+    telegramGroupLink?: string;
 }
 
 export interface TimeSpan {

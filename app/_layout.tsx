@@ -13,8 +13,6 @@ function RootLayoutNav() {
   const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    console.log('RootLayoutNav state:', { isHydrated, isAuthenticated, segments: segments[0], navKey: rootNavigationState?.key });
-
     // Fallback: If hydration takes too long, force it to finish
     const hydrationTimeout = setTimeout(() => {
       if (!isHydrated) {

@@ -24,6 +24,7 @@ export const teachersApi = api.injectEndpoints({
 
 export const {
     useGetTeachersQuery,
+    useLazyGetTeachersQuery,
     useGetTeacherByIdQuery,
     useCreateTeacherMutation,
 } = teachersApi;

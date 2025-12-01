@@ -1,6 +1,7 @@
 import { ClassHeader } from '@/components/class/ClassHeader';
 import { ClassSchedule } from '@/components/class/ClassSchedule';
 import { ClassStats } from '@/components/class/ClassStats';
+import { MaterialList } from '@/components/class/MaterialList';
 import { StudentList } from '@/components/class/StudentList';
 import { StudentModal } from '@/components/class/StudentModal';
 import { TeacherList } from '@/components/class/TeacherList';
@@ -10,10 +11,13 @@ import { ClassDetailsSkeleton } from '@/components/skeletons/ClassDetailsSkeleto
 import {
     useAddStudentToClassMutation,
     useAssignTeacherMutation,
-    useGetClassByIdQuery
+    useGetClassByIdQuery,
+    useGetMaterialsQuery,
+    useRemoveStudentFromClassMutation,
+    useRemoveTeacherFromClassMutation,
 } from '@/services/classes.api';
-import { useGetStudentsQuery } from '@/services/students.api';
-import { useGetTeachersQuery } from '@/services/teachers.api';
+import { useLazyGetStudentsQuery } from '@/services/students.api';
+import { useLazyGetTeachersQuery } from '@/services/teachers.api';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -28,12 +32,15 @@ export default function ClassDetails() {
 
     // Queries
     const { data: classData, isLoading } = useGetClassByIdQuery(id || '');
-    const { data: allTeachers } = useGetTeachersQuery();
-    const { data: allStudents } = useGetStudentsQuery();
+    const [getTeachers, { data: allTeachers }] = useLazyGetTeachersQuery();
+    const [getStudents, { data: allStudents }] = useLazyGetStudentsQuery();
+    const { data: materials } = useGetMaterialsQuery(id || '');
 
     // Mutations
     const [assignTeacher, { isLoading: isAssigningTeacher }] = useAssignTeacherMutation();
     const [addStudent, { isLoading: isAddingStudent }] = useAddStudentToClassMutation();
+    const [removeTeacher, { isLoading: isRemovingTeacher }] = useRemoveTeacherFromClassMutation();
+    const [removeStudent, { isLoading: isRemovingStudent }] = useRemoveStudentFromClassMutation();
 
     // State
     const [showTeacherModal, setShowTeacherModal] = useState(false);
@@ -44,8 +51,23 @@ export default function ClassDetails() {
         visible: false,
         title: '',
         message: '',
-        type: 'error' as 'error' | 'success' | 'info'
+        type: 'error' as 'error' | 'success' | 'info' | 'warning',
+        onConfirm: undefined as (() => void) | undefined,
+        showCancel: false
     });
+
+    // Effects for lazy loading
+    React.useEffect(() => {
+        if (showTeacherModal) {
+            getTeachers();
+        }
+    }, [showTeacherModal]);
+
+    React.useEffect(() => {
+        if (showStudentModal) {
+            getStudents();
+        }
+    }, [showStudentModal]);
 
     if (isLoading) {
         return <ClassDetailsSkeleton />;
@@ -68,9 +90,23 @@ export default function ClassDetails() {
             await assignTeacher({ classId: id!, teacherId }).unwrap();
             setShowTeacherModal(false);
             setTeacherSearch('');
-            setAlertConfig({ visible: true, title: 'Success', message: 'Teacher assigned successfully', type: 'success' });
+            setAlertConfig({
+                visible: true,
+                title: 'Success',
+                message: 'Teacher assigned successfully',
+                type: 'success',
+                onConfirm: undefined,
+                showCancel: false
+            });
         } catch (error) {
-            setAlertConfig({ visible: true, title: 'Error', message: 'Failed to assign teacher', type: 'error' });
+            setAlertConfig({
+                visible: true,
+                title: 'Error',
+                message: 'Failed to assign teacher',
+                type: 'error',
+                onConfirm: undefined,
+                showCancel: false
+            });
         }
     };
 
@@ -79,10 +115,88 @@ export default function ClassDetails() {
             await addStudent({ classId: id!, studentId }).unwrap();
             setShowStudentModal(false);
             setStudentSearch('');
-            setAlertConfig({ visible: true, title: 'Success', message: 'Student added successfully', type: 'success' });
+            setAlertConfig({
+                visible: true,
+                title: 'Success',
+                message: 'Student added successfully',
+                type: 'success',
+                onConfirm: undefined,
+                showCancel: false
+            });
         } catch (error) {
-            setAlertConfig({ visible: true, title: 'Error', message: 'Failed to add student', type: 'error' });
+            setAlertConfig({
+                visible: true,
+                title: 'Error',
+                message: 'Failed to add student',
+                type: 'error',
+                onConfirm: undefined,
+                showCancel: false
+            });
         }
+    };
+
+    const handleRemoveTeacher = (teacherId: string) => {
+        setAlertConfig({
+            visible: true,
+            title: 'Remove Teacher',
+            message: 'Are you sure you want to remove this teacher from the class?',
+            type: 'warning',
+            showCancel: true,
+            onConfirm: async () => {
+                try {
+                    await removeTeacher({ classId: id!, teacherId }).unwrap();
+                    setAlertConfig({
+                        visible: true,
+                        title: 'Success',
+                        message: 'Teacher removed successfully',
+                        type: 'success',
+                        onConfirm: undefined,
+                        showCancel: false
+                    });
+                } catch (error) {
+                    setAlertConfig({
+                        visible: true,
+                        title: 'Error',
+                        message: 'Failed to remove teacher',
+                        type: 'error',
+                        onConfirm: undefined,
+                        showCancel: false
+                    });
+                }
+            }
+        });
+    };
+
+    const handleRemoveStudent = (studentId: string) => {
+        setAlertConfig({
+            visible: true,
+            title: 'Remove Student',
+            message: 'Are you sure you want to remove this student from the class?',
+            type: 'warning',
+            showCancel: true,
+            onConfirm: async () => {
+                try {
+                    await removeStudent({ classId: id!, studentId }).unwrap();
+                    setAlertConfig({
+                        visible: true,
+                        title: 'Success',
+                        message: 'Student removed successfully',
+                        type: 'success',
+                        onConfirm: undefined,
+                        showCancel: false
+                    });
+                } catch (error) {
+                    setAlertConfig({
+                        visible: true,
+                        title: 'Error',
+                        message: 'Failed to remove student',
+                        type: 'error',
+                        onConfirm: undefined,
+                        showCancel: false
+                    });
+                }
+            }
+        });
     };
 
     const filteredTeachers = allTeachers?.filter(t =>
@@ -108,6 +222,8 @@ export default function ClassDetails() {
                 message={alertConfig.message}
                 type={alertConfig.type}
                 onClose={() => setAlertConfig(prev => ({ ...prev, visible: false }))}
+                onConfirm={alertConfig.onConfirm}
+                showCancel={alertConfig.showCancel}
             />
             <ScrollView className="flex-1">
                 <ClassHeader
@@ -122,7 +238,6 @@ export default function ClassDetails() {
                         studentCount={studentCount}
                     />
 
-                    {/* Sessions Button */}
                     <TouchableOpacity
                         onPress={() => router.push(`/class/${id}/sessions`)}
                         className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 flex-row items-center justify-between active:bg-gray-50 dark:active:bg-gray-700"
@@ -136,42 +251,48 @@ export default function ClassDetails() {
                             </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                    </TouchableOpacity>
+                    </TouchableOpacity >
 
                     <ClassSchedule
-                        startDate={classData.startDate}
-                        endDate={classData.endDate}
-                        sessionTime={classData.sessionTime}
-                        dayOfWeek={classData.dayOfWeek}
+                        startDate={classData.startDate || ''}
+                        endDate={classData.endDate || ''}
+                        sessionTime={classData.sessionTime || ''}
+                        dayOfWeek={classData.dayOfWeek ? [classData.dayOfWeek] : []}
                     />
+
+                    <MaterialList materials={materials || []} />
 
                     <TeacherList
                         teachers={classData.teachers || []}
                         onAddTeacher={() => setShowTeacherModal(true)}
+                        onRemoveTeacher={handleRemoveTeacher}
                     />
 
                     <StudentList
                         students={classData.students || []}
                         onAddStudent={() => setShowStudentModal(true)}
+                        onRemoveStudent={handleRemoveStudent}
                     />
 
                     {/* Telegram Group Button */}
-                    {classData.telegramGroupLink && (
-                        <TouchableOpacity
-                            onPress={() => classData.telegramGroupLink && Linking.openURL(classData.telegramGroupLink)}
-                            className="active:opacity-90 mb-8"
-                        >
-                            <LinearGradient
-                                colors={['#3B82F6', '#2563EB']}
-                                className="p-4 rounded-2xl flex-row items-center justify-center shadow-lg"
+                    {
+                        classData.telegramGroupLink && (
+                            <TouchableOpacity
+                                onPress={() => classData.telegramGroupLink && Linking.openURL(classData.telegramGroupLink)}
+                                className="active:opacity-90 mb-8"
                             >
-                                <Ionicons name="paper-plane" size={20} color="white" />
-                                <Text className="text-white font-bold ml-2 text-base">Join Telegram Group</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </ScrollView>
+                                <LinearGradient
+                                    colors={['#3B82F6', '#2563EB']}
+                                    className="p-4 rounded-2xl flex-row items-center justify-center shadow-lg"
+                                >
+                                    <Ionicons name="paper-plane" size={20} color="white" />
+                                    <Text className="text-white font-bold ml-2 text-base">Join Telegram Group</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        )
+                    }
+                </View >
+            </ScrollView >
 
             <TeacherModal
                 visible={showTeacherModal}
@@ -192,7 +313,7 @@ export default function ClassDetails() {
                 onAdd={handleAddStudent}
                 isLoading={isAddingStudent}
             />
-        </View>
+        </View >
     );
 }
 

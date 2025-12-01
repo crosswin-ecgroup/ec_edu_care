@@ -6,7 +6,7 @@ import { refreshAccessToken } from '../utils/oauth';
 // In a real app, use env vars
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://localhost:5001/api';
 
-const baseQuery = fetchBaseQuery({
+const rawBaseQuery = fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
         const token = useAuthStore.getState().token;
@@ -17,12 +17,37 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
+// Logging middleware
+const baseQueryWithLogging: BaseQueryFn<
+    string | FetchArgs,
+    unknown,
+    FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+    const startTime = Date.now();
+    const method = typeof args === 'string' ? 'GET' : args.method || 'GET';
+    const url = typeof args === 'string' ? args : args.url;
+
+    const result = await rawBaseQuery(args, api, extraOptions);
+
+    const duration = Date.now() - startTime;
+
+    if (result.error) {
+        console.log(`🔴 API Error: ${method} ${url} - ${result.error.status} (${duration}ms)`);
+        console.log('Error details:', result.error);
+    } else {
+        console.log(`🟢 API Success: ${method} ${url} - ${result.meta?.response?.status || 200} (${duration}ms)`);
+    }
+
+    return result;
+};
+
+// Re-authentication logic wrapping the logging middleware
 const baseQueryWithReauth: BaseQueryFn<
     string | FetchArgs,
     unknown,
     FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-    let result = await baseQuery(args, api, extraOptions);
+    let result = await baseQueryWithLogging(args, api, extraOptions);
 
     if (result.error && result.error.status === 401) {
         // Try to refresh the token
@@ -39,7 +64,7 @@ const baseQueryWithReauth: BaseQueryFn<
                     );
 
                     // Retry the original request
-                    result = await baseQuery(args, api, extraOptions);
+                    result = await baseQueryWithLogging(args, api, extraOptions);
                 } else {
                     // Refresh failed
                     useAuthStore.getState().clearAuth();

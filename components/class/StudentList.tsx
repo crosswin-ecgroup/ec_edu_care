@@ -5,9 +5,10 @@ import { Text, TouchableOpacity, View } from 'react-native';
 interface StudentListProps {
     students: any[];
     onAddStudent: () => void;
+    onRemoveStudent: (studentId: string) => void;
 }
 
-export const StudentList = ({ students, onAddStudent }: StudentListProps) => {
+export const StudentList = ({ students, onAddStudent, onRemoveStudent }: StudentListProps) => {
     return (
         <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
             <View className="flex-row items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
@@ -45,6 +46,12 @@ export const StudentList = ({ students, onAddStudent }: StudentListProps) => {
                                     </Text>
                                 )}
                             </View>
+                            <TouchableOpacity
+                                onPress={() => onRemoveStudent(student.studentId || student.id)}
+                                className="p-2 bg-red-50 dark:bg-red-900/20 rounded-full ml-2"
+                            >
+                                <Ionicons name="trash-outline" size={18} color="#EF4444" />
+                            </TouchableOpacity>
                         </View>
                     ))}
                     {students.length > 5 && (
@@ -56,7 +63,10 @@ export const StudentList = ({ students, onAddStudent }: StudentListProps) => {
                     )}
                 </>
             ) : (
-                <Text className="text-gray-500 dark:text-gray-400 text-center py-4">No students assigned</Text>
+                <View className="items-center py-8 opacity-50">
+                    <Ionicons name="school-outline" size={48} color="#9CA3AF" />
+                    <Text className="text-gray-500 dark:text-gray-400 text-center mt-2">No students assigned</Text>
+                </View>
             )}
         </View>
     );

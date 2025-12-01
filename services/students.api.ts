@@ -24,6 +24,7 @@ export const studentsApi = api.injectEndpoints({
 
 export const {
     useGetStudentsQuery,
+    useLazyGetStudentsQuery,
     useGetStudentByIdQuery,
     useCreateStudentMutation,
 } = studentsApi;
