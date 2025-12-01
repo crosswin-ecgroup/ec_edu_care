@@ -63,55 +63,7 @@ export default function DashboardLayout() {
                     ),
                 }}
             />
-            <Tabs.Screen
-                name="class/[id]"
-                options={{
-                    title: 'Class Details',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="class/create"
-                options={{
-                    title: 'Create Class',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="profile/index"
-                options={{
-                    title: 'Profile',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="student/create"
-                options={{
-                    title: 'Create Student',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="teacher/create"
-                options={{
-                    title: 'Create Teacher',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="teacher/[id]"
-                options={{
-                    title: 'Teacher Details',
-                    tabBarButton: () => null,
-                }}
-            />
-            <Tabs.Screen
-                name="student/[id]"
-                options={{
-                    title: 'Student Details',
-                    tabBarButton: () => null,
-                }}
-            />
+
         </Tabs>
     );
 }

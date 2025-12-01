@@ -174,7 +174,7 @@ export default function CalendarScreen() {
                         selectedDateClasses.map((cls) => (
                             <TouchableOpacity
                                 key={cls.classId}
-                                onPress={() => router.push(`/(tabs)/class/${cls.classId}` as any)}
+                                onPress={() => router.push(`/class/${cls.classId}` as any)}
                                 className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm mb-4 border border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
                                 style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >

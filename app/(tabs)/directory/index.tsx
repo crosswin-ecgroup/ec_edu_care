@@ -58,17 +58,17 @@ export default function Directory() {
 
     const handlePress = (personId: string) => {
         if (selectedType === 'teacher') {
-            router.push(`/(tabs)/teacher/${personId}` as any);
+            router.push(`/teacher/${personId}` as any);
         } else {
-            router.push(`/(tabs)/student/${personId}` as any);
+            router.push(`/student/${personId}` as any);
         }
     };
 
     const handleCreatePress = () => {
         if (selectedType === 'teacher') {
-            router.push('/(tabs)/teacher/create' as any);
+            router.push('/teacher/create' as any);
         } else {
-            router.push('/(tabs)/student/create' as any);
+            router.push('/student/create' as any);
         }
     };
 

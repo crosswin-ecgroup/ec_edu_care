@@ -49,7 +49,7 @@ export default function Dashboard() {
         { icon: 'people', label: 'Teachers', color: ['#4F46E5', '#3730A3'], route: '/(tabs)/directory?type=teacher' },
         { icon: 'school', label: 'Students', color: ['#059669', '#047857'], route: '/(tabs)/directory?type=student' },
         { icon: 'calendar', label: 'Calendar', color: ['#D97706', '#B45309'], route: '/(tabs)/calendar' },
-        { icon: 'add-circle', label: 'New Class', color: ['#DC2626', '#991B1B'], route: '/(tabs)/class/create' },
+        { icon: 'add-circle', label: 'New Class', color: ['#DC2626', '#991B1B'], route: '/class/create' },
     ];
 
     return (
@@ -70,7 +70,7 @@ export default function Dashboard() {
                             </Text>
                         </View>
                         <TouchableOpacity
-                            onPress={() => router.push('/(tabs)/profile' as any)}
+                            onPress={() => router.push('/profile' as any)}
                             className="bg-white/20 p-2 rounded-full border border-white/30"
                         >
                             <Ionicons name="person" size={24} color="white" />
@@ -137,7 +137,7 @@ export default function Dashboard() {
                             {recentClasses.map((item, index) => (
                                 <TouchableOpacity
                                     key={index}
-                                    onPress={() => router.push(`/(tabs)/class/${item.classId}` as any)}
+                                    onPress={() => router.push(`/class/${item.classId}` as any)}
                                     className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
                                     activeOpacity={0.9}
                                 >
