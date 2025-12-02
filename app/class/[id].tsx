@@ -12,6 +12,7 @@ import {
     useAddStudentToClassMutation,
     useAssignTeacherMutation,
     useGetClassByIdQuery,
+    useGetClassDashboardQuery,
     useGetMaterialsQuery,
     useRemoveStudentFromClassMutation,
     useRemoveTeacherFromClassMutation,
@@ -32,7 +33,8 @@ export default function ClassDetails() {
     const { showAlert } = useAlert();
 
     // Queries
-    const { data: classData, isLoading } = useGetClassByIdQuery(id || '');
+    const { data: classData, isLoading: isLoadingClass } = useGetClassByIdQuery(id || '');
+    const { data: dashboardData, isLoading: isLoadingDashboard } = useGetClassDashboardQuery(id || '');
     const [getTeachers, { data: allTeachers }] = useLazyGetTeachersQuery();
     const [getStudents, { data: allStudents }] = useLazyGetStudentsQuery();
     const { data: materials } = useGetMaterialsQuery(id || '');
@@ -62,7 +64,7 @@ export default function ClassDetails() {
         }
     }, [showStudentModal]);
 
-    if (isLoading) {
+    if (isLoadingClass || isLoadingDashboard) {
         return <ClassDetailsSkeleton />;
     }
 
@@ -195,6 +197,22 @@ export default function ClassDetails() {
                         teacherCount={teacherCount}
                         studentCount={studentCount}
                     />
+
+                    {/* Next Session Card (from Dashboard Data) */}
+                    {dashboardData?.nextSession && (
+                        <View className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-2xl mb-6 border border-indigo-100 dark:border-indigo-800">
+                            <View className="flex-row items-center mb-2">
+                                <Ionicons name="time" size={20} color="#4F46E5" />
+                                <Text className="text-indigo-700 dark:text-indigo-300 font-bold ml-2">Next Session</Text>
+                            </View>
+                            <Text className="text-gray-800 dark:text-gray-100 text-lg font-bold">
+                                {new Date(dashboardData.nextSession.date).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                            </Text>
+                            <Text className="text-gray-600 dark:text-gray-400">
+                                {new Date(dashboardData.nextSession.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                            </Text>
+                        </View>
+                    )}
 
                     <TouchableOpacity
                         onPress={() => router.push(`/class/${id}/sessions`)}

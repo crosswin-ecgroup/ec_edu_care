@@ -1,15 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { TodaysClassesSkeleton } from '../../components/skeletons/TodaysClassesSkeleton';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { useAuthStore } from '../../store/auth.store';
 
 export default function Dashboard() {
     const router = useRouter();
     const user = useAuthStore((state) => state.user);
-    const { data: classes } = useGetClassesQuery();
+    const { data: classes, isLoading } = useGetClassesQuery();
     const [showAllClasses, setShowAllClasses] = useState(false);
 
     // Calculate statistics
@@ -155,7 +156,9 @@ export default function Dashboard() {
                             </Text>
                         </View>
 
-                        {todaysClasses.length > 0 ? (
+                        {isLoading ? (
+                            <TodaysClassesSkeleton />
+                        ) : todaysClasses.length > 0 ? (
                             <>
                                 {todaysClasses.slice(0, showAllClasses ? todaysClasses.length : 5).map((item, index) => {
                                     // Safe time formatting with AM/PM

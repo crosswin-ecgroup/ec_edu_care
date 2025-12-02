@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, RefreshControl, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ClassesSkeleton } from '../../components/skeletons/ClassesSkeleton';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { useAuthStore } from '../../store/auth.store';
+import { getSubjectIcon } from '../../utils/subjectIcons';
 
 export default function Classes() {
     const user = useAuthStore((state) => state.user);
@@ -72,9 +73,7 @@ export default function Classes() {
                 <View className="flex-row items-center flex-1 mr-2">
                     <View className="w-14 h-14 rounded-3xl items-center justify-center mr-4 bg-blue-500/20 border border-blue-400/30 backdrop-blur-md shadow-lg">
                         <View className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent rounded-3xl" />
-                        <Text className="text-xl font-bold text-blue-600 dark:text-blue-400 z-10">
-                            {item.name.charAt(0).toUpperCase()}
-                        </Text>
+                        <Ionicons name={getSubjectIcon(item.subject)} size={24} color="#2563EB" />
                     </View>
                     <View className="flex-1">
                         <Text className="text-lg font-bold text-gray-900 dark:text-white leading-tight mb-1">

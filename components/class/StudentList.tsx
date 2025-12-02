@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
 interface StudentListProps {
@@ -9,6 +9,9 @@ interface StudentListProps {
 }
 
 export const StudentList = ({ students, onAddStudent, onRemoveStudent }: StudentListProps) => {
+    const [showAll, setShowAll] = useState(false);
+    const displayedStudents = showAll ? students : students.slice(0, 5);
+
     return (
         <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
             <View className="flex-row items-center justify-between mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">
@@ -29,7 +32,7 @@ export const StudentList = ({ students, onAddStudent, onRemoveStudent }: Student
             </View>
             {students && students.length > 0 ? (
                 <>
-                    {students.slice(0, 5).map((student: any, index: number) => (
+                    {displayedStudents.map((student: any, index: number) => (
                         <View key={index} className="flex-row items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                             <View className="w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 items-center justify-center">
                                 <Text className="text-green-600 dark:text-green-400 font-bold text-lg">
@@ -55,11 +58,15 @@ export const StudentList = ({ students, onAddStudent, onRemoveStudent }: Student
                         </View>
                     ))}
                     {students.length > 5 && (
-                        <View className="mt-4 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-xl">
-                            <Text className="text-sm text-gray-600 dark:text-gray-300 text-center font-medium">
-                                +{students.length - 5} more students
+                        <TouchableOpacity
+                            className="mt-4 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800"
+                            activeOpacity={0.7}
+                            onPress={() => setShowAll(!showAll)}
+                        >
+                            <Text className="text-sm text-blue-600 dark:text-blue-400 text-center font-bold">
+                                {showAll ? 'Show Less' : `View All ${students.length} Students`}
                             </Text>
-                        </View>
+                        </TouchableOpacity>
                     )}
                 </>
             ) : (

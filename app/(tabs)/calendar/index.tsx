@@ -1,10 +1,11 @@
 import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { useGetClassesQuery } from '@/services/classes.api';
+import { getSubjectIcon } from '@/utils/subjectIcons';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -186,9 +187,14 @@ export default function CalendarScreen() {
                                 style={{ borderLeftWidth: 4, borderLeftColor: classColors[cls.classId] }}
                             >
                                 <View className="flex-row justify-between items-start">
-                                    <View className="flex-1">
-                                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">{cls.name}</Text>
-                                        <Text className="text-gray-500 dark:text-gray-400 font-medium">{cls.subject}</Text>
+                                    <View className="flex-row items-center flex-1 mr-2">
+                                        <View className="w-10 h-10 rounded-xl items-center justify-center mr-3 bg-blue-100 dark:bg-blue-900/40">
+                                            <Ionicons name={getSubjectIcon(cls.subject)} size={20} color="#3B82F6" />
+                                        </View>
+                                        <View className="flex-1">
+                                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">{cls.name}</Text>
+                                            <Text className="text-gray-500 dark:text-gray-400 font-medium">{cls.subject}</Text>
+                                        </View>
                                     </View>
                                     <View className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-lg border border-blue-100 dark:border-blue-800">
                                         <Text className="text-blue-700 dark:text-blue-300 text-xs font-bold uppercase">

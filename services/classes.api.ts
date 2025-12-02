@@ -1,4 +1,4 @@
-import { Class, CreateClassDto } from '@/types/api.types';
+import { Class, ClassDashboardDto, CreateClassDto, UpdateSessionScheduleDto } from '@/types/api.types';
 import { api } from './api.base';
 
 export const classesApi = api.injectEndpoints({
@@ -57,15 +57,19 @@ export const classesApi = api.injectEndpoints({
             query: (classId) => `/classes/${classId}/materials`,
             providesTags: (result, error, classId) => [{ type: 'Classes', id: classId }],
         }),
-        updateClassSchedule: builder.mutation<void, { classId: string; data: any }>({
-            query: ({ classId, data }) => ({
-                url: `/classes/${classId}/schedule/update`,
+        getClassDashboard: builder.query<ClassDashboardDto, string>({
+            query: (classId) => `classes/${classId}/dashboard`,
+            providesTags: (result, error, id) => [{ type: 'Classes', id }],
+        }),
+        updateClassSchedule: builder.mutation<void, { classId: string; body: UpdateSessionScheduleDto }>({
+            query: ({ classId, body }) => ({
+                url: `classes/${classId}/schedule/update`,
                 method: 'PUT',
-                body: data,
+                body,
             }),
             invalidatesTags: (result, error, { classId }) => [
                 { type: 'Classes', id: classId },
-                { type: 'Sessions' }
+                { type: 'Sessions', id: 'LIST' }
             ],
         }),
         deleteSession: builder.mutation<void, { classId: string; sessionId: string }>({
@@ -84,7 +88,7 @@ export const classesApi = api.injectEndpoints({
 export const {
     useGetClassesQuery,
     useGetClassByIdQuery,
-    useGetClassDetailsQuery,
+    useGetClassDashboardQuery,
     useCreateClassMutation,
     useAssignTeacherMutation,
     useAddStudentToClassMutation,

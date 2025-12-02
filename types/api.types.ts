@@ -128,3 +128,25 @@ export interface UpdateSingleSessionDto {
     newTime?: any; // TimeSpan object
     newDurationMinutes?: number;
 }
+
+export interface ClassDashboardDto {
+    classId: string;
+    className: string;
+    subject: string;
+    standard: string;
+    section: string;
+    studentCount: number;
+    nextSession?: ClassSession;
+    recentSessions?: ClassSession[];
+    attendanceSummary?: {
+        totalSessions: number;
+        averageAttendance: number;
+    };
+    teachers?: Teacher[];
+    students?: Student[];
+    telegramGroupLink?: string;
+    dayOfWeek?: string | string[];
+    sessionTime?: string;
+    startDate?: string;
+    endDate?: string;
+}
