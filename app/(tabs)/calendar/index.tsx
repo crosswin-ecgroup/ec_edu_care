@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import React, { useMemo, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,7 +21,7 @@ const CLASS_COLORS = [
 ];
 
 export default function CalendarScreen() {
-    const { data: classes, isLoading } = useGetClassesQuery();
+    const { data: classes, isLoading, refetch, isFetching } = useGetClassesQuery();
     const router = useRouter();
     const [selectedDate, setSelectedDate] = useState('');
     const insets = useSafeAreaInsets();
@@ -134,7 +134,13 @@ export default function CalendarScreen() {
                 </View>
             </LinearGradient>
 
-            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+            <ScrollView
+                className="flex-1"
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                    <RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor="#4F46E5" />
+                }
+            >
                 <View className="mx-4 mt-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-2 border border-gray-100 dark:border-gray-700">
                     <Calendar
                         key={isDark ? 'dark' : 'light'}
@@ -193,7 +199,23 @@ export default function CalendarScreen() {
                                 <View className="flex-row items-center mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
                                     <Ionicons name="time-outline" size={18} color="#6B7280" />
                                     <Text className="text-gray-500 dark:text-gray-400 ml-2 text-sm font-medium">
-                                        {cls.sessionTime ? `${Math.floor(cls.sessionTime.totalHours || 0)}h ${Math.floor((cls.sessionTime.totalMinutes || 0) % 60)}m duration` : 'Time N/A'}
+                                        {(() => {
+                                            if (!cls.sessionTime) return 'Time N/A';
+
+                                            // Handle string format "HH:mm:ss"
+                                            if (typeof cls.sessionTime === 'string') {
+                                                const [hours, minutes] = cls.sessionTime.split(':');
+                                                return `${parseInt(hours)}h ${parseInt(minutes)}m duration`;
+                                            }
+
+                                            // Handle object format (TimeSpan)
+                                            if (typeof cls.sessionTime === 'object') {
+                                                const timeSpan = cls.sessionTime as any;
+                                                return `${Math.floor(timeSpan.totalHours || 0)}h ${Math.floor((timeSpan.totalMinutes || 0) % 60)}m duration`;
+                                            }
+
+                                            return 'Time N/A';
+                                        })()}
                                     </Text>
                                 </View>
                             </TouchableOpacity>
