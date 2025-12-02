@@ -1,7 +1,8 @@
+import { useAlert } from '@/context/AlertContext';
 import { useUpdateClassScheduleMutation } from '@/services/classes.api';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { EditScheduleModal } from './EditScheduleModal';
 
 interface ClassScheduleProps {
@@ -16,6 +17,7 @@ interface ClassScheduleProps {
 export const ClassSchedule = ({ classId, startDate, endDate, sessionTime, dayOfWeek, sessionDurationMinutes }: ClassScheduleProps) => {
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [updateSchedule, { isLoading: isUpdating }] = useUpdateClassScheduleMutation();
+    const { showAlert } = useAlert();
 
     const formatDate = (dateString: string) => {
         if (!dateString) return 'N/A';
@@ -34,10 +36,18 @@ export const ClassSchedule = ({ classId, startDate, endDate, sessionTime, dayOfW
         try {
             await updateSchedule({ classId, data }).unwrap();
             setIsEditModalVisible(false);
-            Alert.alert('Success', 'Class schedule updated successfully');
+            showAlert({
+                title: 'Success',
+                message: 'Class schedule updated successfully',
+                type: 'success'
+            });
         } catch (error) {
             console.error('Failed to update schedule:', error);
-            Alert.alert('Error', 'Failed to update class schedule');
+            showAlert({
+                title: 'Error',
+                message: 'Failed to update class schedule',
+                type: 'error'
+            });
         }
     };
 

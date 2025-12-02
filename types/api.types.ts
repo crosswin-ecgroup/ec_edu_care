@@ -39,7 +39,7 @@ export interface Class {
     startDate?: string;
     endDate?: string;
     sessionTime?: string;
-    dayOfWeek?: string;
+    dayOfWeek?: string | string[];
     teachers?: Teacher[];
     students?: Student[];
     telegramGroupLink?: string;

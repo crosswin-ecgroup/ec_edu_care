@@ -1,43 +1,44 @@
 import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { useAlert } from '@/context/AlertContext';
 import { useDeleteSessionMutation } from '@/services/classes.api';
 import { useGetSessionsQuery } from '@/services/sessions.api';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { Alert, FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ClassSessions() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const { data: sessions, isLoading, refetch, isFetching } = useGetSessionsQuery(id || '');
     const [deleteSession, { isLoading: isDeleting }] = useDeleteSessionMutation();
+    const { showAlert } = useAlert();
 
     if (isLoading) {
         return <LoadingOverlay />;
     }
 
     const handleDeleteSession = (sessionId: string) => {
-        Alert.alert(
-            'Delete Session',
-            'Are you sure you want to delete this session? This action cannot be undone.',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Delete',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            await deleteSession({ classId: id || '', sessionId }).unwrap();
-                            // Refetch is handled by tag invalidation
-                        } catch (error) {
-                            console.error('Failed to delete session:', error);
-                            Alert.alert('Error', 'Failed to delete session');
-                        }
-                    }
+        showAlert({
+            title: 'Delete Session',
+            message: 'Are you sure you want to delete this session? This action cannot be undone.',
+            type: 'warning',
+            showCancel: true,
+            onConfirm: async () => {
+                try {
+                    await deleteSession({ classId: id || '', sessionId }).unwrap();
+                    // Refetch is handled by tag invalidation
+                } catch (error) {
+                    console.error('Failed to delete session:', error);
+                    showAlert({
+                        title: 'Error',
+                        message: 'Failed to delete session',
+                        type: 'error'
+                    });
                 }
-            ]
-        );
+            }
+        });
     };
 
     const formatDate = (dateString: string) => {
@@ -62,6 +63,7 @@ export default function ClassSessions() {
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
             {isDeleting && <LoadingOverlay />}
+
             {/* Header */}
             <LinearGradient
                 colors={['#4F46E5', '#3730A3']}

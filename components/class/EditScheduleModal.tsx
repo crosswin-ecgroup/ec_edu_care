@@ -63,11 +63,9 @@ export const EditScheduleModal = ({ visible, onClose, onSave, initialData, isLoa
     };
 
     const handleSave = () => {
-        const sessionTime = {
-            hours: startTime.getHours(),
-            minutes: startTime.getMinutes(),
-            seconds: 0
-        };
+        const hours = startTime.getHours().toString().padStart(2, '0');
+        const minutes = startTime.getMinutes().toString().padStart(2, '0');
+        const sessionTime = `${hours}:${minutes}:00`;
 
         const data = {
             newStartDate: startDate.toISOString(),
@@ -191,14 +189,14 @@ export const EditScheduleModal = ({ visible, onClose, onSave, initialData, isLoa
                                         key={day}
                                         onPress={() => toggleDay(day)}
                                         className={`px-4 py-2 rounded-full border ${selectedDays.includes(day)
-                                                ? 'bg-blue-600 border-blue-600'
-                                                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
+                                            ? 'bg-blue-600 border-blue-600'
+                                            : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600'
                                             }`}
                                     >
                                         <Text
                                             className={`${selectedDays.includes(day)
-                                                    ? 'text-white font-bold'
-                                                    : 'text-gray-700 dark:text-gray-300'
+                                                ? 'text-white font-bold'
+                                                : 'text-gray-700 dark:text-gray-300'
                                                 }`}
                                         >
                                             {day.slice(0, 3)}

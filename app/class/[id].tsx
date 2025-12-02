@@ -6,8 +6,8 @@ import { StudentList } from '@/components/class/StudentList';
 import { StudentModal } from '@/components/class/StudentModal';
 import { TeacherList } from '@/components/class/TeacherList';
 import { TeacherModal } from '@/components/class/TeacherModal';
-import { CustomAlert } from '@/components/CustomAlert';
 import { ClassDetailsSkeleton } from '@/components/skeletons/ClassDetailsSkeleton';
+import { useAlert } from '@/context/AlertContext';
 import {
     useAddStudentToClassMutation,
     useAssignTeacherMutation,
@@ -29,6 +29,7 @@ export default function ClassDetails() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const { showAlert } = useAlert();
 
     // Queries
     const { data: classData, isLoading } = useGetClassByIdQuery(id || '');
@@ -47,14 +48,6 @@ export default function ClassDetails() {
     const [showStudentModal, setShowStudentModal] = useState(false);
     const [teacherSearch, setTeacherSearch] = useState('');
     const [studentSearch, setStudentSearch] = useState('');
-    const [alertConfig, setAlertConfig] = useState({
-        visible: false,
-        title: '',
-        message: '',
-        type: 'error' as 'error' | 'success' | 'info' | 'warning',
-        onConfirm: undefined as (() => void) | undefined,
-        showCancel: false
-    });
 
     // Effects for lazy loading
     React.useEffect(() => {
@@ -90,22 +83,16 @@ export default function ClassDetails() {
             await assignTeacher({ classId: id!, teacherId }).unwrap();
             setShowTeacherModal(false);
             setTeacherSearch('');
-            setAlertConfig({
-                visible: true,
+            showAlert({
                 title: 'Success',
                 message: 'Teacher assigned successfully',
-                type: 'success',
-                onConfirm: undefined,
-                showCancel: false
+                type: 'success'
             });
         } catch (error) {
-            setAlertConfig({
-                visible: true,
+            showAlert({
                 title: 'Error',
                 message: 'Failed to assign teacher',
-                type: 'error',
-                onConfirm: undefined,
-                showCancel: false
+                type: 'error'
             });
         }
     };
@@ -115,29 +102,22 @@ export default function ClassDetails() {
             await addStudent({ classId: id!, studentId }).unwrap();
             setShowStudentModal(false);
             setStudentSearch('');
-            setAlertConfig({
-                visible: true,
+            showAlert({
                 title: 'Success',
                 message: 'Student added successfully',
-                type: 'success',
-                onConfirm: undefined,
-                showCancel: false
+                type: 'success'
             });
         } catch (error) {
-            setAlertConfig({
-                visible: true,
+            showAlert({
                 title: 'Error',
                 message: 'Failed to add student',
-                type: 'error',
-                onConfirm: undefined,
-                showCancel: false
+                type: 'error'
             });
         }
     };
 
     const handleRemoveTeacher = (teacherId: string) => {
-        setAlertConfig({
-            visible: true,
+        showAlert({
             title: 'Remove Teacher',
             message: 'Are you sure you want to remove this teacher from the class?',
             type: 'warning',
@@ -145,22 +125,16 @@ export default function ClassDetails() {
             onConfirm: async () => {
                 try {
                     await removeTeacher({ classId: id!, teacherId }).unwrap();
-                    setAlertConfig({
-                        visible: true,
+                    showAlert({
                         title: 'Success',
                         message: 'Teacher removed successfully',
-                        type: 'success',
-                        onConfirm: undefined,
-                        showCancel: false
+                        type: 'success'
                     });
                 } catch (error) {
-                    setAlertConfig({
-                        visible: true,
+                    showAlert({
                         title: 'Error',
                         message: 'Failed to remove teacher',
-                        type: 'error',
-                        onConfirm: undefined,
-                        showCancel: false
+                        type: 'error'
                     });
                 }
             }
@@ -168,8 +142,7 @@ export default function ClassDetails() {
     };
 
     const handleRemoveStudent = (studentId: string) => {
-        setAlertConfig({
-            visible: true,
+        showAlert({
             title: 'Remove Student',
             message: 'Are you sure you want to remove this student from the class?',
             type: 'warning',
@@ -177,22 +150,16 @@ export default function ClassDetails() {
             onConfirm: async () => {
                 try {
                     await removeStudent({ classId: id!, studentId }).unwrap();
-                    setAlertConfig({
-                        visible: true,
+                    showAlert({
                         title: 'Success',
                         message: 'Student removed successfully',
-                        type: 'success',
-                        onConfirm: undefined,
-                        showCancel: false
+                        type: 'success'
                     });
                 } catch (error) {
-                    setAlertConfig({
-                        visible: true,
+                    showAlert({
                         title: 'Error',
                         message: 'Failed to remove student',
-                        type: 'error',
-                        onConfirm: undefined,
-                        showCancel: false
+                        type: 'error'
                     });
                 }
             }
@@ -216,15 +183,6 @@ export default function ClassDetails() {
 
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
-            <CustomAlert
-                visible={alertConfig.visible}
-                title={alertConfig.title}
-                message={alertConfig.message}
-                type={alertConfig.type}
-                onClose={() => setAlertConfig(prev => ({ ...prev, visible: false }))}
-                onConfirm={alertConfig.onConfirm}
-                showCancel={alertConfig.showCancel}
-            />
             <ScrollView className="flex-1">
                 <ClassHeader
                     name={classData.name || ''}
@@ -258,7 +216,13 @@ export default function ClassDetails() {
                         startDate={classData?.startDate || ''}
                         endDate={classData?.endDate || ''}
                         sessionTime={classData?.sessionTime}
-                        dayOfWeek={classData?.dayOfWeek ? classData.dayOfWeek.split(',') : []}
+                        dayOfWeek={
+                            Array.isArray(classData?.dayOfWeek)
+                                ? classData.dayOfWeek
+                                : classData?.dayOfWeek
+                                    ? classData.dayOfWeek.split(',')
+                                    : []
+                        }
                     />
 
                     <MaterialList materials={materials || []} />

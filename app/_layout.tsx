@@ -57,11 +57,15 @@ function RootLayoutNav() {
   );
 }
 
+import { AlertProvider } from '@/context/AlertContext';
+
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <NetworkStatus />
-      <RootLayoutNav />
+      <AlertProvider>
+        <NetworkStatus />
+        <RootLayoutNav />
+      </AlertProvider>
     </Provider>
   );
 }
