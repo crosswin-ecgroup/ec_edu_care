@@ -1,10 +1,16 @@
 import { NetworkStatus } from '@/components/NetworkStatus';
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
+import { LogBox } from 'react-native';
 import { Provider } from 'react-redux';
 import '../global.css';
 import { store } from '../store';
 import { useAuthStore } from '../store/auth.store';
+
+// Suppress SafeAreaView deprecation warning from dependencies until they update
+LogBox.ignoreLogs([
+  'SafeAreaView has been deprecated',
+]);
 
 function RootLayoutNav() {
   const { isAuthenticated, isHydrated, setHydrated } = useAuthStore();
@@ -38,6 +44,11 @@ function RootLayoutNav() {
 
     return () => clearTimeout(hydrationTimeout);
   }, [isAuthenticated, segments, rootNavigationState, isHydrated]);
+
+  // Wait for navigation state to be ready (prevents dev-only navigation errors)
+  if (!rootNavigationState?.key) {
+    return null;
+  }
 
   // We must render the Stack immediately to ensure navigation is mounted.
   // The useEffect will handle redirection once hydration is complete.

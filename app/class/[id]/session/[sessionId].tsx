@@ -9,7 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 export default function SessionDetails() {
@@ -132,6 +132,34 @@ export default function SessionDetails() {
                                 {classData.students?.length || 0}
                             </Text>
                             <Text className="text-xs text-gray-500 uppercase font-medium">Total</Text>
+                        </View>
+                    </View>
+
+                    {/* Legend */}
+                    <View className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-2xl mb-6 border border-blue-100 dark:border-blue-800">
+                        <View className="flex-row items-center mb-3">
+                            <Ionicons name="information-circle" size={18} color="#3B82F6" />
+                            <Text className="text-blue-700 dark:text-blue-300 font-bold ml-2">Status Legend</Text>
+                        </View>
+                        <View className="flex-row justify-between">
+                            <View className="flex-row items-center flex-1">
+                                <View className="bg-green-100 dark:bg-green-900/50 p-2 rounded-lg border border-green-500 mr-2">
+                                    <Ionicons name="checkmark-circle" size={18} color="#10B981" />
+                                </View>
+                                <Text className="text-gray-700 dark:text-gray-300 text-sm font-medium">Present</Text>
+                            </View>
+                            <View className="flex-row items-center flex-1">
+                                <View className="bg-red-100 dark:bg-red-900/50 p-2 rounded-lg border border-red-500 mr-2">
+                                    <Ionicons name="close-circle" size={18} color="#EF4444" />
+                                </View>
+                                <Text className="text-gray-700 dark:text-gray-300 text-sm font-medium">Absent</Text>
+                            </View>
+                            <View className="flex-row items-center flex-1">
+                                <View className="bg-yellow-100 dark:bg-yellow-900/50 p-2 rounded-lg border border-yellow-500 mr-2">
+                                    <Ionicons name="time" size={18} color="#F59E0B" />
+                                </View>
+                                <Text className="text-gray-700 dark:text-gray-300 text-sm font-medium">Late</Text>
+                            </View>
                         </View>
                     </View>
 

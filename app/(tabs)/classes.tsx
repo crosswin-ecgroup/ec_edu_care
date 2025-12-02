@@ -4,17 +4,47 @@ import { useRouter } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, RefreshControl, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LoadingOverlay } from '../../components/LoadingOverlay';
+import { ClassesSkeleton } from '../../components/skeletons/ClassesSkeleton';
 import { useGetClassesQuery } from '../../services/classes.api';
 import { useAuthStore } from '../../store/auth.store';
 
 export default function Classes() {
     const user = useAuthStore((state) => state.user);
-    const { data: classes, isLoading, refetch } = useGetClassesQuery();
+    const { data: classes, isLoading, refetch, isFetching } = useGetClassesQuery();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState('');
     const [filterStandard, setFilterStandard] = useState('All');
     const insets = useSafeAreaInsets();
+
+    // Show skeleton on initial load
+    if (isLoading) {
+        return (
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                className="flex-1 bg-gray-50 dark:bg-gray-900"
+            >
+                <LinearGradient
+                    colors={['#4F46E5', '#3730A3']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={{ paddingTop: insets.top + 10, paddingBottom: 24 }}
+                    className="px-6 rounded-b-[32px] shadow-lg z-10"
+                >
+                    <View className="flex-row justify-between items-center mb-6">
+                        <View>
+                            <Text className="text-3xl font-bold text-white">
+                                Classes
+                            </Text>
+                        </View>
+                        <View className="bg-white/10 p-2 rounded-2xl backdrop-blur-md border border-white/20">
+                            <Ionicons name="grid-outline" size={24} color="white" />
+                        </View>
+                    </View>
+                </LinearGradient>
+                <ClassesSkeleton />
+            </KeyboardAvoidingView>
+        );
+    }
 
     const handleClassPress = useCallback((classId: string) => {
         router.push(`/class/${classId}` as any);
@@ -114,9 +144,6 @@ export default function Classes() {
             >
                 <View className="flex-row justify-between items-center mb-6">
                     <View>
-                        <Text className="text-blue-200 text-sm font-medium mb-1 uppercase tracking-wider">
-                            Dashboard
-                        </Text>
                         <Text className="text-3xl font-bold text-white">
                             Classes
                         </Text>
@@ -186,15 +213,13 @@ export default function Classes() {
                     data={filteredClasses}
                     keyExtractor={(item) => item.classId}
                     keyboardShouldPersistTaps="handled"
-                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} tintColor="#4F46E5" />}
+                    refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor="#4F46E5" />}
                     contentContainerClassName="pb-32"
                     renderItem={renderItem}
                     ListEmptyComponent={renderEmpty}
                     showsVerticalScrollIndicator={false}
                 />
             </View>
-
-            {isLoading && <LoadingOverlay />}
 
             {/* Floating Action Button */}
             <TouchableOpacity

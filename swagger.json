@@ -6,6 +6,83 @@
         "version": "v1"
     },
     "paths": {
+        "/api/academic-years": {
+            "get": {
+                "tags": [
+                    "AcademicYear"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/academic-years/{academicYear}/report": {
+            "get": {
+                "tags": [
+                    "AcademicYear"
+                ],
+                "parameters": [
+                    {
+                        "name": "academicYear",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AcademicYearReportDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AcademicYearReportDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AcademicYearReportDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/classes/{classId}/assignments": {
             "post": {
                 "tags": [
@@ -113,6 +190,104 @@
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/AssignmentDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/assignments/with-submissions": {
+            "get": {
+                "tags": [
+                    "Assignments"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentWithSubmissionDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentWithSubmissionDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentWithSubmissionDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/assignments/grouped": {
+            "get": {
+                "tags": [
+                    "Assignments"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentGroupSummaryDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentGroupSummaryDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AssignmentGroupSummaryDto"
                                     }
                                 }
                             }
@@ -576,6 +751,86 @@
                 }
             }
         },
+        "/api/sessions/{sessionId}/attendance": {
+            "get": {
+                "tags": [
+                    "Attendance"
+                ],
+                "parameters": [
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionAttendanceDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionAttendanceDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionAttendanceDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/sessions/attendance": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BulkAttendanceRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BulkAttendanceRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BulkAttendanceRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/Auth/login": {
             "post": {
                 "tags": [
@@ -799,6 +1054,46 @@
                 }
             }
         },
+        "/api/classes/{classId}/dashboard": {
+            "get": {
+                "tags": [
+                    "ClassDashboard"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDashboardDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDashboardDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDashboardDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/Classes": {
             "post": {
                 "tags": [
@@ -899,6 +1194,63 @@
                         }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateClassDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateClassDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateClassDto"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1071,10 +1423,275 @@
                 }
             }
         },
+        "/api/Classes/{id}/students/performance": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StudentPerformanceDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StudentPerformanceDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/StudentPerformanceDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Classes/{classId}/students/{studentId}/detail": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "studentId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/Classes/{classId}/students/details": {
+            "get": {
+                "tags": [
+                    "Classes"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ClassStudentDetailDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/": {
             "get": {
                 "tags": [
                     "EC.EduCare.Rise.API"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/sessions/{sessionId}": {
+            "get": {
+                "tags": [
+                    "IndividualSession"
+                ],
+                "parameters": [
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "IndividualSession"
+                ],
+                "parameters": [
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateSessionDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "IndividualSession"
+                ],
+                "parameters": [
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
                 ],
                 "responses": {
                     "200": {
@@ -1226,6 +1843,296 @@
                 }
             }
         },
+        "/api/classes/{classId}/materials/{materialId}": {
+            "delete": {
+                "tags": [
+                    "Materials"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "materialId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/materials/search": {
+            "post": {
+                "tags": [
+                    "Materials"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaterialSearchRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaterialSearchRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MaterialSearchRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MaterialSearchResponse"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MaterialSearchResponse"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MaterialSearchResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/notifications/bot/info": {
+            "get": {
+                "tags": [
+                    "Notifications"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BotInfoResponse"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BotInfoResponse"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BotInfoResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/notifications/classes/{classId}/announce": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnnouncementRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnnouncementRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AnnouncementRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/notifications/classes/{classId}/sessions/{sessionId}/reminder": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SessionReminderRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SessionReminderRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SessionReminderRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/notifications/assignments/reminders": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "hoursBeforeDue",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 24
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/notifications/sessions/upcoming": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "parameters": [
+                    {
+                        "name": "minutesBefore",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "default": 30
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/notifications/test/message": {
+            "post": {
+                "tags": [
+                    "Notifications"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestMessageRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestMessageRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TestMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/classes/{classId}/sessions": {
             "post": {
                 "tags": [
@@ -1332,6 +2239,55 @@
                 }
             }
         },
+        "/api/classes/{classId}/sessions/with-attendance": {
+            "get": {
+                "tags": [
+                    "Sessions"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionWithAttendanceDto"
+                                    }
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionWithAttendanceDto"
+                                    }
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SessionWithAttendanceDto"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/classes/{classId}/sessions/{sessionId}": {
             "get": {
                 "tags": [
@@ -1377,6 +2333,36 @@
                                 }
                             }
                         }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Sessions"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    },
+                    {
+                        "name": "sessionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
                     }
                 }
             }
@@ -1579,6 +2565,107 @@
                         "application/*+json": {
                             "schema": {
                                 "$ref": "#/components/schemas/BulkMarkAttendanceDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/sessions/single": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSingleSessionDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSingleSessionDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateSingleSessionDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ClassSessionDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/classes/{classId}/sessions/reschedule": {
+            "post": {
+                "tags": [
+                    "Sessions"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RescheduleClassDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RescheduleClassDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RescheduleClassDto"
                             }
                         }
                     }
@@ -1956,6 +3043,63 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "tags": [
+                    "Students"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStudentDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStudentDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateStudentDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StudentDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StudentDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StudentDto"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/Teachers": {
@@ -2149,6 +3293,61 @@
                 }
             }
         },
+        "/api/TelegramAuth/clear-session": {
+            "post": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/bot-status": {
+            "get": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/TelegramAuth/bot-test-message": {
+            "post": {
+                "tags": [
+                    "TelegramAuth"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BotTestMessageRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BotTestMessageRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BotTestMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/telegram/webhook": {
             "post": {
                 "tags": [
@@ -2214,12 +3413,97 @@
     },
     "components": {
         "schemas": {
+            "AcademicYearReportDto": {
+                "type": "object",
+                "properties": {
+                    "academicYear": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "totalClasses": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalTeachers": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "completedSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalSubmissions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "overallAttendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "overallSubmissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageGrade": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "classes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ClassSummaryDto"
+                        },
+                        "nullable": true
+                    },
+                    "teacherPerformances": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TeacherPerformanceDto"
+                        },
+                        "nullable": true
+                    },
+                    "monthlyTrends": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MonthlyTrendDto"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "AddStudentToClassDto": {
                 "type": "object",
                 "properties": {
                     "studentId": {
                         "type": "string",
                         "format": "uuid"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AnnouncementRequest": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "content": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -2310,6 +3594,110 @@
                 },
                 "additionalProperties": false
             },
+            "AssignmentGroupSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "assignmentBatchId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "assignedOn": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submittedCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pendingCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "gradedCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageScore": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "highestScore": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "lowestScore": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "sampleAssignmentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AssignmentSubmissionSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "assignmentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submittedCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pendingCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageScore": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "AssignmentSuggestionDto": {
                 "type": "object",
                 "properties": {
@@ -2393,13 +3781,196 @@
                 },
                 "additionalProperties": false
             },
+            "AssignmentWithSubmissionDto": {
+                "type": "object",
+                "properties": {
+                    "classStudentAssignmentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "classStudentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "studentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "studentName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "assignedOn": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "submittedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "gradedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "score": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "grade": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isLate": {
+                        "type": "boolean"
+                    },
+                    "submissionCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AttendanceItem": {
+                "type": "object",
+                "properties": {
+                    "studentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AttendanceItemDto": {
+                "type": "object",
+                "properties": {
+                    "studentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AttendanceTrendDto": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "sessionTitle": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "presentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "BotInfoResponse": {
+                "type": "object",
+                "properties": {
+                    "isConfigured": {
+                        "type": "boolean"
+                    },
+                    "botId": {
+                        "type": "integer",
+                        "format": "int64",
+                        "nullable": true
+                    },
+                    "botUsername": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "botFirstName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "BotTestMessageRequest": {
+                "type": "object",
+                "properties": {
+                    "chatId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "BulkAttendanceRequest": {
+                "type": "object",
+                "properties": {
+                    "sessionId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "attendance": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttendanceItem"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "BulkMarkAttendanceDto": {
                 "type": "object",
                 "properties": {
                     "attendances": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/MarkAttendanceDto"
+                            "$ref": "#/components/schemas/AttendanceItemDto"
                         },
                         "nullable": true
                     }
@@ -2448,6 +4019,99 @@
                 },
                 "additionalProperties": false
             },
+            "ClassDashboardDto": {
+                "type": "object",
+                "properties": {
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "className": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "completedSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalSubmissions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "overallAttendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "totalPresentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalLateCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalAbsentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageGrade": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "recentSessions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SessionAttendanceSummaryDto"
+                        },
+                        "nullable": true
+                    },
+                    "recentAssignments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AssignmentSubmissionSummaryDto"
+                        },
+                        "nullable": true
+                    },
+                    "attendanceTrend": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttendanceTrendDto"
+                        },
+                        "nullable": true
+                    },
+                    "gradeDistribution": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/GradeDistributionDto"
+                        },
+                        "nullable": true
+                    },
+                    "studentPerformances": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StudentPerformanceDto"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "ClassDto": {
                 "type": "object",
                 "properties": {
@@ -2464,6 +4128,10 @@
                         "nullable": true
                     },
                     "standard": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "academicYear": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2485,6 +4153,10 @@
                     "sessionTime": {
                         "$ref": "#/components/schemas/TimeSpan"
                     },
+                    "sessionDurationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
                     "createdOn": {
                         "type": "string",
                         "format": "date-time"
@@ -2495,6 +4167,22 @@
                         "nullable": true
                     },
                     "telegramGroupLink": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "studentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "assignmentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sessionCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "primaryTeacherName": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2588,6 +4276,127 @@
                 },
                 "additionalProperties": false
             },
+            "ClassStudentDetailDto": {
+                "type": "object",
+                "properties": {
+                    "studentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "classStudentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "grade": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mobileNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "enrolledOn": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "className": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "subject": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "standard": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "academicYear": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "summary": {
+                        "$ref": "#/components/schemas/StudentSummaryStatsDto"
+                    },
+                    "attendanceRecords": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StudentAttendanceRecordDto"
+                        },
+                        "nullable": true
+                    },
+                    "assignmentRecords": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/StudentAssignmentRecordDto"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "ClassSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "className": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "subject": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "standard": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "studentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sessionCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "assignmentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageGrade": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "teacherName": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "CreateAssignmentDto": {
                 "type": "object",
                 "properties": {
@@ -2601,11 +4410,7 @@
                     },
                     "dueDate": {
                         "type": "string",
-                        "format": "date-time"
-                    },
-                    "maxScore": {
-                        "type": "number",
-                        "format": "double"
+                        "format": "date"
                     }
                 },
                 "additionalProperties": false
@@ -2622,6 +4427,10 @@
                         "nullable": true
                     },
                     "standard": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "academicYear": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2642,6 +4451,10 @@
                     },
                     "sessionTime": {
                         "$ref": "#/components/schemas/TimeSpan"
+                    },
+                    "sessionDurationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
                     }
                 },
                 "additionalProperties": false
@@ -2672,10 +4485,43 @@
                 },
                 "additionalProperties": false
             },
+            "CreateSingleSessionDto": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "scheduledDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "meetingLink": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isSpecialSession": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
             "CreateStudentDto": {
                 "type": "object",
                 "properties": {
                     "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2708,6 +4554,24 @@
                     "password": {
                         "type": "string",
                         "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "GradeDistributionDto": {
+                "type": "object",
+                "properties": {
+                    "gradeRange": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "count": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "percentage": {
+                        "type": "number",
+                        "format": "double"
                     }
                 },
                 "additionalProperties": false
@@ -2755,6 +4619,10 @@
                         "type": "string",
                         "format": "uuid"
                     },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "fileName": {
                         "type": "string",
                         "nullable": true
@@ -2767,9 +4635,104 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "openAIFileId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "openAIVectorStoreFileId": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "openAIUploadStatus": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "uploadedOn": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MaterialSearchRequest": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MaterialSearchResponse": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "answer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "MonthlyTrendDto": {
+                "type": "object",
+                "properties": {
+                    "month": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "year": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sessionCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "assignmentsDue": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "RescheduleClassDto": {
+                "type": "object",
+                "properties": {
+                    "dayOfWeek": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "nullable": true
+                    },
+                    "sessionTime": {
+                        "$ref": "#/components/schemas/TimeSpan"
+                    },
+                    "sessionDurationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "newEndDate": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -2827,6 +4790,228 @@
                 },
                 "additionalProperties": false
             },
+            "SessionAttendanceSummaryDto": {
+                "type": "object",
+                "properties": {
+                    "sessionId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "scheduledDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "presentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lateCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "absentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SessionReminderRequest": {
+                "type": "object",
+                "properties": {
+                    "sessionTitle": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "meetingLink": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SessionWithAttendanceDto": {
+                "type": "object",
+                "properties": {
+                    "classSessionId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "scheduledDateTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "meetingLink": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "presentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lateCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "absentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "isAttendanceMarked": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "StudentAssignmentRecordDto": {
+                "type": "object",
+                "properties": {
+                    "assignmentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "dueDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "maxScore": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "assignedOn": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "submittedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "gradedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "score": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "grade": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isLate": {
+                        "type": "boolean"
+                    },
+                    "isOverdue": {
+                        "type": "boolean"
+                    },
+                    "submissions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SubmissionDetailDto"
+                        },
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "StudentAttendanceRecordDto": {
+                "type": "object",
+                "properties": {
+                    "sessionId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "attendanceId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true
+                    },
+                    "sessionTitle": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "sessionDate": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "markedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "markedBy": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "isPastSession": {
+                        "type": "boolean"
+                    },
+                    "sessionStatus": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "StudentDto": {
                 "type": "object",
                 "properties": {
@@ -2835,6 +5020,10 @@
                         "format": "uuid"
                     },
                     "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
                         "type": "string",
                         "nullable": true
                     },
@@ -2854,6 +5043,185 @@
                     "createdOn": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "StudentPerformanceDto": {
+                "type": "object",
+                "properties": {
+                    "studentId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "studentName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "attendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "totalAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submittedAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "averageGrade": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "performanceLevel": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "StudentSummaryStatsDto": {
+                "type": "object",
+                "properties": {
+                    "totalSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendedSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lateCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "absentCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "attendancePercentage": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "totalAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submittedCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "gradedCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "pendingCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "missingCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lateSubmissions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "submissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageScore": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "maxPossibleScore": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "highestScore": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "lowestScore": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "overallGrade": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "performanceTrend": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "SubmissionDetailDto": {
+                "type": "object",
+                "properties": {
+                    "submissionId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "submissionText": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fileUrl": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "imageUrl": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "submittedOn": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "attemptNumber": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isProcessed": {
+                        "type": "boolean"
+                    },
+                    "score": {
+                        "type": "number",
+                        "format": "double",
+                        "nullable": true
+                    },
+                    "grade": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "feedback": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "strengths": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "areasForImprovement": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "suggestions": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "feedbackGeneratedOn": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "generatedBy": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -2911,11 +5279,6 @@
                         "nullable": true
                     },
                     "score": {
-                        "type": "number",
-                        "format": "double",
-                        "nullable": true
-                    },
-                    "maxScore": {
                         "type": "number",
                         "format": "double",
                         "nullable": true
@@ -2979,6 +5342,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "specialization": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "telegramUserId": {
                         "type": "integer",
                         "format": "int64",
@@ -2987,6 +5354,48 @@
                     "createdOn": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "TeacherPerformanceDto": {
+                "type": "object",
+                "properties": {
+                    "teacherId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "teacherName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "classCount": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalStudents": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalSessions": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalAssignments": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "averageAttendanceRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageSubmissionRate": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "averageGrade": {
+                        "type": "number",
+                        "format": "double"
                     }
                 },
                 "additionalProperties": false
@@ -3208,6 +5617,20 @@
                 },
                 "additionalProperties": false
             },
+            "TestMessageRequest": {
+                "type": "object",
+                "properties": {
+                    "chatId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "message": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "TimeSpan": {
                 "type": "object",
                 "properties": {
@@ -3288,6 +5711,58 @@
                 },
                 "additionalProperties": false
             },
+            "UpdateClassDto": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "subject": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "standard": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "academicYear": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "UpdateSessionDto": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "durationMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "status": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "meetingLink": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
             "UpdateSessionScheduleDto": {
                 "type": "object",
                 "properties": {
@@ -3353,6 +5828,28 @@
                     "newDurationMinutes": {
                         "type": "integer",
                         "format": "int32"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "UpdateStudentDto": {
+                "type": "object",
+                "properties": {
+                    "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mobileNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "grade": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false

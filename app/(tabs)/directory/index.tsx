@@ -13,14 +13,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 type PersonType = 'teacher' | 'student';
 
 export default function Directory() {
-    const router = useRouter();
+    // All hooks must be called unconditionally at the top
     const insets = useSafeAreaInsets();
     const [selectedType, setSelectedType] = useState<PersonType>('teacher');
     const [selectedGrade, setSelectedGrade] = useState('All');
     const [searchQuery, setSearchQuery] = useState('');
-
     const { data: teachers, isLoading: teachersLoading } = useGetTeachersQuery();
     const { data: students, isLoading: studentsLoading } = useGetStudentsQuery();
+
+    // Safely get router - if not available during dev fast refresh, return null
+    let router;
+    try {
+        router = useRouter();
+    } catch (error) {
+        // Navigation context not ready yet (dev only)
+        return null;
+    }
 
     const isLoading = teachersLoading || studentsLoading;
 
@@ -34,31 +42,26 @@ export default function Directory() {
         return Array.from(gradeSet).sort();
     }, [students]);
 
-    // Filter people based on search and grade
-    const filteredPeople = useMemo(() => {
-        const people = selectedType === 'teacher' ? (teachers || []) : (students || []);
+    // Filter data based on search and filters
+    const filteredData = useMemo(() => {
+        const data = selectedType === 'teacher' ? teachers : students;
+        if (!data) return [];
 
-        return people.filter(person => {
-            const matchesSearch = person.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (person.mobileNumber?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+        return data.filter(person => {
+            const matchesSearch = person.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                (selectedType === 'teacher' && (person as any).email?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                (selectedType === 'student' && (person as any).grade?.toLowerCase().includes(searchQuery.toLowerCase()));
 
-            // For teachers, also search by email
-            if (selectedType === 'teacher') {
-                const teacher = person as NonNullable<typeof teachers>[number];
-                return matchesSearch || (teacher.email?.toLowerCase() || '').includes(searchQuery.toLowerCase());
-            }
+            const matchesGrade = selectedType === 'teacher' ||
+                selectedGrade === 'All' ||
+                (person as any).grade === selectedGrade;
 
-            // For students, filter by grade
-            if (selectedType === 'student' && selectedGrade !== 'All') {
-                const student = person as NonNullable<typeof students>[number];
-                return matchesSearch && student.grade === selectedGrade;
-            }
-
-            return matchesSearch;
+            return matchesSearch && matchesGrade;
         });
     }, [selectedType, teachers, students, searchQuery, selectedGrade]);
 
-    const handlePress = (personId: string) => {
+    const handlePersonPress = (personId: string) => {
+        if (!router) return;
         if (selectedType === 'teacher') {
             router.push(`/teacher/${personId}` as any);
         } else {
@@ -67,6 +70,7 @@ export default function Directory() {
     };
 
     const handleCreatePress = () => {
+        if (!router) return;
         if (selectedType === 'teacher') {
             router.push('/teacher/create' as any);
         } else {
@@ -112,10 +116,10 @@ export default function Directory() {
                     <ListSkeleton />
                 ) : (
                     <PersonList
-                        data={filteredPeople}
+                        data={filteredData}
                         isLoading={false}
                         selectedType={selectedType}
-                        onPress={handlePress}
+                        onPress={handlePersonPress}
                         searchQuery={searchQuery}
                         selectedGrade={selectedGrade}
                     />
