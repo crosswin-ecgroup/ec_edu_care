@@ -7,6 +7,8 @@ import '../global.css';
 import { store } from '../store';
 import { useAuthStore } from '../store/auth.store';
 
+import { AlertProvider } from '@/context/AlertContext';
+
 // Suppress SafeAreaView deprecation warning from dependencies until they update
 LogBox.ignoreLogs([
   'SafeAreaView has been deprecated',
@@ -67,8 +69,6 @@ function RootLayoutNav() {
     </Stack>
   );
 }
-
-import { AlertProvider } from '@/context/AlertContext';
 
 export default function RootLayout() {
   return (

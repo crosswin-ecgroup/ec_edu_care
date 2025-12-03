@@ -150,3 +150,35 @@ export interface ClassDashboardDto {
     gradeDistribution?: any[];
     studentPerformances?: any[];
 }
+
+export interface AssignmentGroupSummaryDto {
+    assignmentBatchId: string;
+    title: string;
+    description?: string;
+    dueDate: string;
+    assignedOn: string;
+    maxScore: number;
+    studentCount: number;
+    submissionCount: number;
+    averageGrade?: number;
+}
+
+export interface AssignmentWithSubmissionDto {
+    classStudentAssignmentId: string;
+    classId: string;
+    classStudentId: string;
+    studentId: string;
+    studentName: string;
+    studentEmail?: string;
+    studentMobile?: string;
+    title: string;
+    description?: string;
+    dueDate: string;
+    assignedOn: string;
+    maxScore: number;
+    status: string;
+    submittedOn?: string;
+    gradedOn?: string;
+    grade?: number;
+    feedback?: string;
+}

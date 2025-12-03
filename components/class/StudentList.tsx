@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -9,6 +10,7 @@ interface StudentListProps {
 }
 
 export const StudentList = ({ students, onAddStudent, onRemoveStudent }: StudentListProps) => {
+    const router = useRouter();
     const [showAll, setShowAll] = useState(false);
     const displayedStudents = showAll ? students : students.slice(0, 5);
 
@@ -33,7 +35,11 @@ export const StudentList = ({ students, onAddStudent, onRemoveStudent }: Student
             {students && students.length > 0 ? (
                 <>
                     {displayedStudents.map((student: any, index: number) => (
-                        <View key={index} className="flex-row items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                        <TouchableOpacity
+                            key={index}
+                            onPress={() => router.push(`/student/${student.studentId || student.id}` as any)}
+                            className="flex-row items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 active:bg-gray-50 dark:active:bg-gray-700/50"
+                        >
                             <View className="w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 items-center justify-center">
                                 <Text className="text-green-600 dark:text-green-400 font-bold text-lg">
                                     {(student.fullName || student.name || 'S')[0].toUpperCase()}
@@ -43,19 +49,20 @@ export const StudentList = ({ students, onAddStudent, onRemoveStudent }: Student
                                 <Text className="text-gray-800 dark:text-gray-100 font-bold text-base">
                                     {student.fullName || student.name || 'Student'}
                                 </Text>
-                                {student.email && (
-                                    <Text className="text-sm text-gray-500 dark:text-gray-400">
-                                        {student.email}
-                                    </Text>
-                                )}
+                                <Text className="text-sm text-gray-500 dark:text-gray-400">
+                                    {student.mobileNumber || student.email || 'No contact info'}
+                                </Text>
                             </View>
                             <TouchableOpacity
-                                onPress={() => onRemoveStudent(student.studentId || student.id)}
+                                onPress={(e) => {
+                                    e.stopPropagation();
+                                    onRemoveStudent(student.studentId || student.id);
+                                }}
                                 className="p-2 bg-red-50 dark:bg-red-900/20 rounded-full ml-2"
                             >
                                 <Ionicons name="trash-outline" size={18} color="#EF4444" />
                             </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                     {students.length > 5 && (
                         <TouchableOpacity

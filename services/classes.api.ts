@@ -82,6 +82,14 @@ export const classesApi = api.injectEndpoints({
                 { type: 'Sessions' }
             ],
         }),
+        getAssignmentsGrouped: builder.query<any, string>({
+            query: (classId) => `/classes/${classId}/assignments/grouped`,
+            providesTags: (result, error, classId) => [{ type: 'Classes', id: classId }],
+        }),
+        getAssignmentsWithSubmissions: builder.query<any, string>({
+            query: (classId) => `/classes/${classId}/assignments/with-submissions`,
+            providesTags: (result, error, classId) => [{ type: 'Classes', id: classId }],
+        }),
     }),
 });
 
@@ -97,4 +105,6 @@ export const {
     useGetMaterialsQuery,
     useUpdateClassScheduleMutation,
     useDeleteSessionMutation,
+    useGetAssignmentsGroupedQuery,
+    useGetAssignmentsWithSubmissionsQuery,
 } = classesApi;
