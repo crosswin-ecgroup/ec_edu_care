@@ -5,11 +5,12 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 interface StudentListProps {
     students: any[];
+    classId: string;
     onAddStudent: () => void;
     onRemoveStudent: (studentId: string) => void;
 }
 
-export const StudentList = ({ students, onAddStudent, onRemoveStudent }: StudentListProps) => {
+export const StudentList = ({ students, classId, onAddStudent, onRemoveStudent }: StudentListProps) => {
     const router = useRouter();
     const [showAll, setShowAll] = useState(false);
     const displayedStudents = showAll ? students : students.slice(0, 5);
@@ -37,7 +38,7 @@ export const StudentList = ({ students, onAddStudent, onRemoveStudent }: Student
                     {displayedStudents.map((student: any, index: number) => (
                         <TouchableOpacity
                             key={index}
-                            onPress={() => router.push(`/student/${student.studentId || student.id}` as any)}
+                            onPress={() => router.push(`/class/${classId}/student/${student.studentId || student.id}` as any)}
                             className="flex-row items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 active:bg-gray-50 dark:active:bg-gray-700/50"
                         >
                             <View className="w-12 h-12 rounded-full bg-green-50 dark:bg-green-900/30 items-center justify-center">

@@ -20,7 +20,6 @@ import {
 } from '@/services/classes.api';
 import { useLazyGetStudentsQuery } from '@/services/students.api';
 import { useLazyGetTeachersQuery } from '@/services/teachers.api';
-import { AssignmentGroupSummaryDto } from '@/types/api.types';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -350,65 +349,22 @@ export default function ClassDetails() {
                                 </View>
                             </View>
                         </View>
-
-                        {/* Assignments List */}
-                        <View className="mb-6">
-                            <View className="flex-row items-center justify-between mb-4">
-                                <View className="flex-row items-center">
-                                    <View className="bg-blue-100 dark:bg-blue-900 p-2 rounded-xl mr-3">
-                                        <Ionicons name="library" size={20} color="#3B82F6" />
-                                    </View>
-                                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                        Assignments
-                                    </Text>
-                                </View>
-                            </View>
-
-                            {assignmentsGrouped && assignmentsGrouped.length > 0 ? (
-                                assignmentsGrouped.map((assignment: AssignmentGroupSummaryDto, index: number) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        onPress={() => router.push({
-                                            pathname: `/class/${id}/assignments/${assignment.assignmentBatchId}`,
-                                            params: { title: assignment.title }
-                                        })}
-                                        className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-3 border border-gray-100 dark:border-gray-700 active:bg-gray-50 dark:active:bg-gray-700"
-                                    >
-                                        <View className="flex-row justify-between items-start mb-2">
-                                            <View className="flex-1 mr-2">
-                                                <Text className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                                                    {assignment.title}
-                                                </Text>
-                                                <Text className="text-sm text-gray-500 dark:text-gray-400" numberOfLines={2}>
-                                                    {assignment.description || 'No description'}
-                                                </Text>
-                                            </View>
-                                            <View className="bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-lg">
-                                                <Text className="text-xs font-bold text-blue-600 dark:text-blue-400">
-                                                    {assignment.submissionCount}/{assignment.studentCount}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View className="flex-row items-center pt-2 border-t border-gray-50 dark:border-gray-700/50">
-                                            <Ionicons name="calendar-outline" size={14} color="#6B7280" />
-                                            <Text className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                                                Due: {new Date(assignment.dueDate).toLocaleDateString()}
-                                            </Text>
-                                            <View className="w-px h-3 bg-gray-300 dark:bg-gray-600 mx-2" />
-                                            <Text className="text-xs text-gray-500 dark:text-gray-400">
-                                                Avg: <Text className="font-bold text-gray-700 dark:text-gray-300">{assignment.averageGrade?.toFixed(1) || '-'}</Text>
-                                            </Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))
-                            ) : (
-                                <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 items-center">
-                                    <Ionicons name="document-text-outline" size={32} color="#9CA3AF" />
-                                    <Text className="text-gray-500 dark:text-gray-400 mt-2">No assignments found</Text>
-                                </View>
-                            )}
-                        </View>
                     </View>
+
+                    <TouchableOpacity
+                        onPress={() => router.push(`/class/${id}/assignments`)}
+                        className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700 flex-row items-center justify-between active:bg-gray-50 dark:active:bg-gray-700"
+                    >
+                        <View className="flex-row items-center">
+                            <View className="bg-blue-100 dark:bg-blue-900 p-2 rounded-xl mr-3">
+                                <Ionicons name="library" size={20} color="#3B82F6" />
+                            </View>
+                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                View All Assignments
+                            </Text>
+                        </View>
+                        <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+                    </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={() => router.push(`/class/${id}/sessions`)}
@@ -449,6 +405,7 @@ export default function ClassDetails() {
 
                     <StudentList
                         students={classData.students || []}
+                        classId={id}
                         onAddStudent={() => setShowStudentModal(true)}
                         onRemoveStudent={handleRemoveStudent}
                     />

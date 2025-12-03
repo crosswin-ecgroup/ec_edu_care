@@ -182,3 +182,55 @@ export interface AssignmentWithSubmissionDto {
     grade?: number;
     feedback?: string;
 }
+
+export interface StudentSummaryStatsDto {
+    totalSessions: number;
+    attendedSessions: number;
+    lateCount: number;
+    absentCount: number;
+    attendancePercentage: number;
+    totalAssignments: number;
+    submittedCount: number;
+    gradedCount: number;
+    pendingCount: number;
+    missingCount: number;
+    submissionRate: number;
+    averageScore: number;
+    overallGrade?: string;
+}
+
+export interface StudentAttendanceRecordDto {
+    sessionId: string;
+    sessionDate: string;
+    status: string;
+    markedAt?: string;
+}
+
+export interface StudentAssignmentRecordDto {
+    assignmentId: string;
+    title: string;
+    dueDate: string;
+    status: string;
+    submittedOn?: string;
+    grade?: number;
+    maxScore: number;
+    feedback?: string;
+}
+
+export interface ClassStudentDetailDto {
+    studentId: string;
+    classStudentId: string;
+    fullName: string;
+    email?: string;
+    grade?: string;
+    mobileNumber?: string;
+    enrolledOn: string;
+    classId: string;
+    className: string;
+    subject?: string;
+    standard?: string;
+    academicYear?: string;
+    summary: StudentSummaryStatsDto;
+    attendanceRecords?: StudentAttendanceRecordDto[];
+    assignmentRecords?: StudentAssignmentRecordDto[];
+}

@@ -90,6 +90,13 @@ export const classesApi = api.injectEndpoints({
             query: (classId) => `/classes/${classId}/assignments/with-submissions`,
             providesTags: (result, error, classId) => [{ type: 'Classes', id: classId }],
         }),
+        getStudentClassDetail: builder.query<any, { classId: string; studentId: string }>({
+            query: ({ classId, studentId }) => `/Classes/${classId}/students/${studentId}/detail`,
+            providesTags: (result, error, { classId, studentId }) => [
+                { type: 'Classes', id: classId },
+                { type: 'Classes', id: `student-${studentId}` }
+            ],
+        }),
     }),
 });
 
@@ -107,4 +114,5 @@ export const {
     useDeleteSessionMutation,
     useGetAssignmentsGroupedQuery,
     useGetAssignmentsWithSubmissionsQuery,
+    useGetStudentClassDetailQuery,
 } = classesApi;
