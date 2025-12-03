@@ -83,6 +83,105 @@
                 }
             }
         },
+        "/api/AppSettings": {
+            "get": {
+                "tags": [
+                    "AppSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "AppSettings"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppSettingsDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppSettingsDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppSettingsDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppSettingsDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/AppSettings/toggle-openai": {
+            "post": {
+                "tags": [
+                    "AppSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/AppSettings/openai-status": {
+            "get": {
+                "tags": [
+                    "AppSettings"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/classes/{classId}/assignments": {
             "post": {
                 "tags": [
@@ -2133,6 +2232,167 @@
                 }
             }
         },
+        "/api/openai-test/status": {
+            "get": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/openai-test/classes": {
+            "get": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/openai-test/classes/{classId}/assignments": {
+            "get": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "parameters": [
+                    {
+                        "name": "classId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/openai-test/suggest-assignments": {
+            "post": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignmentSuggestionRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignmentSuggestionRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignmentSuggestionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/openai-test/grade-text": {
+            "post": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TextGradingRequest"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TextGradingRequest"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TextGradingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
+        "/api/openai-test/grade-image": {
+            "post": {
+                "tags": [
+                    "OpenAITest"
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "ClassId": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "AssignmentDescription": {
+                                        "type": "string"
+                                    },
+                                    "Image": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "MaxScore": {
+                                        "type": "number",
+                                        "format": "double"
+                                    }
+                                }
+                            },
+                            "encoding": {
+                                "ClassId": {
+                                    "style": "form"
+                                },
+                                "AssignmentDescription": {
+                                    "style": "form"
+                                },
+                                "Image": {
+                                    "style": "form"
+                                },
+                                "MaxScore": {
+                                    "style": "form"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                }
+            }
+        },
         "/api/classes/{classId}/sessions": {
             "post": {
                 "tags": [
@@ -3272,6 +3532,63 @@
                         }
                     }
                 }
+            },
+            "put": {
+                "tags": [
+                    "Teachers"
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTeacherDto"
+                            }
+                        },
+                        "text/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTeacherDto"
+                            }
+                        },
+                        "application/*+json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTeacherDto"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TeacherDto"
+                                }
+                            },
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TeacherDto"
+                                }
+                            },
+                            "text/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TeacherDto"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/TelegramAuth/status": {
@@ -3621,6 +3938,15 @@
                 },
                 "additionalProperties": false
             },
+            "AppSettingsDto": {
+                "type": "object",
+                "properties": {
+                    "openAIEnabled": {
+                        "type": "boolean"
+                    }
+                },
+                "additionalProperties": false
+            },
             "AssignTeacherDto": {
                 "type": "object",
                 "properties": {
@@ -3914,6 +4240,24 @@
                     "relevanceScore": {
                         "type": "number",
                         "format": "float"
+                    }
+                },
+                "additionalProperties": false
+            },
+            "AssignmentSuggestionRequest": {
+                "type": "object",
+                "properties": {
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "chapterOrTopic": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "numberOfSuggestions": {
+                        "type": "integer",
+                        "format": "int32"
                     }
                 },
                 "additionalProperties": false
@@ -4771,9 +5115,18 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "countryCode": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "mobileNumber": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "fullMobileNumber": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
                     }
                 },
                 "additionalProperties": false
@@ -4785,6 +5138,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "countryCode": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "mobileNumber": {
                         "type": "string",
                         "nullable": true
@@ -4793,9 +5150,14 @@
                         "type": "string",
                         "nullable": true
                     },
-                    "password": {
+                    "specialization": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "fullMobileNumber": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
                     }
                 },
                 "additionalProperties": false
@@ -5695,19 +6057,19 @@
             "TelegramDocument": {
                 "type": "object",
                 "properties": {
-                    "fileId": {
+                    "file_id": {
                         "type": "string",
                         "nullable": true
                     },
-                    "fileName": {
+                    "file_name": {
                         "type": "string",
                         "nullable": true
                     },
-                    "mimeType": {
+                    "mime_type": {
                         "type": "string",
                         "nullable": true
                     },
-                    "fileSize": {
+                    "file_size": {
                         "type": "integer",
                         "format": "int64"
                     }
@@ -5748,7 +6110,7 @@
             "TelegramMessage": {
                 "type": "object",
                 "properties": {
-                    "messageId": {
+                    "message_id": {
                         "type": "integer",
                         "format": "int64"
                     },
@@ -5776,8 +6138,12 @@
                         },
                         "nullable": true
                     },
-                    "replyToMessage": {
+                    "reply_to_message": {
                         "$ref": "#/components/schemas/TelegramMessage"
+                    },
+                    "caption": {
+                        "type": "string",
+                        "nullable": true
                     }
                 },
                 "additionalProperties": false
@@ -5785,11 +6151,11 @@
             "TelegramPhotoSize": {
                 "type": "object",
                 "properties": {
-                    "fileId": {
+                    "file_id": {
                         "type": "string",
                         "nullable": true
                     },
-                    "fileUniqueId": {
+                    "file_unique_id": {
                         "type": "string",
                         "nullable": true
                     },
@@ -5801,7 +6167,7 @@
                         "type": "integer",
                         "format": "int32"
                     },
-                    "fileSize": {
+                    "file_size": {
                         "type": "integer",
                         "format": "int32",
                         "nullable": true
@@ -5816,14 +6182,14 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "isBot": {
+                    "is_bot": {
                         "type": "boolean"
                     },
-                    "firstName": {
+                    "first_name": {
                         "type": "string",
                         "nullable": true
                     },
-                    "lastName": {
+                    "last_name": {
                         "type": "string",
                         "nullable": true
                     },
@@ -5855,17 +6221,17 @@
             "TelegramWebhookUpdate": {
                 "type": "object",
                 "properties": {
-                    "updateId": {
+                    "update_id": {
                         "type": "integer",
                         "format": "int64"
                     },
                     "message": {
                         "$ref": "#/components/schemas/TelegramMessage"
                     },
-                    "editedMessage": {
+                    "edited_message": {
                         "$ref": "#/components/schemas/TelegramMessage"
                     },
-                    "callbackQuery": {
+                    "callback_query": {
                         "$ref": "#/components/schemas/TelegramCallbackQuery"
                     }
                 },
@@ -5881,6 +6247,28 @@
                     "message": {
                         "type": "string",
                         "nullable": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "TextGradingRequest": {
+                "type": "object",
+                "properties": {
+                    "classId": {
+                        "type": "string",
+                        "format": "uuid"
+                    },
+                    "assignmentDescription": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "studentAnswer": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "maxScore": {
+                        "type": "number",
+                        "format": "double"
                     }
                 },
                 "additionalProperties": false
@@ -6097,6 +6485,10 @@
                         "type": "string",
                         "nullable": true
                     },
+                    "countryCode": {
+                        "type": "string",
+                        "nullable": true
+                    },
                     "mobileNumber": {
                         "type": "string",
                         "nullable": true
@@ -6104,6 +6496,42 @@
                     "grade": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "fullMobileNumber": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
+                    }
+                },
+                "additionalProperties": false
+            },
+            "UpdateTeacherDto": {
+                "type": "object",
+                "properties": {
+                    "fullName": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "countryCode": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "mobileNumber": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "specialization": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "fullMobileNumber": {
+                        "type": "string",
+                        "nullable": true,
+                        "readOnly": true
                     }
                 },
                 "additionalProperties": false

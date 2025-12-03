@@ -4,14 +4,16 @@ import { ClassStudentDetailDto, StudentAssignmentRecordDto, StudentAttendanceRec
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function StudentClassDetails() {
-    const { classId, studentId } = useLocalSearchParams<{ classId: string; studentId: string }>();
+    const { id: classId, studentId } = useLocalSearchParams<{ id: string; studentId: string }>();
     const router = useRouter();
     const insets = useSafeAreaInsets();
+    const [showAllAttendance, setShowAllAttendance] = useState(false);
+    const [showAllAssignments, setShowAllAssignments] = useState(false);
 
     const { data: studentDetail, isLoading } = useGetStudentClassDetailQuery({ classId, studentId });
 
@@ -31,19 +33,26 @@ export default function StudentClassDetails() {
     const getStatusColor = (status: string) => {
         switch (status?.toLowerCase()) {
             case 'present':
-                return 'text-green-600 bg-green-50 dark:bg-green-900/30';
+                return 'text-green-700 dark:text-white bg-green-50 dark:bg-green-600';
             case 'late':
-                return 'text-orange-600 bg-orange-50 dark:bg-orange-900/30';
+                return 'text-orange-700 dark:text-white bg-orange-50 dark:bg-orange-600';
             case 'absent':
-                return 'text-red-600 bg-red-50 dark:bg-red-900/30';
+                return 'text-red-700 dark:text-white bg-red-50 dark:bg-red-600';
+            case 'not marked':
+            case 'not_marked':
+                return 'text-yellow-700 dark:text-white bg-yellow-50 dark:bg-yellow-600';
             case 'submitted':
             case 'graded':
-                return 'text-blue-600 bg-blue-50 dark:bg-blue-900/30';
+                return 'text-blue-700 dark:text-white bg-blue-50 dark:bg-blue-600';
+            case 'assigned':
             case 'pending':
+                return 'text-purple-700 dark:text-white bg-purple-50 dark:bg-purple-600';
             case 'missing':
-                return 'text-gray-600 bg-gray-50 dark:bg-gray-800';
+            case 'not submitted':
+            case 'not_submitted':
+                return 'text-red-700 dark:text-white bg-red-50 dark:bg-red-600';
             default:
-                return 'text-gray-600 bg-gray-100 dark:bg-gray-700';
+                return 'text-gray-700 dark:text-white bg-gray-100 dark:bg-gray-600';
         }
     };
 
@@ -65,7 +74,15 @@ export default function StudentClassDetails() {
                     </TouchableOpacity>
                     <View className="flex-1">
                         <Text className="text-2xl font-bold text-white">{detail.fullName}</Text>
-                        <Text className="text-white/80 text-sm mt-1">{detail.className}</Text>
+                        <View className="flex-row items-center mt-1">
+                            <Text className="text-white/80 text-sm">{detail.className}</Text>
+                            {detail.grade && (
+                                <>
+                                    <Text className="text-white/60 mx-2">•</Text>
+                                    <Text className="text-white/80 text-sm">Grade {detail.grade}</Text>
+                                </>
+                            )}
+                        </View>
                     </View>
                 </View>
             </LinearGradient>
@@ -145,9 +162,21 @@ export default function StudentClassDetails() {
 
                 {/* Attendance History */}
                 <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 mb-4 border border-gray-100 dark:border-gray-700">
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Attendance History</Text>
+                    <View className="flex-row items-center justify-between mb-4">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">Attendance History</Text>
+                        {detail.attendanceRecords && detail.attendanceRecords.length > 5 && (
+                            <TouchableOpacity
+                                onPress={() => setShowAllAttendance(!showAllAttendance)}
+                                className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-lg"
+                            >
+                                <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold">
+                                    {showAllAttendance ? 'Show Less' : `View All (${detail.attendanceRecords.length})`}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                     {detail.attendanceRecords && detail.attendanceRecords.length > 0 ? (
-                        detail.attendanceRecords.map((record: StudentAttendanceRecordDto, index) => (
+                        (showAllAttendance ? detail.attendanceRecords : detail.attendanceRecords.slice(0, 5)).map((record: StudentAttendanceRecordDto, index) => (
                             <View
                                 key={index}
                                 className="flex-row justify-between items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
@@ -163,7 +192,7 @@ export default function StudentClassDetails() {
                                     )}
                                 </View>
                                 <View className={`px-3 py-1 rounded-full ${getStatusColor(record.status)}`}>
-                                    <Text className={`text-xs font-bold capitalize ${getStatusColor(record.status).split(' ')[0]}`}>
+                                    <Text className="text-xs font-bold capitalize">
                                         {record.status}
                                     </Text>
                                 </View>
@@ -176,12 +205,24 @@ export default function StudentClassDetails() {
 
                 {/* Assignment Records */}
                 <View className="bg-white dark:bg-gray-800 rounded-2xl p-5 mb-4 border border-gray-100 dark:border-gray-700">
-                    <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Assignments</Text>
+                    <View className="flex-row items-center justify-between mb-4">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">Assignments</Text>
+                        {detail.assignmentRecords && detail.assignmentRecords.length > 5 && (
+                            <TouchableOpacity
+                                onPress={() => setShowAllAssignments(!showAllAssignments)}
+                                className="bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-lg"
+                            >
+                                <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold">
+                                    {showAllAssignments ? 'Show Less' : `View All (${detail.assignmentRecords.length})`}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                     {detail.assignmentRecords && detail.assignmentRecords.length > 0 ? (
-                        detail.assignmentRecords.map((record: StudentAssignmentRecordDto, index) => (
+                        (showAllAssignments ? detail.assignmentRecords : detail.assignmentRecords.slice(0, 5)).map((record: StudentAssignmentRecordDto, index) => (
                             <View
                                 key={index}
-                                className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl mb-3 last:mb-0"
+                                className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl mb-4"
                             >
                                 <View className="flex-row justify-between items-start mb-2">
                                     <View className="flex-1 mr-2">
@@ -193,7 +234,7 @@ export default function StudentClassDetails() {
                                         </Text>
                                     </View>
                                     <View className={`px-3 py-1 rounded-full ${getStatusColor(record.status)}`}>
-                                        <Text className={`text-xs font-bold capitalize ${getStatusColor(record.status).split(' ')[0]}`}>
+                                        <Text className="text-xs font-bold capitalize">
                                             {record.status}
                                         </Text>
                                     </View>

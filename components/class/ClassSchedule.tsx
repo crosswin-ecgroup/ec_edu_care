@@ -2,7 +2,7 @@ import { useAlert } from '@/context/AlertContext';
 import { useUpdateClassScheduleMutation } from '@/services/classes.api';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { EditScheduleModal } from './EditScheduleModal';
 
 interface ClassScheduleProps {
@@ -15,6 +15,7 @@ interface ClassScheduleProps {
 }
 
 export const ClassSchedule = ({ classId, startDate, endDate, sessionTime, dayOfWeek, sessionDurationMinutes }: ClassScheduleProps) => {
+    const colorScheme = useColorScheme();
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [updateSchedule, { isLoading: isUpdating }] = useUpdateClassScheduleMutation();
     const { showAlert } = useAlert();
@@ -66,7 +67,7 @@ export const ClassSchedule = ({ classId, startDate, endDate, sessionTime, dayOfW
                     onPress={() => setIsEditModalVisible(true)}
                     className="bg-gray-100 dark:bg-gray-700 p-2 rounded-full"
                 >
-                    <Ionicons name="pencil" size={18} color="#4B5563" />
+                    <Ionicons name="pencil" size={18} color={colorScheme === 'dark' ? '#D1D5DB' : '#6B7280'} />
                 </TouchableOpacity>
             </View>
 
