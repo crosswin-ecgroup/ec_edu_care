@@ -234,3 +234,50 @@ export interface ClassStudentDetailDto {
     attendanceRecords?: StudentAttendanceRecordDto[];
     assignmentRecords?: StudentAssignmentRecordDto[];
 }
+
+export interface TeacherPerformanceDto {
+    teacherId: string;
+    teacherName?: string;
+    classCount: number;
+    totalStudents: number;
+    totalSessions: number;
+    averageAttendanceRate?: number;
+    averageSubmissionRate?: number;
+}
+
+export interface MonthlyTrendDto {
+    month?: string;
+    year: number;
+    sessionCount: number;
+    attendanceRate: number;
+    assignmentsDue: number;
+    submissionRate: number;
+}
+
+export interface ClassSummaryDto {
+    classId: string;
+    className?: string;
+    subject?: string;
+    standard?: string;
+    studentCount: number;
+    attendanceRate?: number;
+    submissionRate?: number;
+    averageGrade?: number;
+}
+
+export interface AcademicYearReportDto {
+    academicYear?: string;
+    totalClasses: number;
+    totalStudents: number;
+    totalTeachers: number;
+    totalSessions: number;
+    completedSessions: number;
+    totalAssignments: number;
+    totalSubmissions: number;
+    overallAttendanceRate: number;
+    overallSubmissionRate: number;
+    averageGrade: number;
+    classes?: ClassSummaryDto[];
+    teacherPerformances?: TeacherPerformanceDto[];
+    monthlyTrends?: MonthlyTrendDto[];
+}

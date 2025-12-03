@@ -1,55 +1,19 @@
+import { DashboardSkeleton } from '@/components/skeletons/DashboardSkeleton';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { TodaysClassesSkeleton } from '../../components/skeletons/TodaysClassesSkeleton';
-import { useGetClassesQuery } from '../../services/classes.api';
+import { useGetAcademicYearReportQuery } from '../../services/academicYear.api';
 import { useAuthStore } from '../../store/auth.store';
 import { getSubjectIcon } from '../../utils/subjectIcons';
 
 export default function Dashboard() {
     const router = useRouter();
     const user = useAuthStore((state) => state.user);
-    const { data: classes, isLoading } = useGetClassesQuery();
-    const [showAllClasses, setShowAllClasses] = useState(false);
+    const { data: report, isLoading: reportLoading } = useGetAcademicYearReportQuery('2025-2026');
 
-    // Calculate statistics
-    const stats = useMemo(() => {
-        if (!classes) return { totalClasses: 0, totalTeachers: 0, totalStudents: 0 };
 
-        const teacherSet = new Set<string>();
-        const studentSet = new Set<string>();
-
-        classes.forEach(cls => {
-            cls.teachers?.forEach(t => teacherSet.add(t.teacherId));
-            cls.students?.forEach(s => studentSet.add(s.studentId));
-        });
-
-        return {
-            totalClasses: classes.length,
-            totalTeachers: teacherSet.size,
-            totalStudents: studentSet.size
-        };
-    }, [classes]);
-
-    // Get Today's Classes
-    const todaysClasses = useMemo(() => {
-        if (!classes) return [];
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        const today = days[new Date().getDay()];
-
-        return classes.filter(cls =>
-            cls.dayOfWeek?.includes(today)
-        );
-    }, [classes]);
-
-    const quickActions = [
-        { icon: 'people', label: 'Teachers', subtitle: 'Manage Staff', color: ['#4F46E5', '#3730A3'], route: '/(tabs)/directory?type=teacher' },
-        { icon: 'school', label: 'Students', subtitle: 'View Roster', color: ['#059669', '#047857'], route: '/(tabs)/directory?type=student' },
-        { icon: 'calendar', label: 'Calendar', subtitle: 'Check Schedule', color: ['#D97706', '#B45309'], route: '/(tabs)/calendar' },
-        { icon: 'add-circle', label: 'New Class', subtitle: 'Create Session', color: ['#DC2626', '#991B1B'], route: '/class/create' },
-    ];
 
     return (
         <View className="flex-1 bg-gray-50 dark:bg-gray-900">
@@ -67,6 +31,9 @@ export default function Dashboard() {
                             <Text className="text-white text-3xl font-bold mt-1">
                                 {user?.name || 'Administrator'}
                             </Text>
+                            <Text className="text-blue-200 text-sm mt-1 font-medium bg-white/10 self-start px-3 py-1 rounded-full overflow-hidden">
+                                Academic Year 2025-2026
+                            </Text>
                         </View>
                         <TouchableOpacity
                             onPress={() => router.push('/profile' as any)}
@@ -79,52 +46,71 @@ export default function Dashboard() {
                     {/* Main Stats Row */}
                     <View className="flex-row justify-between bg-white/10 p-4 rounded-2xl border border-white/20 backdrop-blur-md">
                         <View className="items-center flex-1 border-r border-white/20">
-                            <Text className="text-3xl font-bold text-white">{stats.totalClasses}</Text>
+                            <Text className="text-3xl font-bold text-white">{report?.totalClasses || 0}</Text>
                             <Text className="text-blue-100 text-xs mt-1">Classes</Text>
                         </View>
                         <View className="items-center flex-1 border-r border-white/20">
-                            <Text className="text-3xl font-bold text-white">{stats.totalTeachers}</Text>
+                            <Text className="text-3xl font-bold text-white">{report?.totalTeachers || 0}</Text>
                             <Text className="text-blue-100 text-xs mt-1">Teachers</Text>
                         </View>
                         <View className="items-center flex-1">
-                            <Text className="text-3xl font-bold text-white">{stats.totalStudents}</Text>
+                            <Text className="text-3xl font-bold text-white">{report?.totalStudents || 0}</Text>
                             <Text className="text-blue-100 text-xs mt-1">Students</Text>
                         </View>
                     </View>
                 </LinearGradient>
 
                 <View className="px-6 mt-4">
-                    {/* Quick Actions Grid */}
-                    <View className="flex-row flex-wrap justify-between mb-6">
-                        {quickActions.map((action, index) => (
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => router.push(action.route as any)}
-                                className="w-[48%] mb-4"
-                                activeOpacity={0.9}
-                            >
-                                <LinearGradient
-                                    colors={action.color as any}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
-                                    style={{ borderRadius: 12 }}
-                                    className="p-5 shadow-sm h-36 justify-between"
-                                >
-                                    <View className="bg-white/20 w-12 h-12 rounded-full items-center justify-center backdrop-blur-sm">
-                                        <Ionicons name={action.icon as any} size={24} color="white" />
+                    {/* Academic Year Report Stats */}
+                    {report && (
+                        <View className="mb-6">
+                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                                Academic Year Overview
+                            </Text>
+                            <View className="flex-row flex-wrap gap-3 mb-4">
+                                <View className="flex-1 min-w-[45%] bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center mb-2">
+                                        <View className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-2">
+                                            <Ionicons name="calendar-outline" size={18} color="#3B82F6" />
+                                        </View>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">Sessions</Text>
                                     </View>
-                                    <View>
-                                        <Text className="text-white font-bold text-lg leading-tight">
-                                            {action.label}
-                                        </Text>
-                                        <Text className="text-white/80 text-xs font-medium mt-1">
-                                            {action.subtitle}
-                                        </Text>
+                                    <Text className="text-2xl font-bold text-gray-900 dark:text-white">{report.completedSessions}/{report.totalSessions}</Text>
+                                    <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">Completed</Text>
+                                </View>
+                                <View className="flex-1 min-w-[45%] bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center mb-2">
+                                        <View className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full mr-2">
+                                            <Ionicons name="checkmark-circle-outline" size={18} color="#10B981" />
+                                        </View>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">Attendance</Text>
                                     </View>
-                                </LinearGradient>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                                    <Text className="text-2xl font-bold text-gray-900 dark:text-white">{Math.round(report.overallAttendanceRate)}%</Text>
+                                    <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">Overall Rate</Text>
+                                </View>
+                                <View className="flex-1 min-w-[45%] bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center mb-2">
+                                        <View className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full mr-2">
+                                            <Ionicons name="document-text-outline" size={18} color="#8B5CF6" />
+                                        </View>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">Assignments</Text>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-900 dark:text-white">{report.totalAssignments}</Text>
+                                    <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">{Math.round(report.overallSubmissionRate)}% submitted</Text>
+                                </View>
+                                <View className="flex-1 min-w-[45%] bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                                    <View className="flex-row items-center mb-2">
+                                        <View className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full mr-2">
+                                            <Ionicons name="star-outline" size={18} color="#F59E0B" />
+                                        </View>
+                                        <Text className="text-gray-500 dark:text-gray-400 text-xs">Avg Grade</Text>
+                                    </View>
+                                    <Text className="text-2xl font-bold text-gray-900 dark:text-white">{report.averageGrade?.toFixed(1) || '-'}</Text>
+                                    <Text className="text-xs text-gray-500 dark:text-gray-400 mt-1">Out of 100</Text>
+                                </View>
+                            </View>
+                        </View>
+                    )}
 
                     {/* Interesting Content */}
                     <View className="mb-8">
@@ -147,83 +133,101 @@ export default function Dashboard() {
                     </View>
 
                     {/* Today's Classes Section */}
-                    <View className="mb-20">
-                        <View className="flex-row justify-between items-center mb-4">
-                            <Text className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                Today's Classes
-                            </Text>
-                            <Text className="text-blue-600 dark:text-blue-400 font-medium text-sm">
-                                {new Date().toLocaleDateString('en-US', { weekday: 'long' })}
-                            </Text>
-                        </View>
-
-                        {isLoading ? (
-                            <TodaysClassesSkeleton />
-                        ) : todaysClasses.length > 0 ? (
-                            <>
-                                {todaysClasses.slice(0, showAllClasses ? todaysClasses.length : 5).map((item, index) => {
-                                    // Safe time formatting with AM/PM
-                                    let timeDisplay = 'View';
-                                    if (item.sessionTime) {
-                                        const hours = item.sessionTime.hours ?? 0;
-                                        const minutes = item.sessionTime.minutes ?? 0;
-                                        const period = hours >= 12 ? 'PM' : 'AM';
-                                        const displayHours = hours % 12 || 12;
-                                        timeDisplay = `${displayHours}:${String(minutes).padStart(2, '0')} ${period}`;
-                                    } else if (item.startDate) {
-                                        const date = new Date(item.startDate);
-                                        if (!isNaN(date.getTime())) {
-                                            timeDisplay = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
-                                        }
-                                    }
-
-                                    return (
-                                        <TouchableOpacity
-                                            key={index}
-                                            onPress={() => router.push(`/class/${item.classId}` as any)}
-                                            className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700 flex-row items-center"
-                                            activeOpacity={0.9}
-                                        >
-                                            <View className="w-1 bg-green-500 h-full absolute left-0 rounded-l-2xl" />
-                                            <View className="w-12 h-12 rounded-2xl bg-green-50 dark:bg-green-900/30 items-center justify-center ml-2">
-                                                <Ionicons name={getSubjectIcon(item.subject)} size={24} color="#10B981" />
+                    {/* Class Performance Summary */}
+                    <View className="mb-8">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                            Class Performance Summary
+                        </Text>
+                        {reportLoading ? (
+                            <DashboardSkeleton />
+                        ) : report?.classes && report.classes.length > 0 ? (
+                            report.classes.map((cls, index) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => router.push(`/class/${cls.classId}` as any)}
+                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
+                                >
+                                    <View className="flex-row justify-between items-start mb-3">
+                                        <View className="flex-row items-center">
+                                            <View className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 items-center justify-center mr-3">
+                                                <Ionicons name={getSubjectIcon(cls.subject || 'default')} size={20} color="#3B82F6" />
                                             </View>
-                                            <View className="flex-1 ml-4">
+                                            <View>
                                                 <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
-                                                    {item.name}
+                                                    {cls.className}
                                                 </Text>
-                                                <Text className="text-gray-500 dark:text-gray-400 text-xs mt-1">
-                                                    {item.subject} • {item.standard || 'N/A'}
-                                                </Text>
-                                            </View>
-                                            <View className="bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-full">
-                                                <Text className="text-xs font-medium text-gray-600 dark:text-gray-300">
-                                                    {timeDisplay}
+                                                <Text className="text-gray-500 dark:text-gray-400 text-xs">
+                                                    {cls.studentCount} Students
                                                 </Text>
                                             </View>
-                                        </TouchableOpacity>
-                                    );
-                                })}
+                                        </View>
+                                        <View className="bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded-lg">
+                                            <Text className="text-blue-600 dark:text-blue-400 text-xs font-bold">
+                                                Avg: {cls.averageGrade?.toFixed(1) || '-'}
+                                            </Text>
+                                        </View>
+                                    </View>
 
-                                {todaysClasses.length > 5 && (
-                                    <TouchableOpacity
-                                        onPress={() => setShowAllClasses(!showAllClasses)}
-                                        className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-100 dark:border-blue-800 items-center"
-                                        activeOpacity={0.8}
-                                    >
-                                        <Text className="text-blue-600 dark:text-blue-400 font-bold text-sm">
-                                            {showAllClasses ? 'Show Less' : `Show ${todaysClasses.length - 5} More`}
-                                        </Text>
-                                    </TouchableOpacity>
-                                )}
-                            </>
+                                    <View className="flex-row justify-between pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                                        <View className="items-center flex-1 border-r border-gray-50 dark:border-gray-700/50">
+                                            <Text className="text-gray-900 dark:text-white font-bold">{Math.round(cls.attendanceRate || 0)}%</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-gray-400">Attendance</Text>
+                                        </View>
+                                        <View className="items-center flex-1">
+                                            <Text className="text-gray-900 dark:text-white font-bold">{Math.round(cls.submissionRate || 0)}%</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-gray-400">Submissions</Text>
+                                        </View>
+                                    </View>
+                                </TouchableOpacity>
+                            ))
                         ) : (
-                            <View className="bg-white dark:bg-gray-800 rounded-2xl p-8 items-center justify-center border border-dashed border-gray-300 dark:border-gray-700">
-                                <Ionicons name="calendar-outline" size={48} color="#9CA3AF" />
-                                <Text className="text-gray-500 dark:text-gray-400 mt-3 font-medium">
-                                    No classes scheduled for today
-                                </Text>
-                            </View>
+                            <Text className="text-gray-500 dark:text-gray-400 text-center py-4">No class data available</Text>
+                        )}
+                    </View>
+
+                    {/* Teacher Performance Summary */}
+                    <View className="mb-20">
+                        <Text className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                            Teacher Performance Summary
+                        </Text>
+                        {report?.teacherPerformances && report.teacherPerformances.length > 0 ? (
+                            report.teacherPerformances.map((teacher, index) => (
+                                <View
+                                    key={index}
+                                    className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-sm mb-3 border border-gray-100 dark:border-gray-700"
+                                >
+                                    <View className="flex-row justify-between items-center mb-3">
+                                        <View className="flex-row items-center">
+                                            <View className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/30 items-center justify-center mr-3">
+                                                <Text className="text-purple-600 dark:text-purple-400 font-bold text-lg">
+                                                    {teacher.teacherName?.charAt(0) || 'T'}
+                                                </Text>
+                                            </View>
+                                            <View>
+                                                <Text className="text-base font-bold text-gray-800 dark:text-gray-100">
+                                                    {teacher.teacherName}
+                                                </Text>
+                                                <Text className="text-gray-500 dark:text-gray-400 text-xs">
+                                                    {teacher.totalStudents} Students • {teacher.classCount} Classes
+                                                </Text>
+                                            </View>
+                                        </View>
+                                    </View>
+
+                                    <View className="flex-row justify-between pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                                        <View className="items-center flex-1 border-r border-gray-50 dark:border-gray-700/50">
+                                            <Text className="text-gray-900 dark:text-white font-bold">{Math.round(teacher.averageAttendanceRate || 0)}%</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-gray-400">Attendance</Text>
+                                        </View>
+                                        <View className="items-center flex-1">
+                                            <Text className="text-gray-900 dark:text-white font-bold">{Math.round(teacher.averageSubmissionRate || 0)}%</Text>
+                                            <Text className="text-xs text-gray-500 dark:text-gray-400">Submissions</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            ))
+                        ) : (
+                            <Text className="text-gray-500 dark:text-gray-400 text-center py-4">No teacher data available</Text>
                         )}
                     </View>
                 </View>

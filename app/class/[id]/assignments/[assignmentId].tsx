@@ -63,7 +63,8 @@ export default function AssignmentDetails() {
                     </View>
                 </View>
 
-                {(item.grade !== undefined || item.feedback) && (
+                {/* Grade and Feedback Section */}
+                {(item.grade !== undefined || item.feedback) ? (
                     <View className="mt-3 pt-3 border-t border-gray-50 dark:border-gray-700/50">
                         {item.grade !== undefined && (
                             <View className="flex-row items-center mb-1">
@@ -81,6 +82,15 @@ export default function AssignmentDetails() {
                                 </Text>
                             </View>
                         )}
+                    </View>
+                ) : (
+                    <View className="mt-3 pt-3 border-t border-gray-50 dark:border-gray-700/50">
+                        <View className="flex-row items-center">
+                            <Ionicons name="time-outline" size={16} color="#9CA3AF" />
+                            <Text className="ml-2 text-sm text-gray-500 dark:text-gray-400 italic">
+                                Not graded yet
+                            </Text>
+                        </View>
                     </View>
                 )}
             </View>

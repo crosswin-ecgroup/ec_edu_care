@@ -5,11 +5,12 @@ import { Text, TouchableOpacity, View } from 'react-native';
 
 interface TeacherListProps {
     teachers: any[];
+    classId?: string;
     onAddTeacher: () => void;
     onRemoveTeacher: (teacherId: string) => void;
 }
 
-export const TeacherList = ({ teachers, onAddTeacher, onRemoveTeacher }: TeacherListProps) => {
+export const TeacherList = ({ teachers, classId, onAddTeacher, onRemoveTeacher }: TeacherListProps) => {
     const router = useRouter();
     return (
         <View className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
@@ -33,7 +34,7 @@ export const TeacherList = ({ teachers, onAddTeacher, onRemoveTeacher }: Teacher
                 teachers.map((teacher: any, index: number) => (
                     <TouchableOpacity
                         key={index}
-                        onPress={() => router.push(`/teacher/${teacher.teacherId || teacher.id}` as any)}
+                        onPress={() => router.push(`/class/${classId}/teacher/${teacher.teacherId || teacher.id}` as any)}
                         className="flex-row items-center py-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 active:bg-gray-50 dark:active:bg-gray-700/50"
                     >
                         <View className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-900/30 items-center justify-center">

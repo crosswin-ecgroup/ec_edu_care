@@ -399,6 +399,7 @@ export default function ClassDetails() {
 
                     <TeacherList
                         teachers={classData.teachers || []}
+                        classId={id}
                         onAddTeacher={() => setShowTeacherModal(true)}
                         onRemoveTeacher={handleRemoveTeacher}
                     />
