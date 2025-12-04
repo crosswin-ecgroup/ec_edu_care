@@ -84,6 +84,12 @@ export default function StudentClassDetails() {
                             )}
                         </View>
                     </View>
+                    <TouchableOpacity
+                        onPress={() => router.push(`/student/edit/${studentId}`)}
+                        className="bg-white/20 p-2 rounded-full backdrop-blur-md"
+                    >
+                        <Ionicons name="pencil" size={20} color="white" />
+                    </TouchableOpacity>
                 </View>
             </LinearGradient>
 

@@ -1,4 +1,4 @@
-import { CreateStudentDto, Student } from '@/types/api.types';
+import { CreateStudentDto, Student, UpdateStudentDto } from '@/types/api.types';
 import { api } from './api.base';
 
 export const studentsApi = api.injectEndpoints({
@@ -19,6 +19,17 @@ export const studentsApi = api.injectEndpoints({
             }),
             invalidatesTags: ['Students'],
         }),
+        updateStudent: builder.mutation<Student, { id: string; body: UpdateStudentDto }>({
+            query: ({ id, body }) => ({
+                url: `/Students/${id}`,
+                method: 'PUT',
+                body,
+            }),
+            invalidatesTags: (result, error, { id }) => [
+                { type: 'Students', id },
+                { type: 'Students', id: 'LIST' }
+            ],
+        }),
     }),
 });
 
@@ -27,4 +38,5 @@ export const {
     useLazyGetStudentsQuery,
     useGetStudentByIdQuery,
     useCreateStudentMutation,
+    useUpdateStudentMutation,
 } = studentsApi;

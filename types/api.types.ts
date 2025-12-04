@@ -10,6 +10,7 @@ export interface Teacher {
 export interface Student {
     studentId: string;
     fullName: string;
+    email?: string;
     grade?: string;
     mobileNumber?: string;
     telegramUserId?: number;
@@ -18,12 +19,22 @@ export interface Student {
 }
 
 export interface Material {
-    id: string;
+    materialId: string;
+    classId: string;
     title: string;
+    fileName: string;
+    fileUrl: string;
     description?: string;
-    url: string;
-    type: 'document' | 'video' | 'link';
-    createdAt: string;
+    materialType?: string;
+    isPrimaryTextbook?: boolean;
+    subject?: string;
+    grade?: string;
+    uploadedOn: string;
+    // Legacy field for backward compatibility
+    id?: string;
+    url?: string;
+    type?: 'document' | 'video' | 'link';
+    createdAt?: string;
 }
 
 export interface Class {
@@ -72,6 +83,14 @@ export interface CreateStudentDto {
     mobileNumber?: string;
 }
 
+export interface UpdateStudentDto {
+    fullName?: string;
+    email?: string;
+    countryCode?: string;
+    mobileNumber?: string;
+    grade?: string;
+}
+
 export interface CreateClassDto {
     name?: string;
     subject?: string;
@@ -89,6 +108,11 @@ export interface UpdateClassDto {
     subject?: string;
     standard?: string;
     academicYear?: string;
+    startDate?: string;
+    endDate?: string;
+    dayOfWeek?: string[];
+    sessionTime?: TimeSpan;
+    sessionDurationMinutes?: number;
 }
 
 export interface ClassSession {

@@ -1,3 +1,4 @@
+import { ClassesListSkeleton } from '@/components/skeletons/ClassesListSkeleton';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -172,22 +173,28 @@ export default function Classes() {
 
             {/* Content */}
             <View className="flex-1 -mt-4 px-4 pt-6">
-                <View className="flex-row justify-between items-center mb-4 px-2">
-                    <Text className="text-gray-500 dark:text-gray-400 font-medium">
-                        {filteredClasses.length} Active {filteredClasses.length === 1 ? 'Class' : 'Classes'}
-                    </Text>
-                </View>
+                {!isLoading && (
+                    <View className="flex-row justify-between items-center mb-4 px-2">
+                        <Text className="text-gray-500 dark:text-gray-400 font-medium">
+                            {filteredClasses.length} Active {filteredClasses.length === 1 ? 'Class' : 'Classes'}
+                        </Text>
+                    </View>
+                )}
 
-                <FlatList
-                    data={filteredClasses}
-                    keyExtractor={(item) => item.classId}
-                    keyboardShouldPersistTaps="handled"
-                    refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor="#4F46E5" />}
-                    contentContainerClassName="pb-32"
-                    renderItem={renderItem}
-                    ListEmptyComponent={renderEmpty}
-                    showsVerticalScrollIndicator={false}
-                />
+                {isLoading ? (
+                    <ClassesListSkeleton />
+                ) : (
+                    <FlatList
+                        data={filteredClasses}
+                        keyExtractor={(item) => item.classId}
+                        keyboardShouldPersistTaps="handled"
+                        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={refetch} tintColor="#4F46E5" />}
+                        contentContainerClassName="pb-32"
+                        renderItem={renderItem}
+                        ListEmptyComponent={renderEmpty}
+                        showsVerticalScrollIndicator={false}
+                    />
+                )}
             </View>
 
             {/* Floating Action Button */}
